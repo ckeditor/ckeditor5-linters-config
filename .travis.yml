@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - '14'
+cache:
+  yarn: true
+cache:
+  - node_modules
+before_install:
+  - export START_TIME=$( date +%s )
+  - npm i -g yarn
+install:
+  - yarn install
+script:
+  - yarn run lint
+after_script:
+  - export END_TIME=$( date +%s )
