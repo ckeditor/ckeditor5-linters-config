@@ -9,9 +9,16 @@ This repository is a monorepo. It contains multiple npm packages.
 
 | Package | Version | Dependencies |
 |---------|---------|--------------|
-| [`@ckeditor/eslint-config-ckeditor5`](/packages/eslint-config-ckeditor5) | TBA | TBA |
-| [`@ckeditor/eslint-plugin-ckeditor5-rules`](/packages/eslint-plugin-ckeditor5-rules) | TBA | TBA |
-| [`@ckeditor/stylelint-config-ckeditor5`](/packages/stylelint-config-ckeditor5) | TBA | TBA |
+| [`@ckeditor/eslint-config-ckeditor5`](/packages/eslint-config-ckeditor5) | [![npm version](https://badge.fury.io/js/eslint-config-ckeditor5.svg)](https://www.npmjs.com/package/eslint-config-ckeditor5) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-config-ckeditor5) |
+| [`@ckeditor/eslint-plugin-ckeditor5-rules`](/packages/eslint-plugin-ckeditor5-rules) | [![npm version](https://badge.fury.io/js/eslint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-plugin-ckeditor5-rules) |
+| [`@ckeditor/stylelint-config-ckeditor5`](/packages/stylelint-config-ckeditor5) | [![npm version](https://badge.fury.io/js/stylelint-config-ckeditor5.svg)](https://www.npmjs.com/package/stylelint-config-ckeditor5) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/stylelint-config-ckeditor5) |
+
+### Archived repositories
+
+This repository is a result of merging few older repositories, which are now archived:
+- [eslint-config-ckeditor5](https://github.com/ckeditor/eslint-config-ckeditor5)
+- [eslint-plugin-ckeditor5-rules](https://github.com/ckeditor/eslint-plugin-ckeditor5-rules)
+- [stylelint-config-ckeditor5](https://github.com/ckeditor/stylelint-config-ckeditor5)
 
 ## Cloning
 
@@ -57,7 +64,7 @@ npm run release:publish
 
 As in the previous task, the `--dry-run` option is also available.
 
-Your job's done. You can go now to `ckeditor5`, remove `yarn.lock`, potentially update something in `package.json`, run `yarn install` and commit that as `"Internal: Updated dependencies."`.
+Your job's done. You can go now to the root of the repository, potentially update something in `package.json`, run `yarn install` and commit that as `"Internal: Updated dependencies."`.
 
 ## License
 

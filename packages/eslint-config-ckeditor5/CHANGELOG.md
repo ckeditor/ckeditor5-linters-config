@@ -1,6 +1,10 @@
 Changelog
 =========
 
+All changes in the package are documented in the main repository. See: https://github.com/ckeditor/ckeditor5-linters-config/blob/master/CHANGELOG.md.
+
+Changes for the past releases are available below.
+
 ## [3.1.1](https://github.com/ckeditor/eslint-config-ckeditor5/compare/v3.1.0...v3.1.1) (2021-10-18)
 
 ### Other changes

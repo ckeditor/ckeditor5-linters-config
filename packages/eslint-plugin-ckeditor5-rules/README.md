@@ -1,11 +1,13 @@
 CKEditor 5 ESLint Plugins
 =========================
 
+[![npm version](https://badge.fury.io/js/eslint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)
 [![Build Status](https://app.travis-ci.com/ckeditor/eslint-plugin-ckeditor5-rules.svg?branch=master)](https://app.travis-ci.com/ckeditor/eslint-plugin-ckeditor5-rules)
+![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-plugin-ckeditor5-rules)
 
-A set of plugins used by the [CKEditor 5](https://ckeditor.com) team for [Eslint](https://eslint.org/) 
+A set of plugins used by the [CKEditor 5](https://ckeditor.com) team for [Eslint](https://eslint.org/)
 
-By default this plugin is added to our [`eslint-config-ckeditor5`](https://www.npmjs.com/package/eslint-config-ckeditor5) preset. 
+By default this plugin is added to our [`eslint-config-ckeditor5`](https://www.npmjs.com/package/eslint-config-ckeditor5) preset.
 
 ## Usage
 
@@ -48,7 +50,7 @@ A rule that inspects for relative imports to other [CKEditor 5](https://ckeditor
 // Incorrect import:
 import Position from '../../ckeditor5-engine/src/model/position';
 
-// Will be fix to: 
+// Will be fixed to:
 import Position from '@ckeditor/ckeditor5-engine/src/model/position';
 ```
 

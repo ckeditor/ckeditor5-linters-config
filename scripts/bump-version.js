@@ -10,6 +10,6 @@
 require( '@ckeditor/ckeditor5-dev-env' )
 	.bumpVersions( {
 		cwd: process.cwd(),
-		packages: null,
+		packages: './packages',
 		dryRun: process.argv.includes( '--dry-run' )
 	} );

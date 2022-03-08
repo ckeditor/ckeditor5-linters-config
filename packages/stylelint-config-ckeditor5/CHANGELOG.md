@@ -1,6 +1,10 @@
 Changelog
 =========
 
+All changes in the package are documented in the main repository. See: https://github.com/ckeditor/ckeditor5-linters-config/blob/master/CHANGELOG.md.
+
+Changes for the past releases are available below.
+
 ## [2.0.1](https://github.com/ckeditor/stylelint-config-ckeditor5/compare/v2.0.0...v2.0.1) (2020-09-10)
 
 ### Other changes
