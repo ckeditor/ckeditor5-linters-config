@@ -10,7 +10,7 @@
 require( '@ckeditor/ckeditor5-dev-env' )
 	.generateChangelogForMonoRepository( {
 		cwd: process.cwd(),
-		packages: './packages',
+		packages: 'packages',
 		transformScope: name => {
 			return 'https://www.npmjs.com/package/@ckeditor/' + name;
 		}

@@ -29,18 +29,5 @@
   },
   "peerDependencies": {
     "eslint": ">=7.0.0"
-  },
-  "resolutions": {
-    "eslint-plugin-ckeditor5-rules": "file:./"
-  },
-  "lint-staged": {
-    "**/*.js": [
-      "eslint --quiet"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }

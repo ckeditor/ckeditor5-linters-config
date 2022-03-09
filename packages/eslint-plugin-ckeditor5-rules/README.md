@@ -2,7 +2,6 @@ CKEditor 5 ESLint Plugins
 =========================
 
 [![npm version](https://badge.fury.io/js/eslint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)
-[![Build Status](https://app.travis-ci.com/ckeditor/eslint-plugin-ckeditor5-rules.svg?branch=master)](https://app.travis-ci.com/ckeditor/eslint-plugin-ckeditor5-rules)
 ![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-plugin-ckeditor5-rules)
 
 A set of plugins used by the [CKEditor 5](https://ckeditor.com) team for [Eslint](https://eslint.org/)
@@ -70,40 +69,3 @@ rules: {
 	} ]
 }
 ```
-
-## Changelog
-
-See the [`CHANGELOG.md`](https://github.com/ckeditor/eslint-plugin-ckeditor5-rules/blob/master/CHANGELOG.md) file.
-
-## Releasing package
-
-Note: Be sure that version of dependencies in [`package.json`](https://github.com/ckeditor/eslint-plugin-ckeditor5-rules/blob/master/package.json) are defined correctly.
-
-### Changelog
-
-Before starting the release process, you need to generate the changelog:
-
-```bash
-npm run changelog
-```
-
-### Publishing
-
-After generating the changelog, you are able to release the package.
-
-First, you need to bump the version:
-
-```bash
-npm run release:bump-version
-```
-
-You can also use the `--dry-run` option in order to see what this task does.
-
-After bumping the version, you can publish the changes:
-
-```bash
-npm run release:publish
-```
-
-As in the previous task, the `--dry-run` option is also available.
-

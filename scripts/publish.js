@@ -10,6 +10,6 @@
 require( '@ckeditor/ckeditor5-dev-env' )
 	.releaseSubRepositories( {
 		cwd: process.cwd(),
-		packages: './packages',
+		packages: 'packages',
 		dryRun: process.argv.includes( '--dry-run' )
 	} );
