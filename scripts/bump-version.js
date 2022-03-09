@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+/**
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md.
+ */
+
+'use strict';
+
+require( '@ckeditor/ckeditor5-dev-env' )
+	.bumpVersions( {
+		cwd: process.cwd(),
+		packages: 'packages',
+		dryRun: process.argv.includes( '--dry-run' )
+	} );

@@ -1,0 +1,55 @@
+{
+  "name": "@ckeditor/ckeditor5-linters-config",
+  "version": "0.0.1",
+  "author": "CKSource (http://cksource.com/)",
+  "license": "MIT",
+  "homepage": "https://ckeditor.com/ckeditor-5",
+  "keywords": [
+    "ckeditor",
+    "ckeditor5",
+    "ckeditor 5"
+  ],
+  "private": true,
+  "scripts": {
+    "lint": "eslint --quiet \"**/*.js\"",
+    "precommit": "lint-staged",
+    "changelog": "node ./scripts/changelog.js",
+    "release:bump-version": "node ./scripts/bump-version.js",
+    "release:publish": "node ./scripts/publish.js",
+    "test": "node packages/eslint-plugin-ckeditor5-rules/tests/index.js && echo OK!"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=8.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
+  },
+  "devDependencies": {
+    "@ckeditor/ckeditor5-dev-env": "^28.1.1",
+    "eslint": "^7.0.0"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --quiet"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "eslintIgnore": [
+    "coverage/**",
+    "packages/*/node_modules/**"
+  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/husky"
+    ]
+  }
+}
