@@ -3,6 +3,10 @@ CKEditor 5 linters configuration
 
 TBA: badges
 
+## Issue tracker
+
+The issue tracker is located in the [`ckeditor/ckeditor5`](https://github.com/ckeditor/ckeditor5/issues/new?labels=domain:linters,squad:devops) repository.
+
 ## Packages
 
 This repository is a monorepo. It contains multiple npm packages.
