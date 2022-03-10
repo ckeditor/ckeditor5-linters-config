@@ -21,8 +21,7 @@ const ruleName = 'ckeditor5-plugin/enforce-license';
 const messages = ruleMessages( ruleName, {
 	missing: () => 'This file does not begin with a license header.',
 	notLicense: () => 'This file begins with a comment that is not a license header.',
-	content: () => 'Incorrect license header content.',
-	spacing: () => 'Incorrect license header spacing.'
+	content: () => 'Incorrect license header content.'
 } );
 
 module.exports.ruleName = ruleName;
@@ -30,9 +29,6 @@ module.exports.messages = messages;
 
 module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primaryOption, secondaryOptionObject, context ) {
 	const newline = context.newline || '\n';
-	const expectedHeader = secondaryOptionObject.headerContent.join( newline );
-	const expectedLeftRaw = newline;
-	const expectedRightRaw = newline + ' ';
 
 	return function lint( root, result ) {
 		const firstNode = root.nodes[ 0 ];
@@ -64,42 +60,22 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 		}
 
 		// The comment on the beginning of the file needs to have predefined content.
-		if ( firstNode.text !== expectedHeader ) {
+		const expectedFullComment = [
+			'/*',
+			...secondaryOptionObject.headerContent,
+			' */'
+		].join( newline );
+
+		if ( firstNode.toString() !== expectedFullComment ) {
 			if ( context.fix ) {
-				firstNode.text = expectedHeader;
+				firstNode.text = secondaryOptionObject.headerContent.join( newline );
+				firstNode.raws.left = newline;
+				firstNode.raws.right = newline + ' ';
 			} else {
 				report( {
 					ruleName,
 					result,
 					message: messages.content(),
-					node: firstNode
-				} );
-			}
-		}
-
-		// The comment on the beginning of the file needs to begin with correct spacing.
-		if ( firstNode.raws.left !== expectedLeftRaw ) {
-			if ( context.fix ) {
-				firstNode.raws.left = expectedLeftRaw;
-			} else {
-				report( {
-					ruleName,
-					result,
-					message: messages.spacing(),
-					node: firstNode
-				} );
-			}
-		}
-
-		// The comment on the beginning of the file needs to end with correct spacing.
-		if ( firstNode.raws.right !== expectedRightRaw ) {
-			if ( context.fix ) {
-				firstNode.raws.right = expectedRightRaw;
-			} else {
-				report( {
-					ruleName,
-					result,
-					message: messages.spacing(),
 					node: firstNode
 				} );
 			}

@@ -15,19 +15,19 @@ const pluginPath = path.join( __dirname, '..', '..', 'lib', 'rules', 'license-he
 const { ruleName } = require( pluginPath );
 const { getTestRule } = require( 'jest-preset-stylelint' );
 
-// const messages = {
-// 	missing: 'This file does not begin with a license header.',
-// 	notLicense: 'This file begins with a comment that is not a license header.',
-// 	content: 'Incorrect license header content.',
-// 	spacing: 'Incorrect license header spacing.'
-// };
+const messages = {
+	missing: `This file does not begin with a license header. (${ ruleName })`,
+	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
+	content: `Incorrect license header content. (${ ruleName })`
+};
 
 global.testRule = getTestRule( { plugins: [ pluginPath ] } );
 
 testRule( {
 	plugins: [ '.' ],
 	ruleName,
-	fix: true,
+	// TODO: update tests to have fixer data
+	// fix: true,
 	config: [ true,	{ headerContent: [
 		' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 		' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license'
@@ -42,31 +42,67 @@ testRule( {
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			].join( '\n' )
+		},
+		{
+			description: 'File containing the license and a CSS rule.',
+			code: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
+			].join( '\n' )
+		}
+	],
+
+	reject: [
+		{
+			description: 'License with extra space at the beginning.',
+			code: [
+				'/* ',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */'
+			].join( '\n' ),
+
+			message: messages.content
+		},
+		{
+			description: 'License with missing space at the beginning.',
+			code: [
+				'/*',
+				'* @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */'
+			].join( '\n' ),
+
+			message: messages.content
+		},
+		{
+			description: 'License with missing space at the end.',
+			code: [
+				'/* ',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				'*/'
+			].join( '\n' ),
+
+			message: messages.content
+		},
+		{
+			description: 'License with wrong content.',
+			code: [
+				'/* ',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md.',
+				' */'
+			].join( '\n' ),
+
+			message: messages.content
 		}
 	]
-
-	// reject: [
-	// 	{
-	// 		description: 'License with extra space at the beginning.',
-	// 		code: [
-	// 			'/* ',
-	// 			' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
-	// 			' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-	// 			' */'
-	// 		].join( '\n' )
-	// 	}
-
-	// 	/*
-	// 	{
-	// 		code: '.myClass {}',
-	// 		fixed: '.my-class {}',
-	// 		description: 'camel case class selector',
-	// 		message: messages.missing,
-	// 		line: 1,
-	// 		column: 1,
-	// 		endLine: 1,
-	// 		endColumn: 8
-	// 	}
-	// 	*/
-	// ]
 } );
