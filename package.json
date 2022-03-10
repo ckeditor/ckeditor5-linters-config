@@ -17,7 +17,7 @@
     "changelog": "node ./scripts/changelog.js",
     "release:bump-version": "node ./scripts/bump-version.js",
     "release:publish": "node ./scripts/publish.js",
-    "test": "mocha 'packages/stylelint-plugin-ckeditor5-rules/tests/**/*.js' && node packages/eslint-plugin-ckeditor5-rules/tests/index.js"
+    "test": "jest && node packages/eslint-plugin-ckeditor5-rules/tests/index.js"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -29,11 +29,9 @@
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-dev-env": "^28.1.1",
-    "chai": "^4.3.6",
     "eslint": "^7.0.0",
-    "mocha": "^9.2.1",
-    "mockery": "^2.1.0",
-    "sinon": "^13.0.1",
+    "jest": "^27.5.1",
+    "jest-preset-stylelint": "^5.0.1",
     "stylelint": "^13.13.1",
     "stylelint-config-ckeditor5": "^2.0.1"
   },
@@ -58,5 +56,8 @@
     "nohoist": [
       "**/husky"
     ]
+  },
+  "jest": {
+    "preset": "jest-preset-stylelint"
   }
 }
