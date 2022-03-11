@@ -20,5 +20,9 @@
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
+  },
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage"
   }
 }
