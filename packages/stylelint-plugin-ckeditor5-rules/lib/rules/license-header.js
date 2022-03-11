@@ -29,7 +29,7 @@ module.exports.ruleName = ruleName;
 module.exports.messages = messages;
 
 module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primaryOption, secondaryOptionObject, context ) {
-	const newline = context.newline || '\n';
+	const newline = context.newline;
 
 	return function lint( root, result ) {
 		// The file can not be empty.
