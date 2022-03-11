@@ -17,11 +17,12 @@ const stylelint = require( 'stylelint' );
 
 const { report, ruleMessages } = stylelint.utils;
 
-const ruleName = 'ckeditor5-plugin/enforce-license';
+const ruleName = 'ckeditor5-plugin/license-header';
 const messages = ruleMessages( ruleName, {
 	missing: () => 'This file does not begin with a license header.',
 	notLicense: () => 'This file begins with a comment that is not a license header.',
-	content: () => 'Incorrect license header content.'
+	content: () => 'Incorrect license header content.',
+	gap: () => 'Disallowed gap before the license.'
 } );
 
 module.exports.ruleName = ruleName;
@@ -31,6 +32,18 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 	const newline = context.newline || '\n';
 
 	return function lint( root, result ) {
+		// The file can not be empty.
+		if ( !root.nodes.length ) {
+			report( {
+				ruleName,
+				result,
+				message: messages.missing(),
+				line: 1
+			} );
+
+			return;
+		}
+
 		const firstNode = root.nodes[ 0 ];
 
 		// The file has to begin with a comment.
@@ -39,7 +52,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				ruleName,
 				result,
 				message: messages.missing(),
-				line: 0
+				line: 1
 			} );
 
 			return;
@@ -53,7 +66,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				ruleName,
 				result,
 				message: messages.notLicense(),
-				node: firstNode
+				line: 1
 			} );
 
 			return;
@@ -77,6 +90,20 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 					result,
 					message: messages.content(),
 					node: firstNode
+				} );
+			}
+		}
+
+		// The comment has to start at the first line of the file.
+		if ( firstNode.source.start.line !== 1 ) {
+			if ( context.fix ) {
+				firstNode.raws.before = '';
+			} else {
+				report( {
+					ruleName,
+					result,
+					message: messages.gap(),
+					line: 1
 				} );
 			}
 		}

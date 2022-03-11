@@ -5,24 +5,11 @@
 
 'use strict';
 
+const { getTestRule } = require( 'jest-preset-stylelint' );
 const path = require( 'path' );
 const util = require( 'util' );
 
-const inspect = util.inspect;
-
-// Needed so that `testRule` is not caught.
-/* eslint-disable no-undef */
-
-const pluginPath = path.join( __dirname, '..', '..', 'lib', 'rules', 'license-header.js' ).replace( /\\/g, '/' );
-
-const { ruleName } = require( pluginPath );
-const { getTestRule } = require( 'jest-preset-stylelint' );
-
-const messages = {
-	missing: `This file does not begin with a license header. (${ ruleName })`,
-	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
-	content: `Incorrect license header content. (${ ruleName })`
-};
+const PLUGIN_PATH = path.join( __dirname, '..', '..', 'lib', 'rules', 'license-header.js' ).replace( /\\/g, '/' );
 
 global.testRule = getTestRule();
 
@@ -37,26 +24,26 @@ const config = [
 	}
 ];
 
-// For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
-// the plugin configuration and the checked code. It uses the `util.inspect()` function for making a string from the given `input`.
-// Let's override it and return an empty string for these values to avoid a mess in a console.
-// The original function is restored at the end of the file.
-util.inspect = function( input ) {
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L172.
-	if ( input === config ) {
-		return '';
-	}
-
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L173.
-	if ( input.startsWith && input.startsWith( '/*' ) ) {
-		return '';
-	}
-
-	return inspect( input );
+const { ruleName } = require( PLUGIN_PATH );
+const messages = {
+	missing: `This file does not begin with a license header. (${ ruleName })`,
+	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
+	content: `Incorrect license header content. (${ ruleName })`,
+	gap: `Disallowed gap before the license. (${ ruleName })`
 };
 
-testRule( {
-	plugins: [ pluginPath ],
+// For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
+// the plugin configuration and the checked code. It uses the `util.inspect()` function for making a string from the given `input`.
+// Lets override it and return an empty string for these values to avoid a mess in a console.
+// The original function is restored at the end of the file.
+const defaultInspectFunction = util.inspect;
+
+util.inspect = () => {
+	return '';
+};
+
+global.testRule( {
+	plugins: [ PLUGIN_PATH ],
 	ruleName,
 	// TODO: update tests to have fixer data
 	// fix: true,
@@ -90,6 +77,30 @@ testRule( {
 
 	reject: [
 		{
+			description: 'Empty file.',
+			code: '',
+
+			message: messages.missing
+		},
+		{
+			description: 'File without comments.',
+			code: [
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}'
+			].join( '\n' ),
+
+			message: messages.missing
+		},
+		{
+			description: 'File starting with comment that is not a license.',
+			code: [
+				'/* Comment */'
+			].join( '\n' ),
+
+			message: messages.notLicense
+		},
+		{
 			description: 'License with extra space at the beginning.',
 			code: [
 				'/* ',
@@ -112,9 +123,20 @@ testRule( {
 			message: messages.content
 		},
 		{
+			description: 'License with extra space at the end.',
+			code: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				'  */'
+			].join( '\n' ),
+
+			message: messages.content
+		},
+		{
 			description: 'License with missing space at the end.',
 			code: [
-				'/* ',
+				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'*/'
@@ -123,18 +145,42 @@ testRule( {
 			message: messages.content
 		},
 		{
-			description: 'License with wrong content.',
+			description: 'License with extra part of the content.',
 			code: [
-				'/* ',
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' * This license has too much text.',
+				' */'
+			].join( '\n' ),
+
+			message: messages.content
+		},
+		{
+			description: 'License with missing part of the content.',
+			code: [
+				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
 				' */'
 			].join( '\n' ),
 
 			message: messages.content
+		},
+		{
+			description: 'License that does not start at the first line of the file.',
+			code: [
+				'',
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */'
+			].join( '\n' ),
+
+			message: messages.gap
 		}
 	]
 } );
 
 // Restore the original function.
-util.inspect = inspect;
+util.inspect = defaultInspectFunction;
