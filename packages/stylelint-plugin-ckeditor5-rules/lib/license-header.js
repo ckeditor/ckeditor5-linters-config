@@ -8,7 +8,6 @@
 // Leading comment in a file will be considered license, and thus eligible
 // for automatic fixing if it contains any of the strings below:
 const LICENSE_IDENTIFIERS = [
-	'@license',
 	'Copyright',
 	'copyright'
 ];
@@ -19,11 +18,11 @@ const { report, ruleMessages } = stylelint.utils;
 
 const ruleName = 'ckeditor5-rules/license-header';
 const messages = ruleMessages( ruleName, {
-	missing: () => 'This file does not begin with a license header.',
-	notLicense: () => 'This file begins with a comment that is not a license header.',
-	content: () => 'Incorrect license header content.',
-	gap: () => 'Disallowed gap before the license.',
-	emptyLine: () => 'Missing empty line after the license.'
+	missingLicense: 'This file does not begin with a license header.',
+	notLicense: 'This file begins with a comment that is not a license header.',
+	incorrectContent: 'Incorrect license header content.',
+	leadingSpacing: 'Disallowed gap before the license.',
+	trailingSpacing: 'Missing empty line after the license.'
 } );
 
 module.exports.ruleName = ruleName;
@@ -36,7 +35,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 			report( {
 				ruleName,
 				result,
-				message: messages.missing(),
+				message: messages.missingLicense,
 				line: 1
 			} );
 
@@ -50,7 +49,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 			report( {
 				ruleName,
 				result,
-				message: messages.missing(),
+				message: messages.missingLicense,
 				line: 1
 			} );
 
@@ -64,7 +63,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 			report( {
 				ruleName,
 				result,
-				message: messages.notLicense(),
+				message: messages.notLicense,
 				line: 1
 			} );
 
@@ -86,7 +85,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				report( {
 					ruleName,
 					result,
-					message: messages.content(),
+					message: messages.incorrectContent,
 					node: firstNode
 				} );
 			}
@@ -100,7 +99,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				report( {
 					ruleName,
 					result,
-					message: messages.gap(),
+					message: messages.leadingSpacing,
 					line: 1
 				} );
 			}
@@ -120,7 +119,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				report( {
 					ruleName,
 					result,
-					message: messages.emptyLine(),
+					message: messages.trailingSpacing,
 					line: firstNode.source.end.line,
 					column: firstNode.source.end.column
 				} );

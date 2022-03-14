@@ -19,7 +19,7 @@ const config = [
 		headerLines:
 			[
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			]
@@ -28,11 +28,11 @@ const config = [
 
 const { ruleName } = require( PLUGIN_PATH );
 const messages = {
-	missing: `This file does not begin with a license header. (${ ruleName })`,
+	missingLicense: `This file does not begin with a license header. (${ ruleName })`,
 	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
-	content: `Incorrect license header content. (${ ruleName })`,
-	gap: `Disallowed gap before the license. (${ ruleName })`,
-	emptyLine: `Missing empty line after the license. (${ ruleName })`
+	incorrectContent: `Incorrect license header content. (${ ruleName })`,
+	leadingSpacing: `Disallowed gap before the license. (${ ruleName })`,
+	trailingSpacing: `Missing empty line after the license. (${ ruleName })`
 };
 
 // For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
@@ -53,16 +53,8 @@ util.inspect = input => {
 	}
 
 	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L173.
-	if ( input.includes( '@license Copyright (c) 2003-2022, CKSource Holding sp. z o.o.' ) ) {
-		return '';
-	}
-
-	// To hide remaining test cases.
-	const stringsToHide = [
-		'.ck.ck-editor {\n\tmargin: 1.5em 0;\n}',
-		'/* Comment */'
-	];
-	const shouldHide = stringsToHide.some( string => input === string );
+	const stringsToHide = [ 'CKSource Holding', '.ck.ck-editor' ];
+	const shouldHide = stringsToHide.some( string => input.includes( string ) );
 
 	if ( shouldHide ) {
 		return '';
@@ -82,7 +74,7 @@ global.testRule( {
 			description: 'File containing only the license, without trailing empty line.',
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			].join( '\n' )
@@ -91,7 +83,7 @@ global.testRule( {
 			description: 'File containing only the license, with trailing empty line.',
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				''
@@ -101,7 +93,7 @@ global.testRule( {
 			description: 'File containing the license and a CSS rule.',
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -116,12 +108,12 @@ global.testRule( {
 	reject: [
 		{
 			description: 'Reports error for empty file.',
-			message: messages.missing,
+			message: messages.missingLicense,
 			code: ''
 		},
 		{
 			description: 'Reports error for file without comments.',
-			message: messages.missing,
+			message: messages.missingLicense,
 			code: [
 				'.ck.ck-editor {',
 				'	margin: 1.5em 0;',
@@ -143,10 +135,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with extra space at the beginning.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/* ',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -158,10 +150,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with missing space at the beginning.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				'* @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				'* Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -173,10 +165,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with extra space at the end.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'  */',
 				'',
@@ -188,10 +180,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with missing space at the end.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'*/',
 				'',
@@ -203,10 +195,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with extra part of the content.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
 				' */',
@@ -219,10 +211,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license with missing part of the content.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
 				' */',
 				'',
@@ -234,11 +226,11 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license that does not start at the first line of the file.',
-			message: messages.gap,
+			message: messages.leadingSpacing,
 			code: [
 				'',
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -250,10 +242,10 @@ global.testRule( {
 		},
 		{
 			description: 'Reports error for license that is not followed by an empty line.',
-			message: messages.emptyLine,
+			message: messages.trailingSpacing,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'.ck.ck-editor {',
@@ -274,10 +266,10 @@ global.testRule( {
 	reject: [
 		{
 			description: 'Fixes license with extra space at the beginning.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/* ',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -288,7 +280,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -300,10 +292,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license with missing space at the beginning.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				'* @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				'* Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -314,7 +306,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -326,10 +318,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license with extra space at the end.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'  */',
 				'',
@@ -340,7 +332,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -352,10 +344,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license with missing space at the end.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'*/',
 				'',
@@ -366,7 +358,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -378,10 +370,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license with extra part of the content.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
 				' */',
@@ -393,7 +385,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -405,10 +397,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license with missing part of the content.',
-			message: messages.content,
+			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
 				' */',
 				'',
@@ -419,7 +411,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -431,11 +423,11 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license that does not start at the first line of the file.',
-			message: messages.gap,
+			message: messages.leadingSpacing,
 			code: [
 				'',
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -446,7 +438,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -458,10 +450,10 @@ global.testRule( {
 		},
 		{
 			description: 'Fixes license that is not followed by an empty line.',
-			message: messages.emptyLine,
+			message: messages.trailingSpacing,
 			code: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'.ck.ck-editor {',
@@ -471,7 +463,7 @@ global.testRule( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
