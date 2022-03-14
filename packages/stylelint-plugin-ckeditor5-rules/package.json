@@ -33,5 +33,10 @@
     "jest-preset-stylelint": "^5.0.1",
     "stylelint": "^13.13.1",
     "stylelint-config-ckeditor5": "^2.0.1"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**"
+    ]
   }
 }
