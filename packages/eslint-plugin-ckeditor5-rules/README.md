@@ -1,4 +1,4 @@
-CKEditor 5 ESLint Plugins
+CKEditor 5 ESLint plugins
 =========================
 
 [![npm version](https://badge.fury.io/js/eslint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)
