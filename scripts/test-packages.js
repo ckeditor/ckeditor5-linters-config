@@ -28,9 +28,11 @@ for ( const packageName of PACKAGES_TO_TEST ) {
 		} );
 
 		console.log( `\n✅ Tests for "${ packageName }" complete.\n` );
+
 		completed.push( packageName );
 	} catch ( err ) {
 		console.log( `\n❌ Tests for "${ packageName }" finished with an error.\n` );
+
 		failed.push( packageName );
 	}
 }
@@ -39,6 +41,7 @@ console.log( '\n🔷 Summary of tests:' );
 
 if ( completed.length ) {
 	console.log( '\n✅ Completed:' );
+
 	for ( const packageName of completed ) {
 		console.log( ` - ${ packageName }` );
 	}
@@ -46,6 +49,7 @@ if ( completed.length ) {
 
 if ( failed.length ) {
 	console.log( '\n❌ Failed:' );
+
 	for ( const packageName of failed ) {
 		console.log( ` - ${ packageName }` );
 	}
