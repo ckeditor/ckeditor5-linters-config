@@ -17,7 +17,7 @@ const stylelint = require( 'stylelint' );
 
 const { report, ruleMessages } = stylelint.utils;
 
-const ruleName = 'ckeditor5-plugin/license-header';
+const ruleName = 'ckeditor5-rules/license-header';
 const messages = ruleMessages( ruleName, {
 	missing: () => 'This file does not begin with a license header.',
 	notLicense: () => 'This file begins with a comment that is not a license header.',

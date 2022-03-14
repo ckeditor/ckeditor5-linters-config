@@ -23,7 +23,7 @@ Configure Stylelint with a `.stylelintrc` file using the following contents:
 		"./lib/rules/license-header.js" // Add the plugin to the linter.
 	],
 	"rules": {
-		"ckeditor5-plugin/license-header": [ true, {
+		"ckeditor5-rules/license-header": [ true, {
 			"headerLines": [
 				" * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.",
 				" * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license"

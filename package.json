@@ -12,7 +12,6 @@
   "private": true,
   "scripts": {
     "lint": "eslint --quiet \"**/*.js\"",
-    "stylelint": "stylelint --quiet --allow-empty-input \"./packages/stylelint-plugin-ckeditor5-rules/style.css\" --fix",
     "precommit": "lint-staged",
     "changelog": "node ./scripts/changelog.js",
     "release:bump-version": "node ./scripts/bump-version.js",
@@ -29,11 +28,7 @@
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-dev-env": "^28.1.1",
-    "eslint": "^7.0.0",
-    "jest": "^27.5.1",
-    "jest-preset-stylelint": "^5.0.1",
-    "stylelint": "^13.13.1",
-    "stylelint-config-ckeditor5": "^2.0.1"
+    "eslint": "^7.0.0"
   },
   "lint-staged": {
     "**/*.js": [
@@ -56,8 +51,5 @@
     "nohoist": [
       "**/husky"
     ]
-  },
-  "jest": {
-    "preset": "jest-preset-stylelint"
   }
 }

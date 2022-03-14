@@ -17,4 +17,4 @@ for ( const test of tests ) {
 	require( `./${ test }` );
 }
 
-console.log( '✅ eslint-plugin-ckeditor5-rules - tests passed with no errors.\n' );
+console.log( '✅ eslint-plugin-ckeditor5-rules - tests completed with no errors.\n' );

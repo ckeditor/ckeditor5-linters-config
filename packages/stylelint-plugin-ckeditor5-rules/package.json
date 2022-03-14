@@ -16,13 +16,22 @@
   "files": [
     "lib"
   ],
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
   },
-  "scripts": {
-    "test": "jest",
-    "coverage": "jest --coverage"
+  "dependencies": {
+    "stylelint-config-recommended": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "jest-preset-stylelint": "^5.0.1",
+    "stylelint": "^13.13.1",
+    "stylelint-config-ckeditor5": "^2.0.1"
   }
 }
