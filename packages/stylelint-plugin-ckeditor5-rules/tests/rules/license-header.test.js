@@ -16,10 +16,12 @@ global.testRule = getTestRule();
 const config = [
 	true,
 	{
-		headerContent:
+		headerLines:
 			[
+				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
-				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license'
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */'
 			]
 	}
 ];
@@ -38,8 +40,35 @@ const messages = {
 // The original function is restored at the end of the file.
 const defaultInspectFunction = util.inspect;
 
-util.inspect = () => {
-	return '';
+util.inspect = input => {
+	// To hide empty input.
+	if ( !input ) {
+		return '';
+	}
+
+	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L172.
+	if ( input === config ) {
+		return '';
+	}
+
+	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L173.
+	if ( input.includes( '@license Copyright (c) 2003-2022, CKSource Holding sp. z o.o.' ) ) {
+		return '';
+	}
+
+	// To hide remaining test cases.
+	const stringsToHide = [
+		'.ck.ck-editor {\n\tmargin: 1.5em 0;\n}',
+		'/* Comment */'
+	];
+	const shouldHide = stringsToHide.some( string => input === string );
+
+	if ( shouldHide ) {
+		return '';
+	}
+
+	// In all other cases, function should function normally.
+	return defaultInspectFunction( input );
 };
 
 global.testRule( {
@@ -173,8 +202,8 @@ global.testRule( {
 global.testRule( {
 	plugins: [ PLUGIN_PATH ],
 	ruleName,
-	fix: true,
 	config,
+	fix: true,
 
 	reject: [
 		{

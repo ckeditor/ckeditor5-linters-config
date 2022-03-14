@@ -73,17 +73,16 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 		}
 
 		// The comment on the beginning of the file needs to have predefined content.
-		const expectedFullComment = [
-			'/*',
-			...secondaryOptionObject.headerContent,
-			' */'
-		].join( newline );
+		const expectedFullComment = secondaryOptionObject.headerLines.join( newline );
 
 		if ( firstNode.toString() !== expectedFullComment ) {
 			if ( context.fix ) {
-				firstNode.text = secondaryOptionObject.headerContent.join( newline );
-				firstNode.raws.left = newline;
-				firstNode.raws.right = newline + ' ';
+				// Removing leading `/*` and trailing `*/`.
+				const commentContent = expectedFullComment.slice( 2, -2 );
+
+				firstNode.text = commentContent;
+				firstNode.raws.left = '';
+				firstNode.raws.right = '';
 			} else {
 				report( {
 					ruleName,
