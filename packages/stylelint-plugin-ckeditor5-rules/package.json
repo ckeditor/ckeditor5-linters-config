@@ -26,7 +26,8 @@
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
   },
   "dependencies": {
-    "stylelint-config-recommended": "^3.0.0"
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-plugin-ckeditor5-rules": "^4.0.0"
   },
   "devDependencies": {
     "jest": "^27.5.1",
