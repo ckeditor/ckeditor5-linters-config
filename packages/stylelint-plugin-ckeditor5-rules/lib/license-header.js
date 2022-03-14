@@ -22,7 +22,8 @@ const messages = ruleMessages( ruleName, {
 	missing: () => 'This file does not begin with a license header.',
 	notLicense: () => 'This file begins with a comment that is not a license header.',
 	content: () => 'Incorrect license header content.',
-	gap: () => 'Disallowed gap before the license.'
+	gap: () => 'Disallowed gap before the license.',
+	emptyLine: () => 'Missing empty line after the license.'
 } );
 
 module.exports.ruleName = ruleName;
@@ -101,6 +102,27 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 					result,
 					message: messages.gap(),
 					line: 1
+				} );
+			}
+		}
+
+		// The comment has to have a empty line following it.
+		const rawFileLines = root.source.input.css.split( context.newline );
+		const expectedEmptyLineIndex = firstNode.source.end.line;
+		const hasExpectedEmptyLine = rawFileLines[ expectedEmptyLineIndex ] === '';
+
+		const secondNode = root.nodes[ 1 ];
+
+		if ( !hasExpectedEmptyLine && secondNode ) {
+			if ( context.fix ) {
+				secondNode.raws.before = context.newline.repeat( 2 );
+			} else {
+				report( {
+					ruleName,
+					result,
+					message: messages.emptyLine(),
+					line: firstNode.source.end.line,
+					column: firstNode.source.end.column
 				} );
 			}
 		}

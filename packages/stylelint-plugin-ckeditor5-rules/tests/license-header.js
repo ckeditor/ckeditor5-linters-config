@@ -31,7 +31,8 @@ const messages = {
 	missing: `This file does not begin with a license header. (${ ruleName })`,
 	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
 	content: `Incorrect license header content. (${ ruleName })`,
-	gap: `Disallowed gap before the license. (${ ruleName })`
+	gap: `Disallowed gap before the license. (${ ruleName })`,
+	emptyLine: `Missing empty line after the license. (${ ruleName })`
 };
 
 // For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
@@ -78,12 +79,22 @@ global.testRule( {
 
 	accept: [
 		{
-			description: 'File containing only the license.',
+			description: 'File containing only the license, without trailing empty line.',
 			code: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
+			].join( '\n' )
+		},
+		{
+			description: 'File containing only the license, with trailing empty line.',
+			code: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */',
+				''
 			].join( '\n' )
 		},
 		{
@@ -231,6 +242,20 @@ global.testRule( {
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
+			].join( '\n' )
+		},
+		{
+			description: 'Reports error for license that is not followed by an empty line.',
+			message: messages.emptyLine,
+			code: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */',
 				'.ck.ck-editor {',
 				'	margin: 1.5em 0;',
 				'}',
@@ -414,6 +439,31 @@ global.testRule( {
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
+			].join( '\n' ),
+			fixed: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
+			].join( '\n' )
+		},
+		{
+			description: 'Fixes license that is not followed by an empty line.',
+			message: messages.emptyLine,
+			code: [
+				'/*',
+				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
+				' */',
 				'.ck.ck-editor {',
 				'	margin: 1.5em 0;',
 				'}',
