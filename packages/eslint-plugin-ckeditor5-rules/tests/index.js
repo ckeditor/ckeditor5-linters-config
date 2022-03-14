@@ -12,6 +12,8 @@ const tests = fs.readdirSync( __dirname ).filter( test => {
 } );
 
 for ( const test of tests ) {
+	console.log( `Testing "${ test }"...` );
+
 	require( `./${ test }` );
 }
 
