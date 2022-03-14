@@ -9,7 +9,7 @@ const { getTestRule } = require( 'jest-preset-stylelint' );
 const path = require( 'path' );
 const util = require( 'util' );
 
-const PLUGIN_PATH = path.join( __dirname, '..', '..', 'lib', 'rules', 'license-header.js' ).replace( /\\/g, '/' );
+const PLUGIN_PATH = path.join( __dirname, '..', 'lib', 'license-header.js' ).replace( /\\/g, '/' );
 
 global.testRule = getTestRule();
 

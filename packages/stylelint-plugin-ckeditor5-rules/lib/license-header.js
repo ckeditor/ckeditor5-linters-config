@@ -29,8 +29,6 @@ module.exports.ruleName = ruleName;
 module.exports.messages = messages;
 
 module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primaryOption, secondaryOptionObject, context ) {
-	const newline = context.newline;
-
 	return function lint( root, result ) {
 		// The file can not be empty.
 		if ( !root.nodes.length ) {
@@ -73,7 +71,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 		}
 
 		// The comment on the beginning of the file needs to have predefined content.
-		const expectedFullComment = secondaryOptionObject.headerLines.join( newline );
+		const expectedFullComment = secondaryOptionObject.headerLines.join( context.newline );
 
 		if ( firstNode.toString() !== expectedFullComment ) {
 			if ( context.fix ) {
