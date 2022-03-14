@@ -16,7 +16,7 @@
     "changelog": "node ./scripts/changelog.js",
     "release:bump-version": "node ./scripts/bump-version.js",
     "release:publish": "node ./scripts/publish.js",
-    "test": "jest && node packages/eslint-plugin-ckeditor5-rules/tests/index.js"
+    "test": "node ./scripts/test-packages.js"
   },
   "engines": {
     "node": ">=14.0.0",

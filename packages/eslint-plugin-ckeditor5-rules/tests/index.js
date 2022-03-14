@@ -7,8 +7,6 @@
 
 const fs = require( 'fs' );
 
-console.log( '\n🔷 eslint-plugin-ckeditor5-rules - running tests.\n' );
-
 const tests = fs.readdirSync( __dirname ).filter( test => {
 	return test !== 'index.js';
 } );
@@ -17,4 +15,4 @@ for ( const test of tests ) {
 	require( `./${ test }` );
 }
 
-console.log( '✅ eslint-plugin-ckeditor5-rules - tests completed with no errors.\n' );
+console.log( 'OK!' );
