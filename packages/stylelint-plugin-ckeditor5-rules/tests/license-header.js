@@ -114,14 +114,20 @@ global.testRule( {
 			code: [
 				'.ck.ck-editor {',
 				'	margin: 1.5em 0;',
-				'}'
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
 			description: 'Reports error for file starting with comment that is not a license.',
 			message: messages.notLicense,
 			code: [
-				'/* Comment */'
+				'/* Comment */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -131,7 +137,12 @@ global.testRule( {
 				'/* ',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -141,7 +152,12 @@ global.testRule( {
 				'/*',
 				'* @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -151,7 +167,12 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				'  */'
+				'  */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -161,7 +182,12 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				'*/'
+				'*/',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -172,7 +198,12 @@ global.testRule( {
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -182,7 +213,12 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -193,7 +229,12 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		}
 	]
@@ -213,13 +254,23 @@ global.testRule( {
 				'/* ',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -229,13 +280,23 @@ global.testRule( {
 				'/*',
 				'* @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -245,13 +306,23 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				'  */'
+				'  */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -261,13 +332,23 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				'*/'
+				'*/',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -278,13 +359,23 @@ global.testRule( {
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -294,13 +385,23 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		},
 		{
@@ -311,13 +412,23 @@ global.testRule( {
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' ),
 			fixed: [
 				'/*',
 				' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
-				' */'
+				' */',
+				'',
+				'.ck.ck-editor {',
+				'	margin: 1.5em 0;',
+				'}',
+				''
 			].join( '\n' )
 		}
 	]
