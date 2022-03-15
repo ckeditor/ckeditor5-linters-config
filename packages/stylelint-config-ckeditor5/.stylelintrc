@@ -1,10 +1,16 @@
 {
 	"extends": "stylelint-config-recommended",
+	"plugins": [
+		"stylelint-plugin-ckeditor5-rules/lib/license-header"
+	],
 	"rules": {
 		"at-rule-no-unknown": null,
 		"indentation": "tab",
 		"declaration-property-value-disallowed-list": {
-			"/.*/": ["/#/", "/rgb/"]
+			"/.*/": [
+				"/#/",
+				"/rgb/"
+			]
 		},
 		"color-named": "never"
 	}

@@ -1,0 +1,43 @@
+{
+  "name": "stylelint-plugin-ckeditor5-rules",
+  "version": "0.0.1",
+  "author": "CKSource (http://cksource.com/)",
+  "license": "MIT",
+  "homepage": "https://ckeditor.com/ckeditor-5",
+  "bugs": "https://github.com/ckeditor/ckeditor5/issues",
+  "description": "CKEditor 5 stylelint preset.",
+  "keywords": [
+    "stylelint",
+    "plugin",
+    "lint",
+    "ckeditor"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
+    "directory": "packages/stylelint-plugin-ckeditor5-rules"
+  },
+  "dependencies": {
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-plugin-ckeditor5-rules": "^4.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1",
+    "jest-preset-stylelint": "^5.0.1",
+    "stylelint": "^13.13.1",
+    "stylelint-config-ckeditor5": "^2.0.1"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**"
+    ]
+  }
+}
