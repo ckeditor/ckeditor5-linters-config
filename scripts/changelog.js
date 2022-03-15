@@ -12,6 +12,6 @@ require( '@ckeditor/ckeditor5-dev-env' )
 		cwd: process.cwd(),
 		packages: 'packages',
 		transformScope: name => {
-			return 'https://www.npmjs.com/package/@ckeditor/' + name;
+			return 'https://www.npmjs.com/package/' + name;
 		}
 	} );
