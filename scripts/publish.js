@@ -11,5 +11,8 @@ require( '@ckeditor/ckeditor5-dev-env' )
 	.releaseSubRepositories( {
 		cwd: process.cwd(),
 		packages: 'packages',
+		skipNpmPublish: [
+			'@ckeditor/ckeditor5-linters-config'
+		],
 		dryRun: process.argv.includes( '--dry-run' )
 	} );
