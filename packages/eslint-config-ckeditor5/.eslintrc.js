@@ -315,11 +315,155 @@ module.exports = {
 		'mocha/no-sibling-hooks': 'error',
 		'mocha/no-top-level-hooks': 'error'
 	},
-	'overrides': [
+	overrides: [
 		{
-			'files': [ '**/tests/**/*.js' ],
-			'rules': {
+			files: [ '**/*.ts' ],
+			plugins: [
+				'@typescript-eslint',
+				'ckeditor5-rules',
+				'mocha'
+			],
+			parser: '@typescript-eslint/parser',
+			extends: [
+				'eslint:recommended',
+				'plugin:@typescript-eslint/eslint-recommended',
+				'plugin:@typescript-eslint/recommended'
+			],
+			rules: {
+				'@typescript-eslint/ban-types': [
+					'error',
+					{
+						types: { Function: false },
+						extendDefaults: true
+					}
+				],
+
+				'@typescript-eslint/consistent-type-assertions': [
+					'error',
+					{
+						assertionStyle: 'as',
+						objectLiteralTypeAssertions: 'allow-as-parameter'
+					}
+				],
+
+				'@typescript-eslint/consistent-type-imports': 'error',
+
+				'@typescript-eslint/explicit-module-boundary-types': [
+					'error',
+					{ allowArgumentsExplicitlyTypedAsAny: true }
+				],
+
+				'@typescript-eslint/explicit-member-accessibility': [
+					'error',
+					{
+						accessibility: 'explicit',
+						overrides: {
+							constructors: 'off'
+						}
+					}
+				],
+
+				'@typescript-eslint/member-delimiter-style': 'error',
+
+				'@typescript-eslint/no-confusing-non-null-assertion': 'error',
+
+				'@typescript-eslint/no-empty-function': 'off',
+
+				'@typescript-eslint/no-empty-interface': 'off',
+
+				'@typescript-eslint/no-explicit-any': 'off',
+
+				'@typescript-eslint/no-inferrable-types': 'off',
+
+				'@typescript-eslint/no-invalid-void-type': 'error',
+
+				'@typescript-eslint/no-non-null-asserted-nullish-coalescing': 'error',
+
+				'@typescript-eslint/no-non-null-assertion': 'off',
+
+				'@typescript-eslint/parameter-properties': 'error',
+
+				'@typescript-eslint/type-annotation-spacing': 'error',
+
+				'@typescript-eslint/unified-signatures': 'error',
+
+				// typescript-eslint extension rules (intended to be compatible with those for .js):
+
+				'no-unused-expressions': 'off',
+				'@typescript-eslint/no-unused-expressions': 'error',
+
+				'no-use-before-define': 'off',
+				'@typescript-eslint/no-use-before-define': [
+					'error',
+					{
+						functions: false,
+						classes: false,
+						variables: true,
+						typedefs: false,
+						ignoreTypeReferences: true
+					}
+				],
+
+				'comma-dangle': 'off',
+				'@typescript-eslint/comma-dangle': [ 'error', 'never' ],
+
+				'comma-spacing': 'off',
+				'@typescript-eslint/comma-spacing': [
+					'error',
+					{
+						before: false,
+						after: true
+					}
+				],
+
+				'func-call-spacing': 'off',
+				'@typescript-eslint/func-call-spacing': [ 'error', 'never' ],
+
+				'keyword-spacing': 'off',
+				'@typescript-eslint/keyword-spacing': 'error',
+
+				'no-array-constructor': 'off',
+				'@typescript-eslint/no-array-constructor': 'error',
+
+				'object-curly-spacing': 'off',
+				'@typescript-eslint/object-curly-spacing': [ 'error', 'always' ],
+
+				'quotes': 'off',
+				'@typescript-eslint/quotes': [ 'error', 'single' ],
+
+				'semi': 'off',
+				'@typescript-eslint/semi': 'error',
+
+				'space-before-blocks': 'off',
+				'@typescript-eslint/space-before-blocks': [ 'error', 'always' ],
+
+				'space-before-function-paren': 'off',
+				'@typescript-eslint/space-before-function-paren': [
+					'error',
+					{
+						anonymous: 'never',
+						named: 'never',
+						asyncArrow: 'always'
+					}
+				],
+
+				'space-infix-ops': 'off',
+				'@typescript-eslint/space-infix-ops': 'error',
+
+				'no-useless-constructor': 'off',
+				'@typescript-eslint/no-useless-constructor': 'error'
+			}
+		},
+		{
+			files: [ '**/tests/**/*.js' ],
+			rules: {
 				'no-unused-expressions': 'off'
+			}
+		},
+		{
+			files: [ '**/tests/**/*.ts' ],
+			rules: {
+				'@typescript-eslint/no-unused-expressions': 'off'
 			}
 		}
 	]
