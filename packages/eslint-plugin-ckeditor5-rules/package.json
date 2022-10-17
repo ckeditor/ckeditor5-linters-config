@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "eslint": "^7.0.0",
-    "eslint-config-ckeditor5": "^4.0.1"
+    "eslint-config-ckeditor5": "^4.0.2"
   },
   "peerDependencies": {
     "eslint": ">=7.0.0"
