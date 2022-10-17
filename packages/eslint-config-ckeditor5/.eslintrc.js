@@ -330,6 +330,10 @@ module.exports = {
 				'plugin:@typescript-eslint/recommended'
 			],
 			rules: {
+				'@typescript-eslint/array-type': [
+					'error',
+					{ default: 'generic' }
+				],
 				'@typescript-eslint/ban-types': [
 					'error',
 					{
