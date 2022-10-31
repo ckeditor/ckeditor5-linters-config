@@ -11,6 +11,7 @@ module.exports = {
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
 		'ckeditor-imports': require( './rules/ckeditor-imports' ),
 		'no-cross-package-imports': require( './rules/no-cross-package-imports' ),
-		'license-header': require( './rules/license-header' )
+		'license-header': require( './rules/license-header' ),
+		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' )
 	}
 };
