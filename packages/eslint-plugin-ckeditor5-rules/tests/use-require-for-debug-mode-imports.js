@@ -31,6 +31,11 @@ ruleTester.run(
 				errors: [ usingImportNotAllowed ]
 			},
 			{
+				code: '// @if CK_DEBUG // import { testFunctionOne, testFunctionTwo } from \'module-name\';',
+				output: '// @if CK_DEBUG // const { testFunctionOne, testFunctionTwo } = require( \'module-name\' );',
+				errors: [ usingImportNotAllowed ]
+			},
+			{
 				code: '// @if CK_DEBUG // import { default as alias } from \'module-name\';',
 				output: '// @if CK_DEBUG // const alias = require( \'module-name\' ).default;',
 				errors: [ usingImportNotAllowed ]
@@ -46,16 +51,6 @@ ruleTester.run(
 				errors: [ usingImportNotAllowed ]
 			},
 			{
-				code: '// @if CK_DEBUG_MINIMAP // import { testFunction } from \'module-name\';',
-				output: '// @if CK_DEBUG_MINIMAP // const { testFunction } = require( \'module-name\' );',
-				errors: [ usingImportNotAllowed ]
-			},
-			{
-				code: '// @if CK_DEBUG_MINIMAP // import { testFunctionOne, testFunctionTwo } from \'module-name\';',
-				output: '// @if CK_DEBUG_MINIMAP // const { testFunctionOne, testFunctionTwo } = require( \'module-name\' );',
-				errors: [ usingImportNotAllowed ]
-			},
-			{
 				code: '/**\n' +
 				'* @if CK_DEBUG // import defaultExport from \'module-name\';\n' +
 				'*/',
@@ -68,6 +63,12 @@ ruleTester.run(
 		valid: [
 			{
 				code: '// @if CK_DEBUG // const testModule = require( \'module-name\' );'
+			},
+			{
+				code: '// @if CK_DEBUG_MINIMAP // const testModule = require( \'module-name\' );'
+			},
+			{
+				code: '// @if CK_DEBUG_ENGINE // const testModule = require( \'module-name\' );'
 			},
 			{
 				code: '// @if CK_DEBUG // const defaultExport = require( \'module-name\' ).default;'
@@ -87,16 +88,6 @@ ruleTester.run(
 			{
 				code: '/**\n' +
 				'* @if CK_DEBUG // const testModule = require( \'module-name\' );\n' +
-				'*/'
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG_MINIMAP // const testModule = require( \'module-name\' );\n' +
-				'*/'
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG_ENGINE // const testModule = require( \'module-name\' );\n' +
 				'*/'
 			}
 		]
