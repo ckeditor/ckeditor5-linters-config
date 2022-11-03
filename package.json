@@ -16,7 +16,9 @@
     "changelog": "node ./scripts/changelog.js",
     "release:bump-version": "node ./scripts/bump-version.js",
     "release:publish": "node ./scripts/publish.js",
-    "test": "node ./scripts/test-packages.js"
+    "test": "node ./scripts/test-packages.js",
+    "clean": "npx rimraf package-lock.json yarn.lock ./**/node_modules",
+    "reinstall": "yarn run clean && yarn install"
   },
   "engines": {
     "node": ">=14.0.0",
@@ -27,7 +29,7 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-env": "^28.1.1",
+    "@ckeditor/ckeditor5-dev-env": "^31.1.5",
     "eslint": "^7.0.0"
   },
   "lint-staged": {
