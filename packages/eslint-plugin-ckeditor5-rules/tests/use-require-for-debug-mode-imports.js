@@ -54,26 +54,6 @@ ruleTester.run(
 				code: '// @if CK_DEBUG // import \'module-name-semicolon-missing\'',
 				output: '// @if CK_DEBUG // require( \'module-name-semicolon-missing\' );',
 				errors: [ usingImportNotAllowed ]
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG // import defaultExport from \'module-name\';\n' +
-				'*/',
-				output: '/**\n' +
-				'* @if CK_DEBUG // const defaultExport = require( \'module-name\' ).default;\n' +
-				'*/',
-				errors: [ usingImportNotAllowed ]
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG // import defaultExport from \'module-name\';\n' +
-				'* @if CK_DEBUG_FOO // import otherDefaultExport from \'other-module-name\';\n' +
-				'*/',
-				output: '/**\n' +
-				'* @if CK_DEBUG // const defaultExport = require( \'module-name\' ).default;\n' +
-				'* @if CK_DEBUG_FOO // const otherDefaultExport = require( \'other-module-name\' ).default;\n' +
-				'*/',
-				errors: [ usingImportNotAllowed ]
 			}
 		],
 		valid: [
@@ -106,17 +86,6 @@ ruleTester.run(
 			},
 			{
 				code: '// @if CK_DEBUG //	require( \'module-name\' );'
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG // const testModule = require( \'module-name\' );\n' +
-				'*/'
-			},
-			{
-				code: '/**\n' +
-				'* @if CK_DEBUG // const testModule = require( \'module-name\' );\n' +
-				'* @if CK_DEBUG_FOO // const testOtherModule = require( \'other-module-name\' );\n' +
-				'*/'
 			}
 		]
 	}

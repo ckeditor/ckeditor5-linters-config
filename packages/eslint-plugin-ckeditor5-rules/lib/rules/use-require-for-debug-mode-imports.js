@@ -5,12 +5,12 @@
 
 'use strict';
 
-const DEFAULT_ALIAS_IMPORT = /import { default as (.*) } from ([^;]*);?;?/g;
-const NAMED_ALIAS_IMPORT = /import { (.*) as (.*) } from ([^;]*);?/g;
-const NAMED_IMPORT = /import { (.*) } from ([^;]*);?/g;
-const NAMESPACE_ALIAS_IMPORT = /import .* as (.*) from ([^;]*);?/g;
-const DEFAULT_IMPORT = /import (.*) from ([^;]*);?/g;
-const SIDE_EFFECT_IMPORT = /import ([^;]*);?/g;
+const DEFAULT_ALIAS_IMPORT = /import { default as (.*) } from ([^;]*);?;?/;
+const NAMED_ALIAS_IMPORT = /import { (.*) as (.*) } from ([^;]*);?/;
+const NAMED_IMPORT = /import { (.*) } from ([^;]*);?/;
+const NAMESPACE_ALIAS_IMPORT = /import .* as (.*) from ([^;]*);?/;
+const DEFAULT_IMPORT = /import (.*) from ([^;]*);?/;
+const SIDE_EFFECT_IMPORT = /import ([^;]*);?/;
 
 const DESTRUCTURED_ALIAS_REPLACE = 'const { $1: $2 } = require( $3 );';
 const DESTRUCTURED_REPLACE = 'const { $1 } = require( $2 );';
@@ -47,7 +47,7 @@ module.exports = {
 						messageId: 'usingImportNotAllowed',
 						fix( fixer ) {
 							const newCommentValue = getNewComment( comment.value );
-							const newComment = addCommentCharacters( comment.type, newCommentValue );
+							const newComment = '//' + newCommentValue;
 
 							return fixer.replaceText( comment, newComment );
 						}
@@ -63,7 +63,7 @@ module.exports = {
  * @returns {Boolean}
  */
 function debugCommentDoesNotContainImport( str = '' ) {
-	return !/@if CK_DEBUG.*\s*\/\/\s*import/.test( str );
+	return !/@if CK_DEBUG.*\s*\/\/\s*import/g.test( str );
 }
 
 /**
@@ -93,16 +93,3 @@ function getNewComment( value ) {
 
 	return value.replace( SIDE_EFFECT_IMPORT, SIDE_EFFECT_REPLACE );
 }
-
-/**
- * @param {String} type
- * @param {String} value
- * @returns {Boolean}
- */
-function addCommentCharacters( type, value ) {
-	const commentPrefix = type === 'Line' ? '//' : '/*';
-	const commentSuffix = type === 'Line' ? '' : '*/';
-
-	return commentPrefix + value + commentSuffix;
-}
-
