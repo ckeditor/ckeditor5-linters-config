@@ -302,9 +302,14 @@ module.exports = {
 			'error',
 			'after'
 		],
+
+		// CKEditor 5 rules.
 		'ckeditor5-rules/no-relative-imports': 'error',
 		'ckeditor5-rules/ckeditor-error-message': 'error',
 		'ckeditor5-rules/no-cross-package-imports': 'error',
+		'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
+
+		// Rules for tests.
 		'mocha/handle-done-callback': 'error',
 		'mocha/no-async-describe': 'error',
 		'mocha/no-exclusive-tests': 'error',
