@@ -5,12 +5,12 @@
 
 'use strict';
 
-const DEFAULT_ALIAS_IMPORT = /import { default as (.*) } from (.*)?;/g;
-const NAMED_ALIAS_IMPORT = /import { (.*) as (.*) } from (.*)?;/g;
-const NAMED_IMPORT = /import { (.*) } from (.*)?;/g;
-const NAMESPACE_ALIAS_IMPORT = /import .* as (.*) from (.*)?;/g;
-const DEFAULT_IMPORT = /import (.*) from (.*)?;/g;
-const SIDE_EFFECT_IMPORT = /import (.*)?;/g;
+const DEFAULT_ALIAS_IMPORT = /import { default as (.*) } from ([^;]*);?;?/g;
+const NAMED_ALIAS_IMPORT = /import { (.*) as (.*) } from ([^;]*);?/g;
+const NAMED_IMPORT = /import { (.*) } from ([^;]*);?/g;
+const NAMESPACE_ALIAS_IMPORT = /import .* as (.*) from ([^;]*);?/g;
+const DEFAULT_IMPORT = /import (.*) from ([^;]*);?/g;
+const SIDE_EFFECT_IMPORT = /import ([^;]*);?/g;
 
 const DESTRUCTURED_ALIAS_REPLACE = 'const { $1: $2 } = require( $3 );';
 const DESTRUCTURED_REPLACE = 'const { $1 } = require( $2 );';

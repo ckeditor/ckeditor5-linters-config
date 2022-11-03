@@ -51,6 +51,11 @@ ruleTester.run(
 				errors: [ usingImportNotAllowed ]
 			},
 			{
+				code: '// @if CK_DEBUG // import \'module-name-semicolon-missing\'',
+				output: '// @if CK_DEBUG // require( \'module-name-semicolon-missing\' );',
+				errors: [ usingImportNotAllowed ]
+			},
+			{
 				code: '/**\n' +
 				'* @if CK_DEBUG // import defaultExport from \'module-name\';\n' +
 				'*/',
