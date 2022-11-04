@@ -3,7 +3,13 @@ Changelog
 
 ## [4.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.0.2...v4.1.0) (2022-11-04)
 
-Internal changes only (updated dependencies, documentation, etc.).
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created a new ESLint rule that disables using the `import` statement and `CK_DEBUG_*` flags together due to a webpack error (`'import' and 'export' may only appear at the top level`). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7996055efc698abcb23ad7feca30bd39821cded4))
+
+### Other changes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/use-require-for-debug-mode-imports` rule in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7996055efc698abcb23ad7feca30bd39821cded4))
 
 ### Released packages
 
