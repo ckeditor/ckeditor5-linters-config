@@ -180,7 +180,7 @@ module.exports = {
 				max: 1
 			}
 		],
-		'new-cap': 'error',
+		'new-cap': 'off',
 		'new-parens': 'error',
 		'no-array-constructor': 'error',
 		'no-multiple-empty-lines': [
