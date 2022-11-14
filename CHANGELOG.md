@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [4.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.0...v4.1.1) (2022-11-14)
+
+### Other changes
+
+* Disables the `new-cap` rule. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/9d0b682f24ef6bbd283d021871cd02a8d511c320))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.1.0 => v4.1.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.1.0 => v4.1.1
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.1.0 => v4.1.1
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.1.0 => v4.1.1
+</details>
+
+
 ## [4.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.0.2...v4.1.0) (2022-11-04)
 
 ### Features
