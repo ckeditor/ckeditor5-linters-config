@@ -180,7 +180,12 @@ module.exports = {
 				max: 1
 			}
 		],
-		'new-cap': 'error',
+		'new-cap': [
+			'error',
+			{
+				capIsNewExceptionPattern: 'Mixin$'
+			}
+		],
 		'new-parens': 'error',
 		'no-array-constructor': 'error',
 		'no-multiple-empty-lines': [
