@@ -29,6 +29,9 @@
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
   },
+  "dependencies": {
+    "@ckeditor/ckeditor5-dev-ci": "^32.0.1"
+  },
   "devDependencies": {
     "@ckeditor/ckeditor5-dev-env": "^31.1.5",
     "eslint": "^7.0.0",
