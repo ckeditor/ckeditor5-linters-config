@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md.
  */
 
@@ -15,7 +15,7 @@ const missingHeaderError = { message: 'The license header is missing.' };
 const options = [ {
 	headerLines: [
 		'/**',
-		' * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.',
+		' * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.',
 		' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 		' */'
 	]
@@ -33,7 +33,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/license-header', require( '../lib
 		{
 			code:
 `/**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -45,7 +45,7 @@ foo()`,
 `#!/usr/bin/env node
 
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -56,7 +56,7 @@ foo()`,
 			code:
 `#!/usr/bin/env node
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -72,7 +72,7 @@ foo()`,
 			code:
 `
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -84,7 +84,7 @@ foo()`,
 			code:
 `
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 foo()`,
@@ -94,7 +94,7 @@ foo()`,
 		{
 			code:
 `/**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 foo()`,
@@ -113,7 +113,7 @@ foo()`,
 		{
 			code:
 `/**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */`,
 			options,
@@ -142,7 +142,7 @@ foo()`,
 		},
 		{
 			code:
-`// @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+`// @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
 // For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 foo()`,
@@ -153,7 +153,7 @@ foo()`,
 			code:
 `/** foo */
 /**
- * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
