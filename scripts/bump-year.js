@@ -32,6 +32,9 @@ require( '@ckeditor/ckeditor5-dev-bump-year' )
 			},
 			{
 				pattern: '!(coverage|.nyc_output)/**'
+			},
+			{
+				pattern: 'packages/*/.eslintrc.js'
 			}
 		]
 	} );
