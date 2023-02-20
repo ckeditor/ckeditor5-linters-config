@@ -32,5 +32,9 @@
   },
   "peerDependencies": {
     "eslint": ">=7.0.0"
+  },
+  "dependencies": {
+    "@es-joy/jsdoccomment": "^0.36.1",
+    "@typescript-eslint/parser": "^5.52.0"
   }
 }
