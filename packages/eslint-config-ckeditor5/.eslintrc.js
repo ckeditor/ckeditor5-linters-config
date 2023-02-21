@@ -313,7 +313,6 @@ module.exports = {
 		'ckeditor5-rules/ckeditor-error-message': 'error',
 		'ckeditor5-rules/no-cross-package-imports': 'error',
 		'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
-		'ckeditor5-rules/all-private-members-marked-as-internal': 'error',
 
 		// Rules for tests.
 		'mocha/handle-done-callback': 'error',
