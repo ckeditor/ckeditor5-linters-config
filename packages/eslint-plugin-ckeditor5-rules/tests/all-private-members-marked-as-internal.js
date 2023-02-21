@@ -35,6 +35,21 @@ ruleTester.run(
 			},
 			{
 				code: `
+				/**
+				* This is a test private property that is missing an internal tag.
+				*/
+				export function _testFunc() {}`,
+				output: `
+				/**
+				* This is a test private property that is missing an internal tag.
+				*
+				* @internal
+				*/
+				export function _testFunc() {}`,
+				errors: [ markPrivateAsInternal ]
+			},
+			{
+				code: `
 				class TestClass {
 					/**
 					 * This is a test private property that is missing an internal tag.
@@ -109,6 +124,44 @@ ruleTester.run(
 					 * @internal
 					 */
 					protected bodyPlaceholder;
+				}`,
+				errors: [ markPrivateAsInternal ]
+			},
+			{
+				code: `
+				class TestClass {
+					/**
+					 * This is a test private property that is missing an internal tag.
+					 */
+					private static bodyPlaceholder;
+				}`,
+				output: `
+				class TestClass {
+					/**
+					 * This is a test private property that is missing an internal tag.
+					 *
+					 * @internal
+					 */
+					private static bodyPlaceholder;
+				}`,
+				errors: [ markPrivateAsInternal ]
+			},
+			{
+				code: `
+				class TestClass {
+					/**
+					 * This is a test private property that is missing an internal tag.
+					 */
+					declare private static readonly bodyPlaceholder;
+				}`,
+				output: `
+				class TestClass {
+					/**
+					 * This is a test private property that is missing an internal tag.
+					 *
+					 * @internal
+					 */
+					declare private static readonly bodyPlaceholder;
 				}`,
 				errors: [ markPrivateAsInternal ]
 			}
@@ -166,6 +219,17 @@ ruleTester.run(
 					 * @param testParam this is a test parameter that should be under @internal tag.
 					 */
 					private bodyPlaceholder;
+				}`
+			},
+			{
+				code: `
+				class TestClass {
+					/**
+					 * This is a test private property that is missing an internal tag.
+					 *
+					 * @internal
+					 */
+					declare private static readonly bodyPlaceholder;
 				}`
 			}
 		]
