@@ -121,7 +121,7 @@ function generateNewJsDoc( firstLineNode ) {
 	const column = firstLineNode.loc.start.column;
 	const indent = '\t'.repeat( column );
 	const jsDoc = '/**\n' +
-		indent + ' * @internal\n' +
+		indent + ' * ' + INTERNAL_TAG + '\n' +
 		indent + ' */\n' +
 		indent;
 	return jsDoc;
