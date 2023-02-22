@@ -121,8 +121,8 @@ function generateNewJsDoc( firstLineNode ) {
 	const column = firstLineNode.loc.start.column;
 	const indent = '\t'.repeat( column );
 	const jsDoc = '/**\n' +
-		indent + '* @internal\n' +
-		indent + '*/\n' +
+		indent + ' * @internal\n' +
+		indent + ' */\n' +
 		indent;
 	return jsDoc;
 }
@@ -185,12 +185,12 @@ function isNonPublic( astNode, sourceCode ) {
  * @returns {Boolean}
  */
 function isDeclaration( astNode, sourceCode ) {
-	const forbiddenTokens = [ '.', ':', '(', ',' ];
+	const requiredTokens = [ 'private', 'public', 'protected', 'static', 'get', 'readonly', 'function' ];
 	const [ tokenBefore ] = sourceCode.getTokensBefore( astNode, {
 		count: 1
 	} );
 
-	return !forbiddenTokens.find( token => tokenBefore.value === token );
+	return !!requiredTokens.find( token => tokenBefore.value === token );
 }
 
 /**
