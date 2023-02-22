@@ -30,16 +30,29 @@ module.exports = {
 					return;
 				}
 
-				const nodeJsdoc = getJSDocComment( sourceCode, node );
+				const nodeJsDoc = getJsDocComment( sourceCode, node );
 
-				if ( missingInternalTag( nodeJsdoc ) ) {
+				if ( !nodeJsDoc ) {
 					context.report( {
 						node,
 						messageId: 'markPrivateAsInternal',
 						fix( fixer ) {
-							const newJsdoc = getNewJsdoc( nodeJsdoc.value );
+							const firstLineNode = getFirstNodeInline( node, sourceCode );
+							const jsDoc = generateNewJsDoc( firstLineNode );
 
-							return fixer.replaceText( nodeJsdoc, newJsdoc );
+							return fixer.insertTextBefore( firstLineNode, jsDoc );
+						}
+					} );
+				}
+
+				if ( missingInternalTag( nodeJsDoc ) ) {
+					context.report( {
+						node,
+						messageId: 'markPrivateAsInternal',
+						fix( fixer ) {
+							const jsDoc = modifyJsDoc( nodeJsDoc.value );
+
+							return fixer.replaceText( nodeJsDoc, jsDoc );
 						}
 					} );
 				}
@@ -50,44 +63,75 @@ module.exports = {
 
 /**
  * @param {SourceCode} sourceCode
- * @param {ASTNode} node
+ * @param {AST.Token} node
  * @returns {Token|null}
  */
-function getJSDocComment( sourceCode, node ) {
+function getJsDocComment( sourceCode, node ) {
 	const reducedNode = jsdocComment.getReducedASTNode( node, sourceCode );
-	return findJSDocComment( reducedNode, sourceCode );
+	return findJsDocComment( reducedNode, sourceCode );
 }
 
 /**
  * Checks 5 tokens before a node in order to detect comments before e.g.
  * `declare public static readonly _myPrivateVariable`
  *
- * @param {ASTNode} astNode
+ * @param {AST.Token} astNode
  * @param {SourceCode} sourceCode
  * @returns {Token|null}
  */
-function findJSDocComment( astNode, sourceCode ) {
+function findJsDocComment( astNode, sourceCode ) {
 	const tokenBeforeList = sourceCode.getTokensBefore( astNode, {
 		count: 5,
 		includeComments: true
-	} );
+	} ).reverse();
 
-	return tokenBeforeList.find( isCommentToken ) || null;
+	for ( const token of tokenBeforeList ) {
+		// if token is equal to `{` that means we are moving outside current code block
+		if ( token.value === '{' ) {
+			return null;
+		}
+
+		if ( isCommentToken( token ) ) {
+			return token;
+		}
+	}
+
+	return null;
 }
 
 /**
- * @param {Token} token
- * @returns {Boolean}
+ * @param {AST.Token} node
+ * @param {SourceCode} sourceCode
+ * @returns {AST.Token}
  */
-function isCommentToken( token ) {
-	return token.type === 'Line' || token.type === 'Block' || token.type === 'Shebang';
+function getFirstNodeInline( node, sourceCode ) {
+	const [ firstInLine ] = sourceCode.getTokensBefore( node, {
+		count: 4,
+		includeComments: true
+	} ).filter( token => token.loc.start.line === node.loc.start.line );
+
+	return firstInLine || node;
+}
+
+/**
+ * @param {AST.Token} node
+ * @returns {string}
+ */
+function generateNewJsDoc( firstLineNode ) {
+	const column = firstLineNode.loc.start.column;
+	const indent = '\t'.repeat( column );
+	const jsDoc = '/**\n' +
+		indent + '* @internal\n' +
+		indent + '*/\n' +
+		indent;
+	return jsDoc;
 }
 
 /**
  * @param {String} comment
  * @returns {String}
  */
-function getNewJsdoc( comment ) {
+function modifyJsDoc( comment ) {
 	const indent = getFirstLineIndent( comment );
 	const commentFirstTag = comment.match( /\* @[a-z]+/ );
 
@@ -111,7 +155,15 @@ function getFirstLineIndent( comment ) {
 }
 
 /**
- * @param {ASTNode} nodeJsdoc
+ * @param {Token} token
+ * @returns {Boolean}
+ */
+function isCommentToken( token ) {
+	return token.type === 'Line' || token.type === 'Block' || token.type === 'Shebang';
+}
+
+/**
+ * @param {AST.Token} nodeJsdoc
  * @returns {Boolean}
  */
 function missingInternalTag( nodeJsdoc ) {
@@ -120,7 +172,7 @@ function missingInternalTag( nodeJsdoc ) {
 
 /**
  * @param {SourceCode} sourceCode
- * @param {ASTNode} astNode
+ * @param {AST.Token} astNode
  * @returns {Boolean}
  */
 function isNonPublic( astNode, sourceCode ) {
@@ -129,20 +181,21 @@ function isNonPublic( astNode, sourceCode ) {
 
 /**
  * @param {SourceCode} sourceCode
- * @param {ASTNode} astNode
+ * @param {AST.Token} astNode
  * @returns {Boolean}
  */
 function isDeclaration( astNode, sourceCode ) {
+	const forbiddenTokens = [ '.', ':', '(', ',' ];
 	const [ tokenBefore ] = sourceCode.getTokensBefore( astNode, {
 		count: 1
 	} );
 
-	return tokenBefore.value !== '.' && tokenBefore.value !== ':' && tokenBefore.value !== '(';
+	return !forbiddenTokens.find( token => tokenBefore.value === token );
 }
 
 /**
  * @param {SourceCode} sourceCode
- * @param {ASTNode} astNode
+ * @param {AST.Token} astNode
  * @returns {Boolean}
  */
 function hasNonPublicModifier( sourceCode, astNode ) {
