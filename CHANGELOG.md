@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [4.2.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.1...v4.2.0) (2023-02-23)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/non-public-members-as-internal` plugin that enforces the `@internal` annotation non-public identifiers in the TypeScrpit code. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/b89f90d9f60ae7e18b8961723850e15338daef1f))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.1.1 => v4.2.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.1.1 => v4.2.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.1.1 => v4.2.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.1.1 => v4.2.0
+</details>
+
+
 ## [4.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.0...v4.1.1) (2022-11-14)
 
 ### Other changes
