@@ -11,40 +11,40 @@ const ruleTester = new RuleTester( {
 	parser: require.resolve( '@typescript-eslint/parser' )
 } );
 
-const markPrivateAsInternal = { message: 'Private identifiers must be marked as `@internal`.' };
+const markPrivateAsInternal = { message: 'Non-public identifiers must be marked as `@internal`.' };
 
 ruleTester.run(
-	'eslint-plugin-ckeditor5-rules/all-private-members-marked-as-internal',
-	require( '../lib/rules/all-private-members-marked-as-internal' ),
+	'eslint-plugin-ckeditor5-rules/non-public-members-as-internal',
+	require( '../lib/rules/non-public-members-as-internal' ),
 	{
 		invalid: [
 			{
 				code: `
 				/**
-				* This is a test private property that is missing an internal tag.
-				*/
+				 * This is a test private property that is missing an internal tag.
+				 */
 				function _testFunc() {}`,
 				output: `
 				/**
-				* This is a test private property that is missing an internal tag.
-				*
-				* @internal
-				*/
+				 * This is a test private property that is missing an internal tag.
+				 *
+				 * @internal
+				 */
 				function _testFunc() {}`,
 				errors: [ markPrivateAsInternal ]
 			},
 			{
 				code: `
 				/**
-				* This is a test private property that is missing an internal tag.
-				*/
+				 * This is a test private property that is missing an internal tag.
+				 */
 				export function _testFunc() {}`,
 				output: `
 				/**
-				* This is a test private property that is missing an internal tag.
-				*
-				* @internal
-				*/
+				 * This is a test private property that is missing an internal tag.
+				 *
+				 * @internal
+				 */
 				export function _testFunc() {}`,
 				errors: [ markPrivateAsInternal ]
 			},
@@ -163,6 +163,16 @@ ruleTester.run(
 					 */
 					declare private static readonly bodyPlaceholder;
 				}`,
+				errors: [ markPrivateAsInternal ]
+			},
+			{
+				code: `
+				function _testFunc() {}`,
+				output: `
+				/**
+				 * @internal
+				 */
+				function _testFunc() {}`,
 				errors: [ markPrivateAsInternal ]
 			}
 		],
@@ -170,10 +180,10 @@ ruleTester.run(
 			{
 				code: `
 				/**
-				* This is a test private property that is missing an internal tag.
-				*
-				* @internal
-				*/
+				 * This is a test private property that is missing an internal tag.
+				 *
+				 * @internal
+				 */
 				function _testFunc() {}`
 			},
 			{

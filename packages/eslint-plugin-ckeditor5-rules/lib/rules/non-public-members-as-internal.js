@@ -13,12 +13,12 @@ module.exports = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Private identifiers must be marked as `@internal` so that they can be removed from tsc build.',
+			description: 'Non-public identifiers must be marked as `@internal` so that they can be removed from typings.',
 			category: 'CKEditor5'
 		},
 		fixable: 'code',
 		messages: {
-			'markPrivateAsInternal': 'Private identifiers must be marked as `@internal`.'
+			'markPrivateAsInternal': 'Non-public identifiers must be marked as `@internal`.'
 		}
 	},
 	create( context ) {
@@ -124,6 +124,7 @@ function generateNewJsDoc( firstLineNode ) {
 		indent + ' * ' + INTERNAL_TAG + '\n' +
 		indent + ' */\n' +
 		indent;
+
 	return jsDoc;
 }
 
