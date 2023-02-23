@@ -24,7 +24,7 @@
     "directory": "packages/eslint-config-ckeditor5"
   },
   "dependencies": {
-    "eslint-plugin-ckeditor5-rules": "^4.1.1",
+    "eslint-plugin-ckeditor5-rules": "^4.2.0",
     "eslint-plugin-mocha": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
