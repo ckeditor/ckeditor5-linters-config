@@ -23,7 +23,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow using the `import` keyword for modules used in debug mode.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-modules-in-debug-comments-ckeditor5-rulesuse-require-for-debug-mode-imports'
 		},
 		fixable: 'code',
 		messages: {

@@ -14,7 +14,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Non-public identifiers must be marked as `@internal` so that they can be removed from typings.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#non-public-members-marked-as-internal-ckeditor5-rulesnon-public-members-as-internal'
 		},
 		fixable: 'code',
 		messages: {

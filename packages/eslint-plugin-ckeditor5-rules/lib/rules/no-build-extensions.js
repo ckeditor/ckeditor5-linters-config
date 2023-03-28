@@ -13,7 +13,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow import that extends a CKEditor 5 build.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-a-predefined-build-ckeditor5-rulesno-build-extensions'
 		},
 		schema: []
 	},

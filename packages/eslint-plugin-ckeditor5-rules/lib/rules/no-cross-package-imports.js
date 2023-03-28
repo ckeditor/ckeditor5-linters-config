@@ -16,7 +16,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow imports from CKEditor 5 in specified packages.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#cross-package-imports-ckeditor5-rulesno-cross-package-imports'
 		},
 		schema: []
 	},
