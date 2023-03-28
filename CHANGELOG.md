@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [4.2.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.2.0...v4.2.1) (2023-03-28)
+
+### Other changes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Allow 'requires' methods not to specify a return type. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/bb98cd58b2973179bbc2a13b2d1425140f97c94c))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.2.0 => v4.2.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.2.0 => v4.2.1
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.2.0 => v4.2.1
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.2.0 => v4.2.1
+</details>
+
+
 ## [4.2.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.1...v4.2.0) (2023-02-23)
 
 ### Features
