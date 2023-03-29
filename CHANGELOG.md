@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [4.3.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.2.1...v4.3.0) (2023-03-29)
+
+### Features
+
+* Add support for linting `.tsx` files. Related to [ckeditor/ckeditor5#13542](https://github.com/ckeditor/ckeditor5/issues/13542). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/02be5fa35b3555357e02b1df54afdfe674f2602e))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.2.1 => v4.3.0
+
+Other releases:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.2.1 => v4.3.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.2.1 => v4.3.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.2.1 => v4.3.0
+</details>
+
+
 ## [4.2.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.2.0...v4.2.1) (2023-03-28)
 
 ### Other changes
