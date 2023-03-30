@@ -13,6 +13,7 @@ module.exports = {
 		'no-cross-package-imports': require( './rules/no-cross-package-imports' ),
 		'license-header': require( './rules/license-header' ),
 		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
-		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' )
+		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
+		'no-build-extensions': require( './rules/no-build-extensions' )
 	}
 };

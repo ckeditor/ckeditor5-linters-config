@@ -45,7 +45,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow direct imports of packages that belong to CKEditor 5 DLL.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#dll-builds-ckeditor5-rulesckeditor-imports'
 		},
 		fixable: 'code',
 		schema: []

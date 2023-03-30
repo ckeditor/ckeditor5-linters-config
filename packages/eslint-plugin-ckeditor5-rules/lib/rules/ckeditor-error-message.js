@@ -10,7 +10,9 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow relative imports from CKEditor5 packages.',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			// eslint-disable-next-line max-len
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#description-of-an-error-ckeditor5-rulesckeditor-error-message'
 		},
 		fixable: 'code',
 		messages: {

@@ -485,6 +485,15 @@ module.exports = {
 			rules: {
 				'@typescript-eslint/no-unused-expressions': 'off'
 			}
+		},
+		{
+			files: [
+				'docs/**/*.@(js|ts)',
+				'packages/*/docs/**/*.@(js|ts)'
+			],
+			rules: {
+				'ckeditor5-rules/no-build-extensions': 'error'
+			}
 		}
 	]
 };
