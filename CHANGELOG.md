@@ -1,6 +1,35 @@
 Changelog
 =========
 
+## [4.4.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.3.0...v4.4.0) (2023-03-30)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/no-build-extensions` plugin that disallows extending a CKEditor 5 build. Closes [ckeditor/ckeditor5#13689](https://github.com/ckeditor/ckeditor5/issues/13689). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/e1a43276ab521c5f32f8046645b9a8b6e99ae365))
+
+### Other changes
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added URLs for rule definitions at which the full documentation can be accessed. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/e1a43276ab521c5f32f8046645b9a8b6e99ae365))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.3.0 => v4.4.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.3.0 => v4.4.0
+
+Other releases:
+
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.3.0 => v4.4.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.3.0 => v4.4.0
+</details>
+
+
 ## [4.3.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.2.1...v4.3.0) (2023-03-29)
 
 ### Features
