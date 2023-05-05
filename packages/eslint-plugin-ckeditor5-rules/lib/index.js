@@ -14,6 +14,7 @@ module.exports = {
 		'license-header': require( './rules/license-header' ),
 		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
-		'no-build-extensions': require( './rules/no-build-extensions' )
+		'no-build-extensions': require( './rules/no-build-extensions' ),
+		'no-istanbul-in-debug-code': require( './rules/no-istanbul-in-debug-code' )
 	}
 };
