@@ -21,7 +21,7 @@ const ruleTester = new RuleTester( {
 
 const importError = { message: 'This package cannot import CKEditor 5 packages.' };
 
-ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-cross-package-imports', require( '../lib/rules/no-cross-package-imports' ), {
+ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-cross-package-imports', require( '../../lib/rules/no-cross-package-imports' ), {
 	valid: [
 		/**
 		 * Windows style path

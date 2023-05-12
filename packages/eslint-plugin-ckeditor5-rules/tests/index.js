@@ -6,15 +6,14 @@
 'use strict';
 
 const fs = require( 'fs' );
+const path = require( 'path' );
 
-const tests = fs.readdirSync( __dirname ).filter( test => {
-	return test !== 'index.js';
-} );
+const tests = fs.readdirSync( path.join( __dirname, 'rules' ) );
 
 for ( const test of tests ) {
 	console.log( `Testing "${ test }"...` );
 
-	require( `./${ test }` );
+	require( `./rules/${ test }` );
 }
 
 console.log( 'OK!' );

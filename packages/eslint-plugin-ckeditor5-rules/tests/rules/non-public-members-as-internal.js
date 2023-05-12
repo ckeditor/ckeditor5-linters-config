@@ -15,7 +15,7 @@ const markPrivateAsInternal = { message: 'Non-public identifiers must be marked 
 
 ruleTester.run(
 	'eslint-plugin-ckeditor5-rules/non-public-members-as-internal',
-	require( '../lib/rules/non-public-members-as-internal' ),
+	require( '../../lib/rules/non-public-members-as-internal' ),
 	{
 		invalid: [
 			{

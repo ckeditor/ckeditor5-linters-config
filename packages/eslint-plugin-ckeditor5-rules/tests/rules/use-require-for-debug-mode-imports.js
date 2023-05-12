@@ -12,7 +12,7 @@ const usingImportNotAllowed = { message: 'Using import with `@if CK_DEBUG_*` key
 
 ruleTester.run(
 	'eslint-plugin-ckeditor5-rules/use-require-for-debug-mode-imports',
-	require( '../lib/rules/use-require-for-debug-mode-imports' ),
+	require( '../../lib/rules/use-require-for-debug-mode-imports' ),
 	{
 		invalid: [
 			{
