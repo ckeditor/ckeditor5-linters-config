@@ -90,7 +90,7 @@ function licenseHeaderRule( context, headerLines ) {
 	const whitespaceOnly = /^\s+$/.test( contentBefore );
 	const expectedContentBefore = shebang ? '\n\n' : '';
 
-	const ContentBeforeLoc = {
+	const contentBeforeLoc = {
 		start: {
 			line: 0,
 			column: shebang ? shebang.loc.end.column : 0
@@ -103,13 +103,13 @@ function licenseHeaderRule( context, headerLines ) {
 
 	if ( contentBefore !== expectedContentBefore && whitespaceOnly ) {
 		context.report( {
-			loc: ContentBeforeLoc,
+			loc: contentBeforeLoc,
 			message: 'Incorrect whitespace before the license header.',
 			fix: fixer => fixer.replaceTextRange( contentBeforeRange, expectedContentBefore )
 		} );
 	} else if ( contentBefore !== expectedContentBefore && !whitespaceOnly ) {
 		context.report( {
-			loc: ContentBeforeLoc,
+			loc: contentBeforeLoc,
 			message: 'Unexpected content before the license header.'
 		} );
 	}
