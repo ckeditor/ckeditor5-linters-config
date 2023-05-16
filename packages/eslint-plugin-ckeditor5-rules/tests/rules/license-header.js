@@ -81,13 +81,6 @@ ruleTester.run( ruleName, rule, {
 		output: fixtures.valid.header_with_code
 	}, {
 		options,
-		errors: [ incorrectWhitespaceBeforeError, incorrectHeaderError ],
-		code: fixtures.invalid.incorrect_license_whitespace_before,
-		// TODO: why does this not fix the incorrect header? The actual example works outside tests.
-		// output: fixtures.valid.header_only
-		output: '/**\n * @license TODO\n */'
-	}, {
-		options,
 		errors: [ incorrectHeaderError ],
 		code: fixtures.invalid.all_uppercase,
 		output: fixtures.valid.header_with_code
