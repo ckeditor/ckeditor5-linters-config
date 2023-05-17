@@ -7,7 +7,7 @@
 
 const path = require( 'path' );
 const RuleTester = require( 'eslint' ).RuleTester;
-const ckeditorImports = require( '../lib/rules/ckeditor-imports' );
+const ckeditorImports = require( '../../lib/rules/ckeditor-imports' );
 
 const DLL_IMPORT_ERROR = {
 	message: 'Imports from DLL packages must be done using the "ckeditor5" package.'

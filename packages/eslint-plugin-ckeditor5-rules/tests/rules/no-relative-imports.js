@@ -10,7 +10,7 @@ const RuleTester = require( 'eslint' ).RuleTester;
 const importError = { message: 'Imports of CKEditor5 packages shouldn\'t be relative.' };
 
 const ruleTester = new RuleTester( { parserOptions: { sourceType: 'module', ecmaVersion: 2018 } } );
-ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-relative-imports', require( '../lib/rules/no-relative-imports' ), {
+ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-relative-imports', require( '../../lib/rules/no-relative-imports' ), {
 	valid: [
 		'import Foo from \'../foo\';',
 		'import Foo from \'../../foo\';',

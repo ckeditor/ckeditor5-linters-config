@@ -16,7 +16,7 @@ const validJSDoc = '/**\n' +
 const validThrow = 'throw new CKEditorError( \'method-id-is-kebab\', this );\n';
 
 const ruleTester = new RuleTester( { parserOptions: { sourceType: 'module', ecmaVersion: 2018 } } );
-ruleTester.run( 'eslint-plugin-ckeditor5-rules/ckeditor-error-message', require( '../lib/rules/ckeditor-error-message' ), {
+ruleTester.run( 'eslint-plugin-ckeditor5-rules/ckeditor-error-message', require( '../../lib/rules/ckeditor-error-message' ), {
 	valid: [
 		validJSDoc + validThrow,
 
