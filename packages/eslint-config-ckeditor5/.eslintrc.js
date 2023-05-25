@@ -5,6 +5,8 @@
 
 'use strict';
 
+const METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE = [ 'requires', 'pluginName' ];
+
 module.exports = {
 	extends: 'eslint:recommended',
 	parserOptions: {
@@ -368,7 +370,7 @@ module.exports = {
 				'@typescript-eslint/explicit-module-boundary-types': [
 					'error',
 					{
-						allowedNames: [ 'requires' ],
+						allowedNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE,
 						allowArgumentsExplicitlyTypedAsAny: true
 					}
 				],
@@ -471,7 +473,16 @@ module.exports = {
 				'@typescript-eslint/space-infix-ops': 'error',
 
 				'no-useless-constructor': 'off',
-				'@typescript-eslint/no-useless-constructor': 'error'
+				'@typescript-eslint/no-useless-constructor': 'error',
+
+				'ckeditor5-rules/allow-declare-module-only-in-augmentation-file': 'error',
+				'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
+				'ckeditor5-rules/require-as-const-returns-in-methods': [
+					'error',
+					{
+						methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
+					}
+				]
 			}
 		},
 		{
