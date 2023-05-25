@@ -9,7 +9,7 @@ module.exports = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Enforce CK_DEBUG and instanbul not appearing in the same line.',
+			description: 'Enforce CK_DEBUG and istanbul not appearing in the same line.',
 			category: 'CKEditor5'
 		}
 	},

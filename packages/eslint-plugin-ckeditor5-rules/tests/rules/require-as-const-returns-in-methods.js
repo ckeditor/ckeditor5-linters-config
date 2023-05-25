@@ -11,7 +11,7 @@ const ruleTester = new RuleTester( {
 	parser: require.resolve( '@typescript-eslint/parser' )
 } );
 
-ruleTester.run( 'require-as-const-returns-in-methods', require( '../lib/rules/require-as-const-returns-in-methods' ), {
+ruleTester.run( 'require-as-const-returns-in-methods', require( '../../lib/rules/require-as-const-returns-in-methods' ), {
 	valid: [
 		{
 			code: `
