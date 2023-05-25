@@ -14,7 +14,7 @@ const ruleTester = new RuleTester( {
 	}
 } );
 
-const error = { message: 'Comments cannot have both CK_DEBUG and istanbul flags.' };
+const error = { message: 'Comments cannot have both `@if CK_DEBUG_*` and `istanbul` keywords in the same line.' };
 
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-istanbul-in-debug-code', require( '../../lib/rules/no-istanbul-in-debug-code' ), {
 	valid: [

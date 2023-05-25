@@ -9,24 +9,22 @@ module.exports = {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'Enforce CK_DEBUG and istanbul not appearing in the same line.',
+			description: 'Disallow using the `@if CK_DEBUG_*` and `istanbul` keywords in the same line.',
 			category: 'CKEditor5'
 		}
 	},
 
 	create( context ) {
-		const sourceCode = context.getSourceCode();
-
 		return {
-			Program( node ) {
-				let comments = sourceCode.getComments( node.body[ 0 ] || node );
-				comments = [ ...comments.leading, ...comments.trailing ];
+			Program() {
+				const source = context.getSourceCode();
+				const comments = source.getAllComments();
 
 				for ( const comment of comments ) {
 					if ( comment.value.includes( 'CK_DEBUG' ) && comment.value.includes( 'istanbul' ) ) {
 						context.report( {
 							node: comment,
-							message: 'Comments cannot have both CK_DEBUG and istanbul flags.'
+							message: 'Comments cannot have both `@if CK_DEBUG_*` and `istanbul` keywords in the same line.'
 						} );
 					}
 				}
