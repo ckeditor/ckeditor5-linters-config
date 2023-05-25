@@ -13,7 +13,7 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run(
 	'allow-imports-only-from-main-package-entry-point',
-	require( '../lib/rules/allow-imports-only-from-main-package-entry-point.js' ),
+	require( '../../lib/rules/allow-imports-only-from-main-package-entry-point.js' ),
 	{
 		valid: [
 			'import { Table } from "@ckeditor/ckeditor5-table";'

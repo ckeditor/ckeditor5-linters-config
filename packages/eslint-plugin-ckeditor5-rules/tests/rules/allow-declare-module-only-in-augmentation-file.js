@@ -13,7 +13,7 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run(
 	'allow-declare-module-only-in-augmentation-file',
-	require( '../lib/rules/allow-declare-module-only-in-augmentation-file' ),
+	require( '../../lib/rules/allow-declare-module-only-in-augmentation-file' ),
 	{
 		valid: [
 			{
