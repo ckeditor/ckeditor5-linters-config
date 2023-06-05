@@ -316,14 +316,6 @@ module.exports = {
 		'ckeditor5-rules/no-cross-package-imports': 'error',
 		'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
 		'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
-		'ckeditor5-rules/allow-declare-module-only-in-augmentation-file': 'error',
-		'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
-		'ckeditor5-rules/require-as-const-returns-in-methods': [
-			'error',
-			{
-				methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
-			}
-		],
 
 		// Rules for tests.
 		'mocha/handle-done-callback': 'error',
@@ -482,7 +474,17 @@ module.exports = {
 				'@typescript-eslint/space-infix-ops': 'error',
 
 				'no-useless-constructor': 'off',
-				'@typescript-eslint/no-useless-constructor': 'error'
+				'@typescript-eslint/no-useless-constructor': 'error',
+
+				// CKEditor 5 rules.
+				'ckeditor5-rules/allow-declare-module-only-in-augmentation-file': 'error',
+				'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
+				'ckeditor5-rules/require-as-const-returns-in-methods': [
+					'error',
+					{
+						methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
+					}
+				]
 			}
 		},
 		{
