@@ -15,17 +15,12 @@ const minimist = require( 'minimist' );
  */
 module.exports = function parseArguments( cliArguments ) {
 	const config = {
-		number: [
-			'concurrency'
-		],
-
 		string: [
 			'packages',
 			'npm-tag'
 		],
 
 		default: {
-			concurrency: require( 'os' ).cpus().length / 2,
 			packages: null,
 			'npm-tag': 'staging'
 		}

@@ -30,9 +30,9 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^37.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^37.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^37.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^38.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^38.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^38.0.0",
     "eslint": "^7.0.0",
     "husky": "^8.0.2",
     "lint-staged": "^12.0.0",
