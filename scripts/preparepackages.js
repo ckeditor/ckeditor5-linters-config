@@ -58,12 +58,7 @@ const tasks = new Listr( [
 		title: 'Cleaning-up.',
 		task: () => {
 			return releaseTools.cleanUpPackages( {
-				packagesDirectory: RELEASE_DIRECTORY,
-				packageJsonFieldsToRemove: [
-					// TODO: Report an issue to preserve `scripts.postinstall`.
-					'devDependencies',
-					'depcheckIgnore'
-				]
+				packagesDirectory: RELEASE_DIRECTORY
 			} );
 		}
 	},
