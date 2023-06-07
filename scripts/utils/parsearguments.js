@@ -22,7 +22,7 @@ module.exports = function parseArguments( cliArguments ) {
 
 		default: {
 			packages: null,
-			'npm-tag': 'staging'
+			'npm-tag': 'latest'
 		}
 	};
 
