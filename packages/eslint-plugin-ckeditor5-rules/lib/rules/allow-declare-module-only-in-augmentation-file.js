@@ -12,7 +12,7 @@ module.exports = {
 			description: 'Allow using module augmentation for "@ckeditor/ckeditor5-core" modules only in the "/src/augmentation.ts" files.',
 			category: 'CKEditor5',
 			// eslint-disable-next-line max-len
-			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#declaring-module-augmentation-for-the-core-package-allow-declare-module-only-in-augmentation-file'
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#declaring-module-augmentation-for-the-core-package-ckeditor5-rulesallow-declare-module-only-in-augmentation-file'
 		}
 	},
 	create( context ) {
