@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-ckeditor5-rules",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "eslint": "^7.0.0",
-    "eslint-config-ckeditor5": "^5.0.0"
+    "eslint-config-ckeditor5": "^5.0.1"
   },
   "peerDependencies": {
     "eslint": ">=7.0.0"
