@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-ckeditor5-rules",
-  "version": "4.4.0",
+  "version": "5.0.1",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -16,7 +16,8 @@
   ],
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "test": "node ./tests/index.js"
@@ -28,7 +29,7 @@
   },
   "devDependencies": {
     "eslint": "^7.0.0",
-    "eslint-config-ckeditor5": "^4.4.0",
+    "eslint-config-ckeditor5": "^5.0.1",
     "glob": "^10.2.5",
     "lodash": "^4.17.21"
   },

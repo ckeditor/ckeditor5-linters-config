@@ -1,6 +1,68 @@
 Changelog
 =========
 
+## [5.0.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.0.0...v5.0.1) (2023-06-07)
+
+### Bug fixes
+
+* Fixed versions of dependencies in the repository due to missing update phase while preparing packages to release. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/f72aa1902ff4ee8ae391d9ca6178adc8052cb06c))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v5.0.0 => v5.0.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v5.0.0 => v5.0.1
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v5.0.0 => v5.0.1
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v5.0.0 => v5.0.1
+</details>
+
+
+## [5.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.4.0...v5.0.0) (2023-06-07)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/no-istanbul-in-debug-code` plugin that disallows using the `@if CK_DEBUG_*` and `istanbul` keywords in the same line. Related to [ckeditor/ckeditor5#13922](https://github.com/ckeditor/ckeditor5/issues/13922). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7d754ae2e77a1e596d79de5d48ba608d287ce0f7))
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/allow-declare-module-only-in-augmentation-file` plugin that enforces using module augmentation for the `@ckeditor/ckeditor5-core` modules only in the augmentation files. Related to [ckeditor/ckeditor5#13434](https://github.com/ckeditor/ckeditor5/issues/13434). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/allow-imports-only-from-main-package-entry-point` plugin that allows imports from the `@ckeditor/*` modules only from the main package entry point. Related to [ckeditor/ckeditor5#13434](https://github.com/ckeditor/ckeditor5/issues/13434). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/require-as-const-returns-in-methods` plugin that enforces using the `as const` in return statements for `requires` and `pluginName` methods. Related to [ckeditor/ckeditor5#13434](https://github.com/ckeditor/ckeditor5/issues/13434). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added fixer for the `license-header` rule. Closes [ckeditor/ckeditor5#11473](https://github.com/ckeditor/ckeditor5/issues/11473). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/2873ecc10b8214131d1fe7121f0de9e9c05a9a74))
+
+### Bug fixes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Run some TypeScript-specific rules only against `.ts(x)` files. See [ckeditor/ckeditor5#13434](https://github.com/ckeditor/ckeditor5/issues/13434). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/e6c778ad1afaf41a097346a4529f9353f39f2662))
+
+### Other changes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/no-istanbul-in-debug-code` in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7d754ae2e77a1e596d79de5d48ba608d287ce0f7))
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/allow-declare-module-only-in-augmentation-file` in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/allow-imports-only-from-main-package-entry-point` in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/require-as-const-returns-in-methods` in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1bdcbaa3a69032d8814ef2dc77afd4a1c57f1f24))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.4.0 => v5.0.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.4.0 => v5.0.0
+
+Other releases:
+
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.4.0 => v5.0.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.4.0 => v5.0.0
+</details>
+
+
 ## [4.4.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.3.0...v4.4.0) (2023-03-30)
 
 ### Features
@@ -76,157 +138,6 @@ Other releases:
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.2.0 => v4.2.1
 </details>
 
+---
 
-## [4.2.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.1...v4.2.0) (2023-02-23)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created the `ckeditor5-rules/non-public-members-as-internal` plugin that enforces the `@internal` annotation non-public identifiers in the TypeScrpit code. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/b89f90d9f60ae7e18b8961723850e15338daef1f))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.1.1 => v4.2.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.1.1 => v4.2.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.1.1 => v4.2.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.1.1 => v4.2.0
-</details>
-
-
-## [4.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.1.0...v4.1.1) (2022-11-14)
-
-### Other changes
-
-* Disables the `new-cap` rule. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/9d0b682f24ef6bbd283d021871cd02a8d511c320))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.1.0 => v4.1.1
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.1.0 => v4.1.1
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.1.0 => v4.1.1
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.1.0 => v4.1.1
-</details>
-
-
-## [4.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.0.2...v4.1.0) (2022-11-04)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Created a new ESLint rule that disables using the `import` statement and `CK_DEBUG_*` flags together due to a webpack error (`'import' and 'export' may only appear at the top level`). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7996055efc698abcb23ad7feca30bd39821cded4))
-
-### Other changes
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the `ckeditor5-rules/use-require-for-debug-mode-imports` rule in the ESLint configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7996055efc698abcb23ad7feca30bd39821cded4))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.0.2 => v4.1.0
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.0.2 => v4.1.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.0.2 => v4.1.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.0.2 => v4.1.0
-</details>
-
-
-## [4.0.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.0.1...v4.0.2) (2022-10-17)
-
-### Other changes
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Adds `array-type` rule. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/4cb78a9d1bf7cf449d65c4df18b0f2078ebec6bb))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.0.1 => v4.0.2
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.0.1 => v4.0.2
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.0.1 => v4.0.2
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.0.1 => v4.0.2
-</details>
-
-
-## [4.0.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v4.0.0...v4.0.1) (2022-06-08)
-
-### Other changes
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Adds rules and support for TypeScript. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/98c8b7d46a432a4efbfbb567d4519e526777301a))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v4.0.0 => v4.0.1
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v4.0.0 => v4.0.1
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v4.0.0 => v4.0.1
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.0.0 => v4.0.1
-</details>
-
-
-## [4.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v0.0.1...v4.0.0) (2022-03-15)
-
-Due to migration to the mono-repository, packages hosted in the repository follow [the CKEditor 5 Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html).
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* Upgraded the minimal versions of Node.js to `14.0.0` due to the end of LTS.
-
-### Features
-
-* **[stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules)**: Introduced a new package containing a plugin for checking the license headers in `*.css` files. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/6528c230216864dc99a79a7ab8ff1b37ce411bcd))
-
-### Other changes
-
-* **[stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5)**: Added the `stylelint-plugin-ckeditor5-rules/lib/license-header` plugin to the configuration. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/6528c230216864dc99a79a7ab8ff1b37ce411bcd))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-New packages:
-
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v4.0.0
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v1.3.0 => v4.0.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v2.0.1 => v4.0.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v3.1.1 => v4.0.0
-</details>
+To see all releases, visit the [release page](https://github.com/ckeditor/ckeditor5-linters-config/releases).

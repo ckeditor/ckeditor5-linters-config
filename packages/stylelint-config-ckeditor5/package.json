@@ -1,6 +1,6 @@
 {
   "name": "stylelint-config-ckeditor5",
-  "version": "4.4.0",
+  "version": "5.0.1",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -14,7 +14,8 @@
   ],
   "main": ".stylelintrc",
   "files": [
-    ".stylelintrc"
+    ".stylelintrc",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
   },
   "dependencies": {
     "stylelint-config-recommended": "^3.0.0",
-    "stylelint-plugin-ckeditor5-rules": "^4.4.0"
+    "stylelint-plugin-ckeditor5-rules": "^5.0.1"
   },
   "peerDependencies": {
     "stylelint": ">=13.5.0"
