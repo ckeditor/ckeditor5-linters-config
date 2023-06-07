@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "stylelint-config-recommended": "^3.0.0",
-    "stylelint-plugin-ckeditor5-rules": "^4.4.0"
+    "stylelint-plugin-ckeditor5-rules": "^5.0.0"
   },
   "peerDependencies": {
     "stylelint": ">=13.5.0"

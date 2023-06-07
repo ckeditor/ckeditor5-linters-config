@@ -12,6 +12,7 @@
 const { Listr } = require( 'listr2' );
 const releaseTools = require( '@ckeditor/ckeditor5-dev-release-tools' );
 const parseArguments = require( './utils/parsearguments' );
+const isMonoRepositoryDependency = require( './utils/ismonorepositorydependency' );
 const { PACKAGES_DIRECTORY, RELEASE_DIRECTORY } = require( './utils/constants' );
 
 const cliArguments = parseArguments( process.argv.slice( 2 ) );
@@ -41,6 +42,16 @@ const tasks = new Listr( [
 			return releaseTools.updateVersions( {
 				packagesDirectory: PACKAGES_DIRECTORY,
 				version: latestVersion
+			} );
+		}
+	},
+	{
+		title: 'Updating dependencies.',
+		task: () => {
+			return releaseTools.updateDependencies( {
+				version: '^' + latestVersion,
+				packagesDirectory: PACKAGES_DIRECTORY,
+				shouldUpdateVersionCallback: isMonoRepositoryDependency
 			} );
 		}
 	},
