@@ -9,7 +9,7 @@ const RuleTester = require( 'eslint' ).RuleTester;
 
 const importError = { message: 'Import that extends a CKEditor 5 build is not allowed.' };
 
-const ruleTester = new RuleTester( { parserOptions: { sourceType: 'module', ecmaVersion: 2018 } } );
+const ruleTester = new RuleTester( { parserOptions: { sourceType: 'module', ecmaVersion: 2020 } } );
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-build-extensions', require( '../../lib/rules/no-build-extensions' ), {
 	valid: [
 		// Importing an editor build.

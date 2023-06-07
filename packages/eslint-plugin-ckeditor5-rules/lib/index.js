@@ -11,6 +11,7 @@ module.exports = {
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
 		'ckeditor-imports': require( './rules/ckeditor-imports' ),
 		'no-cross-package-imports': require( './rules/no-cross-package-imports' ),
+		'no-scoped-imports-within-package': require( './rules/no-scoped-imports-within-package' ),
 		'license-header': require( './rules/license-header' ),
 		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),

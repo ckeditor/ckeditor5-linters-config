@@ -10,7 +10,7 @@ const METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE = [ 'requires', 'pluginNa
 module.exports = {
 	extends: 'eslint:recommended',
 	parserOptions: {
-		ecmaVersion: 2018,
+		ecmaVersion: 2020,
 		sourceType: 'module'
 	},
 	env: {
@@ -314,6 +314,7 @@ module.exports = {
 		'ckeditor5-rules/no-relative-imports': 'error',
 		'ckeditor5-rules/ckeditor-error-message': 'error',
 		'ckeditor5-rules/no-cross-package-imports': 'error',
+		'ckeditor5-rules/no-scoped-imports-within-package': 'error',
 		'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
 		'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
 
@@ -506,6 +507,15 @@ module.exports = {
 			],
 			rules: {
 				'ckeditor5-rules/no-build-extensions': 'error'
+			}
+		},
+		{
+			files: [
+				'**/docs/**/*.@(js|ts)',
+				'**/tests/**/*.@(js|ts)'
+			],
+			rules: {
+				'ckeditor5-rules/no-scoped-imports-within-package': 'off'
 			}
 		}
 	]

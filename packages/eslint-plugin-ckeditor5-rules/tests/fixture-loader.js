@@ -4,31 +4,27 @@
  */
 
 const fs = require( 'fs' );
-const path = require( 'path' );
-
-const fixtureTypes = [
-	'valid',
-	'invalid'
-];
+const upath = require( 'upath' );
+const { globSync } = require( 'glob' );
+const _ = require( 'lodash' );
 
 module.exports = function fixtureLoader( ruleName ) {
-	const fixtures = {};
+	const cwd = upath.join( __dirname, 'fixtures', ruleName );
 
-	for ( const fixtureType of fixtureTypes ) {
-		const typeDir = path.join( __dirname, 'fixtures', ruleName, fixtureType );
-
-		fixtures[ fixtureType ] = fs.readdirSync( typeDir ).reduce( ( output, filename ) => {
-			const fixturePath = path.join( typeDir, filename );
-			const fixtureContent = fs.readFileSync( fixturePath, 'utf-8' );
-			const fixtureKey = filename
+	return globSync( '**/*.js', { cwd } )
+		.map( upath.normalize )
+		.reduce( ( result, fixtureRelativePath ) => {
+			const fixtureKey = fixtureRelativePath
 				.replace( '.js', '' )
-				.replace( /-/g, '_' );
+				.replace( /-/g, '_' )
+				.split( upath.sep );
 
-			output[ fixtureKey ] = fixtureContent;
+			const fixturePath = upath.join( cwd, fixtureRelativePath );
+			const fixtureContent = fs.readFileSync( fixturePath, 'utf-8' );
 
-			return output;
+			return _.set( result, fixtureKey, {
+				path: fixturePath,
+				content: fixtureContent
+			} );
 		}, {} );
-	}
-
-	return fixtures;
 };
