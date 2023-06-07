@@ -16,7 +16,8 @@
   ],
   "main": ".eslintrc.js",
   "files": [
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",

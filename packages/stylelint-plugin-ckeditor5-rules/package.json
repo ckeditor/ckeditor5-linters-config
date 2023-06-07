@@ -13,7 +13,8 @@
     "ckeditor"
   ],
   "files": [
-    "lib"
+    "lib",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "test": "jest",

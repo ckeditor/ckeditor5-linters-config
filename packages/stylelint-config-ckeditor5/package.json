@@ -14,7 +14,8 @@
   ],
   "main": ".stylelintrc",
   "files": [
-    ".stylelintrc"
+    ".stylelintrc",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",
