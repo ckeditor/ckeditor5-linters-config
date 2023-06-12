@@ -12,7 +12,7 @@ module.exports = {
 			description: 'Require the use of "as const" in all return statements for methods with given names.',
 			category: 'CKEditor5',
 			// eslint-disable-next-line max-len
-			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#require-as-const-require-as-const-returns-in-methods'
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#require-as-const-ckeditor5-rulesrequire-as-const-returns-in-methods'
 		},
 		schema: [
 			{

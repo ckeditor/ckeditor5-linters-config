@@ -12,7 +12,7 @@ module.exports = {
 			description: 'Allow importing from "@ckeditor/*" modules only from the main package entry point.',
 			category: 'CKEditor5',
 			// eslint-disable-next-line max-len
-			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-from-modules-allow-imports-only-from-main-package-entry-point'
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-from-modules-ckeditor5-rulesallow-imports-only-from-main-package-entry-point'
 		},
 		schema: []
 	},
