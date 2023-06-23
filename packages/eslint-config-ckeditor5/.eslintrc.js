@@ -464,8 +464,8 @@ module.exports = {
 		// Rules for source code.
 		{
 			files: [
-				'**/src/*.ts',
-				'**/src/*.tsx'
+				'**/src/**/*.ts',
+				'**/src/**/*.tsx'
 			],
 			rules: {
 				'ckeditor5-rules/no-relative-imports': 'error',
