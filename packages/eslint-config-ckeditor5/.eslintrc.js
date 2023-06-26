@@ -308,28 +308,10 @@ module.exports = {
 		'yield-star-spacing': [
 			'error',
 			'after'
-		],
-
-		// CKEditor 5 rules.
-		'ckeditor5-rules/no-relative-imports': 'error',
-		'ckeditor5-rules/ckeditor-error-message': 'error',
-		'ckeditor5-rules/no-cross-package-imports': 'error',
-		'ckeditor5-rules/no-scoped-imports-within-package': 'error',
-		'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
-		'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
-
-		// Rules for tests.
-		'mocha/handle-done-callback': 'error',
-		'mocha/no-async-describe': 'error',
-		'mocha/no-exclusive-tests': 'error',
-		'mocha/no-global-tests': 'error',
-		'mocha/no-identical-title': 'warn',
-		'mocha/no-nested-tests': 'error',
-		'mocha/no-pending-tests': 'error',
-		'mocha/no-sibling-hooks': 'error',
-		'mocha/no-top-level-hooks': 'error'
+		]
 	},
 	overrides: [
+		// Rules for all TypeScript files.
 		{
 			files: [
 				'**/*.ts',
@@ -475,9 +457,23 @@ module.exports = {
 				'@typescript-eslint/space-infix-ops': 'error',
 
 				'no-useless-constructor': 'off',
-				'@typescript-eslint/no-useless-constructor': 'error',
+				'@typescript-eslint/no-useless-constructor': 'error'
+			}
+		},
 
-				// CKEditor 5 rules.
+		// Rules for source code.
+		{
+			files: [
+				'**/src/**/*.ts',
+				'**/src/**/*.tsx'
+			],
+			rules: {
+				'ckeditor5-rules/no-relative-imports': 'error',
+				'ckeditor5-rules/ckeditor-error-message': 'error',
+				'ckeditor5-rules/no-cross-package-imports': 'error',
+				'ckeditor5-rules/no-scoped-imports-within-package': 'error',
+				'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
+				'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
 				'ckeditor5-rules/allow-declare-module-only-in-augmentation-file': 'error',
 				'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
 				'ckeditor5-rules/require-as-const-returns-in-methods': [
@@ -486,6 +482,33 @@ module.exports = {
 						methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
 					}
 				]
+			}
+		},
+
+		// Rules for docs and tests.
+		{
+			files: [
+				'**/docs/**/*.@(js|ts)',
+				'**/tests/**/*.@(js|ts)'
+			],
+			rules: {
+				'ckeditor5-rules/no-scoped-imports-within-package': 'off'
+			}
+		},
+
+		// Rules for tests.
+		{
+			files: [ '**/tests/**/*.@(js|ts)' ],
+			rules: {
+				'mocha/handle-done-callback': 'error',
+				'mocha/no-async-describe': 'error',
+				'mocha/no-exclusive-tests': 'error',
+				'mocha/no-global-tests': 'error',
+				'mocha/no-identical-title': 'warn',
+				'mocha/no-nested-tests': 'error',
+				'mocha/no-pending-tests': 'error',
+				'mocha/no-sibling-hooks': 'error',
+				'mocha/no-top-level-hooks': 'error'
 			}
 		},
 		{
@@ -500,6 +523,8 @@ module.exports = {
 				'@typescript-eslint/no-unused-expressions': 'off'
 			}
 		},
+
+		// Rules for docs.
 		{
 			files: [
 				'docs/**/*.@(js|ts)',
@@ -507,15 +532,6 @@ module.exports = {
 			],
 			rules: {
 				'ckeditor5-rules/no-build-extensions': 'error'
-			}
-		},
-		{
-			files: [
-				'**/docs/**/*.@(js|ts)',
-				'**/tests/**/*.@(js|ts)'
-			],
-			rules: {
-				'ckeditor5-rules/no-scoped-imports-within-package': 'off'
 			}
 		}
 	]
