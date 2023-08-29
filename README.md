@@ -1,7 +1,7 @@
 CKEditor 5 linters configuration
 ================================
 
-[![Build Status](https://app.travis-ci.com/ckeditor/ckeditor5-linters-config.svg?branch=master)](https://app.travis-ci.com/ckeditor/ckeditor5-linters-config)
+[![CircleCI](https://circleci.com/gh/ckeditor/ckeditor5-linters-config.svg?style=shield)](https://app.circleci.com/pipelines/github/ckeditor/ckeditor5-linters-config?branch=master)
 
 ## Issue tracker
 
