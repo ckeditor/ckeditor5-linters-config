@@ -19,6 +19,10 @@ ruleTester.run(
 			{
 				code: 'declare module "@ckeditor/ckeditor5-core" {}',
 				filename: '/some/path/src/augmentation.ts'
+			},
+			{
+				code: 'declare module "@ckeditor/ckeditor5-core" {}',
+				filename: 'C:\\some\\path\\src\\augmentation.ts'
 			}
 		],
 		invalid: [

@@ -5,6 +5,8 @@
 
 'use strict';
 
+const upath = require( 'upath' );
+
 module.exports = {
 	meta: {
 		type: 'problem',
@@ -23,7 +25,9 @@ module.exports = {
 					return;
 				}
 
-				if ( context.getFilename().endsWith( '/src/augmentation.ts' ) ) {
+				const normalizedPath = upath.toUnix( context.getFilename() );
+
+				if ( normalizedPath.endsWith( '/src/augmentation.ts' ) ) {
 					// Skip if module declaration is already in the specified file.
 					return;
 				}
