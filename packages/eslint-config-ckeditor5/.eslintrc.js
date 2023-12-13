@@ -308,6 +308,12 @@ module.exports = {
 		'yield-star-spacing': [
 			'error',
 			'after'
+		],
+		'ckeditor5-rules/require-file-extensions-in-imports': [
+			'error',
+			{
+				extensions: [ '.ts', '.js', '.json' ]
+			}
 		]
 	},
 	overrides: [
