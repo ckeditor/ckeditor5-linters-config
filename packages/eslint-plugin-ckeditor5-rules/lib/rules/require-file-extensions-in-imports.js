@@ -5,8 +5,8 @@
 
 'use strict';
 
-const { extname, dirname, sep, parse } = require( 'path' );
-const { isBuiltin } = require( 'node:module' );
+const { extname, dirname, sep, parse } = require( 'upath' );
+const { isBuiltin } = require( 'module' );
 
 // Could be replaced with oxc resolver once it's stable and if performance becomes an issue.
 // https://oxc-project.github.io/docs/guide/usage/resolver.html
