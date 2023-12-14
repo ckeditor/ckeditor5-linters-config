@@ -12,7 +12,7 @@ const { isBuiltin } = require( 'node:module' );
 // https://oxc-project.github.io/docs/guide/usage/resolver.html
 const enhancedResolve = require( 'enhanced-resolve' );
 
-// https://github.com/npm/validate-npm-package-name/blob/2a17a08b298482f32ee217f1bba55c37e0935a0a/lib/index.js#L3C40-L3C67
+// https://github.com/npm/validate-npm-package-name/blob/2a17a08b298482f32ee217f1bba55c37e0935a0a/lib/index.js#L3
 const packageFullPattern = new RegExp( '^(?:@([^/]+?)[/])?([^/]+?)$' );
 
 const extensionsOverride = {
@@ -82,14 +82,14 @@ module.exports = {
 					// Resolve URL to absolute filesystem path.
 					const resolvedPath = resolver( dirname( context.getFilename() ), url );
 
-					// Turn `/absolute/path/to/file.js` to `[ 'absolute', 'path', 'to', 'file' ]`.
+					// Turn `/absolute/path/to/file.js` into `[ 'absolute', 'path', 'to', 'file' ]`.
 					const { dir: pathDir, name: pathName, ext: pathExt } = parse( resolvedPath );
 					const { dir: urlDir, name: urlName } = parse( url );
 					const resolvedPathParts = pathDir.split( sep ).concat( pathName );
 					const urlParts = urlDir.split( sep ).concat( urlName );
 
 					/**
-					 * Find the last patching parts between the relative and absolute paths. Example:
+					 * Find the last matching parts between the relative and absolute paths. Example:
 					 *  - `/absolute/path/to/file.js` and `../to/file`
 					 *                       ^^^^                ^^^^
 					 *
@@ -99,7 +99,7 @@ module.exports = {
 					const lastMatchingIndex = resolvedPathParts.findLastIndex( element => urlParts.includes( element ) );
 
 					/**
-					 * Concatenate parts of the path after the last matching index to the URL. Example:
+					 * Concatenate parts of the path (after the `lastMatchingIndex`) to the end of the URL. Example:
 					 *
 					 * - Path: `/absolute/path/to/index.js`
 					 * - URL: `../to`
