@@ -33,9 +33,9 @@ module.exports = {
 				const themeIndex = parts.findIndex( part => part === 'theme' );
 
 				/**
-				 * Check if `theme` index was found and if the previous part of the URL starts with a dot. This
-				 * is to prevent people from working around this rule by replacing `OTHER_PACKAGE/theme/icons/icon.svg`
-				 * to equivalent but relative path like `../../OTHER_PACKAGE/theme/icons/icon.svg`.
+				 * Check if `theme` index was found and if the previous part of the URL is `..`. This is done to
+				 * prevent working around this rule by replacing `OTHER_PACKAGE/theme/icons/icon.svg` to
+				 * equivalent but relative path like `../../OTHER_PACKAGE/theme/icons/icon.svg`.
 				 *
 				 * Correct import from within the same package:
 				 * - `../theme/icons/icon.svg`.
@@ -45,7 +45,7 @@ module.exports = {
 				 * - `../../../OTHER_PACKAGE/theme/icons/icon.svg`.
 				 * - `../../../../../nod_modules/OTHER_PACKAGE/theme/icons/icon.svg`.
 				 */
-				if ( themeIndex >= 0 && parts[ themeIndex - 1 ].startsWith( '.' ) ) {
+				if ( themeIndex >= 0 && parts[ themeIndex - 1 ] === ( '..' ) ) {
 					return;
 				}
 
