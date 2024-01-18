@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [5.3.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.2.1...v5.3.0) (2024-01-18)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Add a rule to enforce correct imports of the SVG icons. See [ckeditor/ckeditor5#15704](https://github.com/ckeditor/ckeditor5/issues/15704). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/1d9916643f8bdf8580ab9082e3c103d1607a8b12))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.3.0): v5.2.1 => v5.3.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.3.0): v5.2.1 => v5.3.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.3.0): v5.2.1 => v5.3.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.3.0): v5.2.1 => v5.3.0
+</details>
+
+
 ## [5.2.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.2.0...v5.2.1) (2023-12-15)
 
 ### Other changes
@@ -90,28 +115,6 @@ Other releases:
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.1.2): v5.1.1 => v5.1.2
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.1.2): v5.1.1 => v5.1.2
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.1.2): v5.1.1 => v5.1.2
-</details>
-
-
-## [5.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.1.0...v5.1.1) (2023-07-13)
-
-### Bug fixes
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Use `ckeditor5-rules` only for source code, not tests. See [ckeditor/ckeditor5#14451](https://github.com/ckeditor/ckeditor5/issues/14451). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/ff8038d3149790740413bcafda8c39dc4ca69a7b))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5): v5.1.0 => v5.1.1
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules): v5.1.0 => v5.1.1
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5): v5.1.0 => v5.1.1
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules): v5.1.0 => v5.1.1
 </details>
 
 ---
