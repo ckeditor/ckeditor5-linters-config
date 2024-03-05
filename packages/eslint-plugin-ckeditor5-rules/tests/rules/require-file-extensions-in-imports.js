@@ -104,7 +104,7 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 		},
 		{
 			code: 'import Something from ".";',
-			output: 'import Something from "./lib/index.js";',
+			output: 'import Something from "./index.js";',
 			errors: [
 				'Missing file extension in import/export "."'
 			]
