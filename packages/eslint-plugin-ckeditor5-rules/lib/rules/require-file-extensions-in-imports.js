@@ -5,15 +5,11 @@
 
 'use strict';
 
-const { extname, dirname, sep, parse } = require( 'upath' );
+const { normalize, extname, dirname, sep, parse, join } = require( 'upath' );
 const { isBuiltin } = require( 'module' );
-
-// Could be replaced with oxc resolver once it's stable and if performance becomes an issue.
-// https://oxc-project.github.io/docs/guide/usage/resolver.html
+const { exports: resolveExports } = require( 'resolve.exports' );
 const enhancedResolve = require( 'enhanced-resolve' );
-
-// https://github.com/npm/validate-npm-package-name/blob/2a17a08b298482f32ee217f1bba55c37e0935a0a/lib/index.js#L3
-const packageFullPattern = new RegExp( '^(?:@([^/]+?)[/])?([^/]+?)$' );
+const isValidNpmPackageName = require( 'validate-npm-package-name' );
 
 const extensionsOverride = {
 	'.ts': '.js'
@@ -71,7 +67,7 @@ module.exports = {
 				return;
 			}
 
-			if ( packageFullPattern.test( url ) ) {
+			if ( isExternalPackage( url ) ) {
 				// URL is third-party dependency, e.g. `lodash-es`
 				return;
 			}
@@ -109,6 +105,7 @@ module.exports = {
 				 * - Result: `../to/index` (no extension)
 				 */
 				const filePath = urlParts
+					.filter( Boolean )
 					.concat( resolvedPathParts.slice( lastMatchingIndex + 1 ) )
 					.join( sep );
 
@@ -148,3 +145,67 @@ module.exports = {
 		};
 	}
 };
+
+/**
+ * Checks if path is a name of an external dependency, taking into account the `exports` field in `package.json`.
+ *
+ * It returns `false` if the package name is followed by a path that is not registered in the `exports` object.
+ * Example: `@ckeditor/ckeditor5-core/src/index`.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isExternalPackage( url ) {
+	if ( url.startsWith( '.' ) || url.startsWith( '/' ) ) {
+		// URL is a relative or an absolute path.
+		return false;
+	}
+
+	// Turn `@ckeditor/ckeditor5-core/src/index.js` into `[ '@ckeditor', 'ckeditor5-core', 'src', 'index.js' ]`.
+	const parts = normalize( url ).split( sep );
+
+	// Get the package name from the path parts.
+	const packageName = parts
+		.slice( 0, parts[ 0 ].startsWith( '@' ) ? 2 : 1 )
+		.join( sep );
+
+	if ( !isValidNpmPackageName( packageName ) ) {
+		// URL is not a valid npm package name.
+		return false;
+	}
+
+	if ( url === packageName ) {
+		// URL is a valid npm package name and doesn't contain any additional paths after it.
+		return true;
+	}
+
+	// Get path to the `package.json` of the external dependency relative to the current working directory.
+	const packageJsonPath = require.resolve(
+		`${ packageName }/package.json`,
+		{ paths: [ process.cwd() ] }
+	);
+
+	// Load package.json file of the external dependency.
+	const packageJson = require( packageJsonPath );
+
+	if ( !packageJson.exports ) {
+		// The package.json file doesn't contain the `exports` field.
+		return false;
+	}
+
+	try {
+		// Resolve "exports" in the package.json file.
+		for ( const path of resolveExports( packageJson, url ) ) {
+			require.resolve(
+				join( dirname( packageJsonPath ), path )
+			);
+
+			return true;
+		}
+	} catch {
+		return false;
+	}
+
+	// URL is a valid npm package, but the path after the package name is not valid, likely missing a file extension.
+	return false;
+}

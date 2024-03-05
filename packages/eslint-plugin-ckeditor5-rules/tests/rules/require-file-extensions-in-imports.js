@@ -22,16 +22,23 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			code: 'import Something from "./relative/path/with/file.extension";'
 		},
 		{
-			code: 'import Something from "library";'
-		},
-		{
-			code: 'import Something from "@scoped/library";'
-		},
-		{
 			code: 'import Something from "fs";'
 		},
 		{
 			code: 'import Something from "node:fs";'
+		},
+
+		// Import external dependency
+		{
+			code: 'import Something from "enhanced-resolve";' // Unscoped
+		},
+		{
+			code: 'import Something from "@ckeditor/ckeditor5-dev-utils";' // Scoped
+		},
+
+		// Import from external dependency that uses "exports" field
+		{
+			code: 'import tokenizer from "postcss/lib/tokenize";'
 		},
 
 		// Export all
@@ -42,10 +49,10 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			code: 'export * as Something from "./relative/path/with/file.extension";'
 		},
 		{
-			code: 'export * as Something from "library";'
+			code: 'export * as Something from "enhanced-resolve";'
 		},
 		{
-			code: 'export * as Something from "@scoped/library";'
+			code: 'export * as Something from "@ckeditor/ckeditor5-dev-utils";'
 		},
 		{
 			code: 'export * as Something from "fs";'
@@ -62,10 +69,10 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			code: 'export { Something } from "./relative/path/with/file.extension";'
 		},
 		{
-			code: 'export { Something } from "library";'
+			code: 'export { Something } from "enhanced-resolve";'
 		},
 		{
-			code: 'export { Something } from "@scoped/library";'
+			code: 'export { Something } from "@ckeditor/ckeditor5-dev-utils";'
 		},
 		{
 			code: 'export { Something } from "fs";'
@@ -90,15 +97,16 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			]
 		},
 		{
-			code: 'import Something from "library/path/without/file/extension";',
+			code: 'import Something from "@ckeditor/ckeditor5-dev-utils/lib/index";',
 			errors: [
-				'Missing file extension in import/export "library/path/without/file/extension"'
+				'Missing file extension in import/export "@ckeditor/ckeditor5-dev-utils/lib/index"'
 			]
 		},
 		{
-			code: 'import Something from "@scoped/library/path/without/file/extension";',
+			code: 'import Something from ".";',
+			output: 'import Something from "./lib/index.js";',
 			errors: [
-				'Missing file extension in import/export "@scoped/library/path/without/file/extension"'
+				'Missing file extension in import/export "."'
 			]
 		},
 
@@ -115,16 +123,18 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 				'Missing file extension in import/export "./relative/path/without/file/extension"'
 			]
 		},
+
+		// Export all from external library without file extension.
 		{
-			code: 'export * as Something from "library/path/without/file/extension";',
+			code: 'export * as Something from "enhanced-resolve/lib/index";',
 			errors: [
-				'Missing file extension in import/export "library/path/without/file/extension"'
+				'Missing file extension in import/export "enhanced-resolve/lib/index"'
 			]
 		},
 		{
-			code: 'export * as Something from "@scoped/library/path/without/file/extension";',
+			code: 'export * as Something from "@ckeditor/ckeditor5-dev-utils/lib/index";',
 			errors: [
-				'Missing file extension in import/export "@scoped/library/path/without/file/extension"'
+				'Missing file extension in import/export "@ckeditor/ckeditor5-dev-utils/lib/index"'
 			]
 		},
 
@@ -141,16 +151,18 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 				'Missing file extension in import/export "./relative/path/without/file/extension"'
 			]
 		},
+
+		// Named export from external library without file extension.
 		{
-			code: 'export { Something } from "library/path/without/file/extension";',
+			code: 'export { ResolverFactory } from "enhanced-resolve/lib/index";',
 			errors: [
-				'Missing file extension in import/export "library/path/without/file/extension"'
+				'Missing file extension in import/export "enhanced-resolve/lib/index"'
 			]
 		},
 		{
-			code: 'export { Something } from "@scoped/library/path/without/file/extension";',
+			code: 'export { git } from "@ckeditor/ckeditor5-dev-utils/lib/index";',
 			errors: [
-				'Missing file extension in import/export "@scoped/library/path/without/file/extension"'
+				'Missing file extension in import/export "@ckeditor/ckeditor5-dev-utils/lib/index"'
 			]
 		}
 	]
