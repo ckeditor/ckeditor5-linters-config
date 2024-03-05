@@ -1,6 +1,29 @@
 Changelog
 =========
 
+## [5.3.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.3.0...v5.3.1) (2024-03-05)
+
+### Bug fixes
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Report a missing file extension when '.' import or export is used. Fixes [[#15880](https://github.com/ckeditor/ckeditor5-linters-config/issues/15880)](https://github.com/ckeditor/ckeditor5/issues/15880). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/be3159e8b3351b992586da62359b7806277fa3b4))
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Properly detect valid imports of dependencies using the `exports` field. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/be3159e8b3351b992586da62359b7806277fa3b4))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.3.1): v5.3.0 => v5.3.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.3.1): v5.3.0 => v5.3.1
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.3.1): v5.3.0 => v5.3.1
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.3.1): v5.3.0 => v5.3.1
+</details>
+
+
 ## [5.3.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.2.1...v5.3.0) (2024-01-18)
 
 ### Features
@@ -92,29 +115,6 @@ Other releases:
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.1.3): v5.1.2 => v5.1.3
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.1.3): v5.1.2 => v5.1.3
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.1.3): v5.1.2 => v5.1.3
-</details>
-
-
-## [5.1.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.1.1...v5.1.2) (2023-10-20)
-
-### Other changes
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Upgrade the `@es-joy/jsdoccomment` package to its latest version to make the CKEditor 5 compatible with Node@20. Closes [ckeditor/ckeditor5#15203](https://github.com/ckeditor/ckeditor5/issues/15203). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/cc93260dd7aa17ddbe79cb6f4dbe1c1cd6a3157e))
-* Updated the required version of Node.js to 18 when developing the repository. See [ckeditor/ckeditor5#14924](https://github.com/ckeditor/ckeditor5/issues/14924). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/7852374add49fe23c9f7a436d7f119b35f5c6aa0))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.1.2): v5.1.1 => v5.1.2
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.1.2): v5.1.1 => v5.1.2
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.1.2): v5.1.1 => v5.1.2
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.1.2): v5.1.1 => v5.1.2
 </details>
 
 ---
