@@ -94,8 +94,13 @@ module.exports = {
 				 *
 				 * - `/absolute/path/to/index.js` and `../to`
 				 *                   ^^                   ^^
+				 *
+				 * - `/absolute/path/to/index.js and `.`
+				 *                   ^^               ^
 				 */
-				const lastMatchingIndex = resolvedPathParts.findLastIndex( element => urlParts.includes( element ) );
+				const lastMatchingIndex = resolvedPathParts.at( -1 ) === urlParts.at( -1 ) ?
+					resolvedPathParts.length - 1 : // Get index containing file name
+					resolvedPathParts.length - 2; // Get index containing directory name
 
 				/**
 				 * Concatenate parts of the path (after the `lastMatchingIndex`) to the end of the URL. Example:
