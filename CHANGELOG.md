@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [5.3.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.3.1...v5.3.2) (2024-03-08)
+
+### Bug fixes
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Improve autofixer for `'.'` imports to prepare a relative path to the `index.js` file rather than an absolute path to the imported file. Closes [ckeditor/ckeditor5#15880](https://github.com/ckeditor/ckeditor5/issues/15880). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/e978016bc39211b7a675dda6d53a30dac369eac0))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.3.2): v5.3.1 => v5.3.2
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.3.2): v5.3.1 => v5.3.2
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.3.2): v5.3.1 => v5.3.2
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.3.2): v5.3.1 => v5.3.2
+</details>
+
+
 ## [5.3.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.3.0...v5.3.1) (2024-03-05)
 
 ### Bug fixes
@@ -93,28 +115,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.2.0): v5.1.3 => v5.2.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.2.0): v5.1.3 => v5.2.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.2.0): v5.1.3 => v5.2.0
-</details>
-
-
-## [5.1.3](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.1.2...v5.1.3) (2023-12-12)
-
-### Bug fixes
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Fixed the `ckeditor5-rules/allow-declare-module-only-in-augmentation-file` rule that did not detect the correct path to the augmentation files on Windows due to using different path separators. Closes [ckeditor/ckeditor5#15426](https://github.com/ckeditor/ckeditor5/issues/15426). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/a02bdbd4a1dfd7e671f6530a2935598fd8ae85dc))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.1.3): v5.1.2 => v5.1.3
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.1.3): v5.1.2 => v5.1.3
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.1.3): v5.1.2 => v5.1.3
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.1.3): v5.1.2 => v5.1.3
 </details>
 
 ---
