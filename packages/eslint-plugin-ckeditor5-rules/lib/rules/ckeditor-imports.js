@@ -22,6 +22,7 @@ const CKEDITOR5_SHORT_PACKAGE_NAME_REGEXP = /ckeditor5\/src\/(.*)/;
 const DLL_IMPORT_ERROR = 'Imports from DLL packages must be done using the "ckeditor5" package.';
 const CKEDITOR5_INVALID_IMPORT = 'Imports from the `ckeditor5` package must use the `src/` directory.';
 const DLL_USE_FULL_NAME_IMPORT = 'Imports between DLL packages must use full package name.';
+const CKEDITOR5_CROSS_PACKAGE_IMPORT = 'Imports between different packages are not allowed.';
 
 // Short names of the packages that are marked as DLL packages.
 // They are located inside the `src/` directory in the CKEditor 5 repository.
@@ -98,6 +99,14 @@ module.exports = {
 				}
 
 				const shortPackageName = matchResult[ 1 ];
+
+				// Allows importing non-DLL packages.
+				if ( shortPackageName !== currentFileShortPackageName && node.importKind === 'value' ) {
+					return context.report( {
+						node,
+						message: CKEDITOR5_CROSS_PACKAGE_IMPORT
+					} );
+				}
 
 				// Allows importing non-DLL packages.
 				if ( !isPartOfDllPackages( shortPackageName ) ) {
