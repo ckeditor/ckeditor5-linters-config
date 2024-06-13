@@ -28,7 +28,7 @@ ruleTester.run(
 					}
 				]
 			},
-			// Do not allow importing from icons the `theme` folder.
+			// Do not allow importing icons from the `theme` folder.
 			{
 				code: 'import icon from "@ckeditor/ckeditor5-table/theme/icons/icon.svg";',
 				errors: [
