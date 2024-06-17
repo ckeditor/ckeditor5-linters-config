@@ -42,6 +42,8 @@ function getDependencies( packageName ) {
 
 		return dependencies;
 	} catch {
+		cache.set( packageName, [] );
+
 		return [];
 	}
 }
