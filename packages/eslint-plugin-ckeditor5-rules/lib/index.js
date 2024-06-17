@@ -7,6 +7,7 @@
 
 module.exports = {
 	rules: {
+		'no-legacy-imports': require( './rules/no-legacy-imports' ),
 		'no-relative-imports': require( './rules/no-relative-imports' ),
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
 		'ckeditor-imports': require( './rules/ckeditor-imports' ),
