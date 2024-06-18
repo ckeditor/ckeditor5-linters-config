@@ -59,7 +59,7 @@ module.exports = {
 		},
 		fixable: 'code',
 		messages: {
-			legacyImport: 'Import should use the new package name "{{ packageName }}"'
+			legacyImport: 'Import must be done from the "{{ packageName }}" package'
 		},
 		schema: [
 			{

@@ -36,6 +36,10 @@
   "peerDependencies": {
     "eslint": ">=7.0.0"
   },
+  "optionalDependencies": {
+    "ckeditor5": ">=42.0.0 || ^0.0.0-nightly",
+    "ckeditor5-premium-features": ">=42.0.0 || ^0.0.0-nightly"
+  },
   "dependencies": {
     "@es-joy/jsdoccomment": "^0.40.1",
     "@typescript-eslint/parser": "^5.52.0",
