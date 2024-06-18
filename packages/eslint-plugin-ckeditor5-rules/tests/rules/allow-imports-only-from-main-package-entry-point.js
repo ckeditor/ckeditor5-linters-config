@@ -19,12 +19,30 @@ ruleTester.run(
 			'import { Table } from "@ckeditor/ckeditor5-table";'
 		],
 		invalid: [
+			// Do not allow importing from the `src` folder.
 			{
 				code: 'import Table from "@ckeditor/ckeditor5-table/src/table";',
 				errors: [
 					{
-						// eslint-disable-next-line max-len
-						message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point, not from their "/src" folder.'
+						message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.'
+					}
+				]
+			},
+			// Do not allow importing icons from the `theme` folder.
+			{
+				code: 'import icon from "@ckeditor/ckeditor5-table/theme/icons/icon.svg";',
+				errors: [
+					{
+						message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.'
+					}
+				]
+			},
+			// Do not allow importing style sheets from the `theme` folder.
+			{
+				code: 'import styles from "@ckeditor/ckeditor5-table/theme/styles.css";',
+				errors: [
+					{
+						message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.'
 					}
 				]
 			}

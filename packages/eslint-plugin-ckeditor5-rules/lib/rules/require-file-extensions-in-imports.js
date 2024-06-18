@@ -5,7 +5,7 @@
 
 'use strict';
 
-const { normalize, extname, dirname, sep, parse, join } = require( 'upath' );
+const { normalize, extname, dirname, sep, parse } = require( 'upath' );
 const { isBuiltin } = require( 'module' );
 const { exports: resolveExports } = require( 'resolve.exports' );
 const enhancedResolve = require( 'enhanced-resolve' );
@@ -198,19 +198,5 @@ function isExternalPackage( url ) {
 		return false;
 	}
 
-	try {
-		// Resolve "exports" in the package.json file.
-		for ( const path of resolveExports( packageJson, url ) ) {
-			require.resolve(
-				join( dirname( packageJsonPath ), path )
-			);
-
-			return true;
-		}
-	} catch {
-		return false;
-	}
-
-	// URL is a valid npm package, but the path after the package name is not valid, likely missing a file extension.
-	return false;
+	return resolveExports( packageJson, url ).every( extname );
 }

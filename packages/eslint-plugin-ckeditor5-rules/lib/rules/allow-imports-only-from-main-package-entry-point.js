@@ -24,20 +24,21 @@ module.exports = {
 					return;
 				}
 
-				if ( !node.source.value.startsWith( '@ckeditor/' ) ) {
-					// Ignore packages whose names don't start with '@ckeditor/'.
+				const path = node.source.value;
+
+				if ( !path.startsWith( '@ckeditor/' ) ) {
+					// Ignore imports that do not start with '@ckeditor/'.
 					return;
 				}
 
-				if ( !node.source.value.includes( '/src/' ) ) {
-					// Ignore imports that don't include 'src'.
+				if ( path.split( '/' ).length === 2 ) {
+					// Ignore imports from the main package entry point.
 					return;
 				}
 
 				context.report( {
 					node,
-					// eslint-disable-next-line max-len
-					message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point, not from their "/src" folder.'
+					message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.'
 				} );
 			}
 		};
