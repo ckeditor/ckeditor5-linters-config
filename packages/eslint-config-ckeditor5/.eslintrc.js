@@ -398,6 +398,8 @@ module.exports = {
 				'no-unused-expressions': 'off',
 				'@typescript-eslint/no-unused-expressions': 'error',
 
+				'@typescript-eslint/no-unused-vars': 'error',
+
 				'no-use-before-define': 'off',
 				'@typescript-eslint/no-use-before-define': [
 					'error',
