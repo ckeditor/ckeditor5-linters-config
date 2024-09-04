@@ -57,7 +57,7 @@ ruleTester.run( 'no-legacy-imports', require( '../../lib/rules/no-legacy-imports
 			code: 'import Something from "ckeditor5/src/core";',
 			output: 'import Something from "ckeditor5";',
 			errors: [
-				'Import should use the new package name "ckeditor5"'
+				'Import must be done from the "ckeditor5" package'
 			]
 		},
 
@@ -65,14 +65,14 @@ ruleTester.run( 'no-legacy-imports', require( '../../lib/rules/no-legacy-imports
 			code: 'import Something from "ckeditor5/src/core.js";',
 			output: 'import Something from "ckeditor5";',
 			errors: [
-				'Import should use the new package name "ckeditor5"'
+				'Import must be done from the "ckeditor5" package'
 			]
 		},
 		{
 			code: 'import Something from "@ckeditor/ckeditor5-core";',
 			output: 'import Something from "ckeditor5";',
 			errors: [
-				'Import should use the new package name "ckeditor5"'
+				'Import must be done from the "ckeditor5" package'
 			]
 		},
 
@@ -81,21 +81,21 @@ ruleTester.run( 'no-legacy-imports', require( '../../lib/rules/no-legacy-imports
 			code: 'import Something from "ckeditor5-collaboration/src/collaboration-core";',
 			output: 'import Something from "ckeditor5-premium-features";',
 			errors: [
-				'Import should use the new package name "ckeditor5-premium-features"'
+				'Import must be done from the "ckeditor5-premium-features" package'
 			]
 		},
 		{
 			code: 'import Something from "ckeditor5-collaboration/src/collaboration-core.js";',
 			output: 'import Something from "ckeditor5-premium-features";',
 			errors: [
-				'Import should use the new package name "ckeditor5-premium-features"'
+				'Import must be done from the "ckeditor5-premium-features" package'
 			]
 		},
 		{
 			code: 'import Something from "@ckeditor/ckeditor5-ai";',
 			output: 'import Something from "ckeditor5-premium-features";',
 			errors: [
-				'Import should use the new package name "ckeditor5-premium-features"'
+				'Import must be done from the "ckeditor5-premium-features" package'
 			]
 		}
 	]
