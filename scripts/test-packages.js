@@ -56,3 +56,7 @@ if ( failed.length ) {
 }
 
 console.log( '' );
+
+if ( failed.length ) {
+	process.exit( 1 );
+}
