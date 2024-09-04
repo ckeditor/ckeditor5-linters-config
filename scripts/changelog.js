@@ -7,11 +7,21 @@
 
 'use strict';
 
-require( '@ckeditor/ckeditor5-dev-release-tools' )
-	.generateChangelogForMonoRepository( {
-		cwd: process.cwd(),
-		packages: 'packages',
-		transformScope: name => {
-			return 'https://www.npmjs.com/package/' + name;
-		}
-	} );
+const { generateChangelogForMonoRepository } = require( '@ckeditor/ckeditor5-dev-release-tools' );
+const parseArguments = require( './utils/parsearguments' );
+
+const cliArguments = parseArguments( process.argv.slice( 2 ) );
+
+const changelogOptions = {
+	cwd: process.cwd(),
+	packages: 'packages',
+	transformScope: name => {
+		return 'https://www.npmjs.com/package/' + name;
+	}
+};
+
+if ( cliArguments.from ) {
+	changelogOptions.from = cliArguments.from;
+}
+
+generateChangelogForMonoRepository( changelogOptions );
