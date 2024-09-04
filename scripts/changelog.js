@@ -17,7 +17,8 @@ const changelogOptions = {
 	packages: 'packages',
 	transformScope: name => {
 		return 'https://www.npmjs.com/package/' + name;
-	}
+	},
+	releaseBranch: cliArguments.branch
 };
 
 if ( cliArguments.from ) {
