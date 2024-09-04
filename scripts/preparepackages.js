@@ -11,8 +11,9 @@
 
 const { Listr } = require( 'listr2' );
 const releaseTools = require( '@ckeditor/ckeditor5-dev-release-tools' );
-const parseArguments = require( './utils/parsearguments' );
 const isMonoRepositoryDependency = require( './utils/ismonorepositorydependency' );
+const parseArguments = require( './utils/parsearguments' );
+const getListrOptions = require( './utils/getlistroptions' );
 const { PACKAGES_DIRECTORY, RELEASE_DIRECTORY } = require( './utils/constants' );
 
 const cliArguments = parseArguments( process.argv.slice( 2 ) );
@@ -26,7 +27,7 @@ const tasks = new Listr( [
 			const errors = await releaseTools.validateRepositoryToRelease( {
 				version: latestVersion,
 				changes: versionChangelog,
-				branch: 'master'
+				branch: cliArguments.branch
 			} );
 
 			if ( !errors.length ) {
@@ -34,6 +35,14 @@ const tasks = new Listr( [
 			}
 
 			return Promise.reject( 'Aborted due to errors.\n' + errors.map( message => `* ${ message }` ).join( '\n' ) );
+		},
+		skip: () => {
+			// When compiling the packages only, do not validate the release.
+			if ( cliArguments.compileOnly ) {
+				return true;
+			}
+
+			return false;
 		}
 	},
 	{
@@ -43,6 +52,14 @@ const tasks = new Listr( [
 				packagesDirectory: PACKAGES_DIRECTORY,
 				version: latestVersion
 			} );
+		},
+		skip: () => {
+			// When compiling the packages only, do not validate the release.
+			if ( cliArguments.compileOnly ) {
+				return true;
+			}
+
+			return false;
 		}
 	},
 	{
@@ -53,6 +70,14 @@ const tasks = new Listr( [
 				packagesDirectory: PACKAGES_DIRECTORY,
 				shouldUpdateVersionCallback: isMonoRepositoryDependency
 			} );
+		},
+		skip: () => {
+			// When compiling the packages only, do not validate the release.
+			if ( cliArguments.compileOnly ) {
+				return true;
+			}
+
+			return false;
 		}
 	},
 	{
@@ -83,9 +108,17 @@ const tasks = new Listr( [
 					`${ PACKAGES_DIRECTORY }/*/package.json`
 				]
 			} );
+		},
+		skip: () => {
+			// When compiling the packages only, do not validate the release.
+			if ( cliArguments.compileOnly ) {
+				return true;
+			}
+
+			return false;
 		}
 	}
-] );
+], getListrOptions( cliArguments ) );
 
 tasks.run()
 	.catch( err => {
