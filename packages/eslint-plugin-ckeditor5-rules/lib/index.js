@@ -20,6 +20,7 @@ module.exports = {
 		'no-istanbul-in-debug-code': require( './rules/no-istanbul-in-debug-code' ),
 		'allow-declare-module-only-in-augmentation-file': require( './rules/allow-declare-module-only-in-augmentation-file' ),
 		'allow-imports-only-from-main-package-entry-point': require( './rules/allow-imports-only-from-main-package-entry-point.js' ),
+		'prevent-license-key-leak': require( './rules/prevent-license-key-leak' ),
 		'require-as-const-returns-in-methods': require( './rules/require-as-const-returns-in-methods' ),
 		'require-file-extensions-in-imports': require( './rules/require-file-extensions-in-imports' )
 	}
