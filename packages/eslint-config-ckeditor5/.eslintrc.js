@@ -308,7 +308,8 @@ module.exports = {
 		'yield-star-spacing': [
 			'error',
 			'after'
-		]
+		],
+		'ckeditor5-rules/prevent-license-key-leak': 'error'
 	},
 	overrides: [
 		// Rules for all TypeScript files.
