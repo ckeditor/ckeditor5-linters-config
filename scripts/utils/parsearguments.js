@@ -33,7 +33,7 @@ module.exports = function parseArguments( cliArguments ) {
 		],
 
 		default: {
-			concurrency: require( 'os' ).cpus().length / 2,
+			concurrency: Math.floor( require( 'os' ).cpus().length / 2 ) || 1,
 			packages: null,
 			ci: false,
 			verbose: false,
