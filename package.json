@@ -32,9 +32,9 @@
     "@ckeditor/ckeditor5-dev-bump-year": "^44.0.0-alpha.0",
     "@ckeditor/ckeditor5-dev-ci": "^44.0.0-alpha.0",
     "@ckeditor/ckeditor5-dev-release-tools": "^44.0.0-alpha.0",
-    "eslint": "^7.0.0",
+    "eslint": "^8.21.0",
     "husky": "^8.0.2",
-    "lint-staged": "^13.0.0",
+    "lint-staged": "^15.0.0",
     "listr2": "^6.5.0"
   },
   "resolutions": {
