@@ -3,7 +3,5 @@
  * For licensing, see LICENSE.md.
  */
 
-module.exports = {
-	PACKAGES_DIRECTORY: 'packages',
-	RELEASE_DIRECTORY: 'release'
-};
+export const PACKAGES_DIRECTORY = 'packages';
+export const RELEASE_DIRECTORY = 'release';

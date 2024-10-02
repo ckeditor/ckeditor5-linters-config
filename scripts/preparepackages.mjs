@@ -7,14 +7,12 @@
 
 /* eslint-env node */
 
-'use strict';
-
-const { Listr } = require( 'listr2' );
-const releaseTools = require( '@ckeditor/ckeditor5-dev-release-tools' );
-const isMonoRepositoryDependency = require( './utils/ismonorepositorydependency' );
-const parseArguments = require( './utils/parsearguments' );
-const getListrOptions = require( './utils/getlistroptions' );
-const { PACKAGES_DIRECTORY, RELEASE_DIRECTORY } = require( './utils/constants' );
+import { Listr } from 'listr2';
+import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
+import parseArguments from './utils/parsearguments.mjs';
+import getListrOptions from './utils/getlistroptions.mjs';
+import isMonoRepositoryDependency from './utils/ismonorepositorydependency.mjs';
+import { PACKAGES_DIRECTORY, RELEASE_DIRECTORY } from './utils/constants.mjs';
 
 const cliArguments = parseArguments( process.argv.slice( 2 ) );
 const latestVersion = releaseTools.getLastFromChangelog();
