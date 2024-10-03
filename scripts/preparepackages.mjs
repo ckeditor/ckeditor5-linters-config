@@ -7,8 +7,11 @@
 
 /* eslint-env node */
 
-import { Listr } from 'listr2';
+import fs from 'fs-extra';
 import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
+import { Listr } from 'listr2';
+import { ListrInquirerPromptAdapter } from '@listr2/prompt-adapter-inquirer';
+import { confirm } from '@inquirer/prompts';
 import parseArguments from './utils/parsearguments.mjs';
 import getListrOptions from './utils/getlistroptions.mjs';
 import isMonoRepositoryDependency from './utils/ismonorepositorydependency.mjs';
@@ -41,6 +44,38 @@ const tasks = new Listr( [
 			}
 
 			return false;
+		}
+	},
+	{
+		title: 'Check the release directory.',
+		task: async ( ctx, task ) => {
+			const isAvailable = await fs.exists( RELEASE_DIRECTORY );
+
+			if ( !isAvailable ) {
+				return fs.ensureDir( RELEASE_DIRECTORY );
+			}
+
+			const isEmpty = ( await fs.readdir( RELEASE_DIRECTORY ) ).length === 0;
+
+			if ( isEmpty ) {
+				return Promise.resolve();
+			}
+
+			// Do not ask when running on CI.
+			if ( cliArguments.ci ) {
+				return fs.emptyDir( RELEASE_DIRECTORY );
+			}
+
+			const shouldContinue = await task.prompt( ListrInquirerPromptAdapter )
+				.run( confirm, {
+					message: 'The release directory must be empty. Continue and remove all files?'
+				} );
+
+			if ( !shouldContinue ) {
+				return Promise.reject( 'Aborting as requested.' );
+			}
+
+			return fs.emptyDir( RELEASE_DIRECTORY );
 		}
 	},
 	{
