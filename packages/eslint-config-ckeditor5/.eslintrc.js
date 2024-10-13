@@ -483,6 +483,12 @@ module.exports = {
 					{
 						methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
 					}
+				],
+				'ckeditor5-rules/ckeditor-plugin-flags': [
+					'error',
+					{
+						disallowedFlags: [ 'isOfficialPlugin', 'isPremiumPlugin' ]
+					}
 				]
 			}
 		},
