@@ -63,8 +63,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
-					public static get isOfficialPlugin(): true { return true; }
-					public static get isPremiumPlugin(): false { return false; }
+					public static override get isOfficialPlugin(): true { return true; }
+					public static override get isPremiumPlugin(): false { return false; }
 				}
 			`,
 			options: [
@@ -89,15 +89,15 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
-					public static get isOfficialPlugin(): true { return true; }
-					public static get isPremiumPlugin(): false { return false; }
-					public static get isNotOfficialPlugin(): false { return false; }
+					public static override get isOfficialPlugin(): true { return true; }
+					public static override get isPremiumPlugin(): false { return false; }
+					public static override get isNotOfficialPlugin(): false { return false; }
 				}
 			`,
 			output: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
-					public static get isPremiumPlugin(): false { return false; }
+					public static override get isPremiumPlugin(): false { return false; }
 				}
 			`,
 			options: [
@@ -117,18 +117,18 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
 
-					public static get isOfficialPlugin(): true { return true; }
+					public static override get isOfficialPlugin(): true { return true; }
 
-					public static get isPremiumPlugin(): false { return false; }
+					public static override get isPremiumPlugin(): false { return false; }
 
-					public static get isNotOfficialPlugin(): false { return false; }
+					public static override get isNotOfficialPlugin(): false { return false; }
 				}
 			`,
 			output: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
 
-					public static get isPremiumPlugin(): false { return false; }
+					public static override get isPremiumPlugin(): false { return false; }
 				}
 			`,
 			options: [
@@ -156,14 +156,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): true {
+					public static override get isPremiumPlugin(): true {
 						return true;
 					}
 				}
@@ -193,8 +193,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
-					public static get isOfficialPlugin(): false { return false; }
-					public static get isPremiumPlugin(): true { return true; }
+					public static override get isOfficialPlugin(): false { return false; }
+					public static override get isPremiumPlugin(): true { return true; }
 					public foo() {}
 				}
 			`,
@@ -205,14 +205,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 					public foo() {}
@@ -246,9 +246,9 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
 
-					public static get isOfficialPlugin(): false { return false; }
+					public static override get isOfficialPlugin(): false { return false; }
 
-					public static get isPremiumPlugin(): true { return true; }
+					public static override get isPremiumPlugin(): true { return true; }
 				}
 			`,
 			output: `
@@ -258,14 +258,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 				}
@@ -298,7 +298,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
 
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						if ( true ) {
 							return true;
 						}
@@ -314,7 +314,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 				}
@@ -350,7 +350,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 				}
@@ -377,7 +377,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
@@ -391,7 +391,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 				}
@@ -407,8 +407,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 				}
 			],
 			errors: [
-				{ messageId: 'definedBeforePluginName' },
-				{ messageId: 'definedInProperOrder' }
+				{ messageId: 'definedBeforePluginName' }
 			]
 		},
 
@@ -421,14 +420,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 				}
@@ -440,14 +439,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 				}
@@ -481,7 +480,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
@@ -492,7 +491,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 				}
@@ -504,14 +503,14 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					/**
 					 * @inheritDoc
 					 */
-					public static get isOfficialPlugin(): true {
+					public static override get isOfficialPlugin(): true {
 						return true;
 					}
 
 					/**
 					 * @inheritDoc
 					 */
-					public static get isPremiumPlugin(): false {
+					public static override get isPremiumPlugin(): false {
 						return false;
 					}
 

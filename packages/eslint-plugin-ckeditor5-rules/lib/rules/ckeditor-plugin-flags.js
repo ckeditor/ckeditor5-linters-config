@@ -109,8 +109,10 @@ function getDisallowedFlagsConfig( context ) {
 function analyzePluginClass( context, classDeclaration ) {
 	checkIfThereAreNoDisallowedFlags( context, classDeclaration );
 	checkIfAllFlagsAreProperlyDefined( context, classDeclaration );
-	checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration );
-	checkIfFlagsDefinedInProperOrder( context, classDeclaration );
+
+	const misalignedMethods = checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration );
+
+	checkIfFlagsDefinedInProperOrder( context, classDeclaration, misalignedMethods );
 }
 
 /**
@@ -237,7 +239,7 @@ function checkIfAllFlagsAreProperlyDefined( context, classDeclaration ) {
 				data: {
 					flag: requiredFlag.name,
 					returnValue: requiredFlag.returnValue,
-					actualValue: definedMethod.value?.returnType?.typeAnnotation?.literal?.value
+					actualValue: definedMethod.value?.returnType?.typeAnnotation?.literal?.value ?? 'other type'
 				}
 			} );
 		}
@@ -280,6 +282,7 @@ function checkIfAllFlagsAreProperlyDefined( context, classDeclaration ) {
  *
  * @param {Object} context The ESLint rule context.
  * @param {Object} classDeclaration The class declaration node to analyze.
+ * @returns {Array.<Object>} A list of methods that should be ignored in the next check.
  * @example
  *
  * Let's assume we have the following class declaration:
@@ -300,16 +303,28 @@ function checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration ) {
 		staticClassGetters.indexOf( getPluginNameMethod( classDeclaration ) ) + 1
 	);
 
-	// Check if every required flag is defined in the proper order.
-	for ( const requiredFlag of getRequiredFlagsConfig( context ) ) {
-		// Check if method is defined somewhere in the class.
-		const flagDefinedSomewhereInClass = staticClassGetters.find(
-			element => element.key.name === requiredFlag.name
+	// Check if every required flag is defined in the proper order
+	// If not then collect all methods that are in the wrong order to ignore them in the next check.
+	const flagsDefinedBeforePluginName = getRequiredFlagsConfig( context ).flatMap( requiredFlag => {
+		const matchedGettersBeforeRequiredFlag = staticClassGetters.filter(
+			staticGetter =>
+				staticGetter.key.name === requiredFlag.name &&
+				!methodsAfterPluginName.includes( staticGetter )
 		);
 
-		if ( flagDefinedSomewhereInClass && !methodsAfterPluginName.includes( flagDefinedSomewhereInClass ) ) {
+		if ( matchedGettersBeforeRequiredFlag.length ) {
+			return [ [ requiredFlag, matchedGettersBeforeRequiredFlag ] ];
+		}
+
+		return [];
+	} );
+
+	// Report an error for every flag that is defined before the `pluginName` method.
+	for ( const [ requiredFlag, methodsSomewhereInClass ] of flagsDefinedBeforePluginName ) {
+		// There is edge case scenario where the flag is defined multiple times in the class so handle it as well.
+		for ( const affectedMethod of methodsSomewhereInClass ) {
 			context.report( {
-				node: flagDefinedSomewhereInClass,
+				node: affectedMethod,
 				fix: createPluginsFlagsFixer( context, classDeclaration ),
 				messageId: 'definedBeforePluginName',
 				data: {
@@ -318,6 +333,9 @@ function checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration ) {
 			} );
 		}
 	}
+
+	// Return plain list of methods that are in the wrong order to ignore them in the next check.
+	return flagsDefinedBeforePluginName.flatMap( ( [ , methodsSomewhereInClass ] ) => methodsSomewhereInClass );
 }
 
 /**
@@ -325,6 +343,7 @@ function checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration ) {
  *
  * @param {Object} context The ESLint rule context.
  * @param {Object} classDeclaration The class declaration node to analyze.
+ * @param {Array.<Object>} ignoredMethods A list of methods that should be ignored during the check.
  * @example
  *
  * Let's assume we have the following class declaration:
@@ -341,7 +360,7 @@ function checkIfFlagsAreDefinedAfterPluginName( context, classDeclaration ) {
  * This check will report an error for the `isPremiumPlugin` method because it
  * should be defined directly after the `isOfficialPlugin` method.
  */
-function checkIfFlagsDefinedInProperOrder( context, classDeclaration ) {
+function checkIfFlagsDefinedInProperOrder( context, classDeclaration, ignoredMethods = [] ) {
 	const orderedMethodsLinkedList = getRequiredFlagsConfig( context ).map( ( flag, index, array ) => ( {
 		name: flag.name,
 		before: {
@@ -355,6 +374,11 @@ function checkIfFlagsDefinedInProperOrder( context, classDeclaration ) {
 		// Ignore if method signature is not a getter or it's not a static method.
 		if ( !isStaticGetterMethod( classNode ) ) {
 			lastGetterMethod = null;
+			continue;
+		}
+
+		// Check if method was reported by one of previous analyzers. If so, ignore it, do not report similar error twice.
+		if ( ignoredMethods.includes( classNode ) ) {
 			continue;
 		}
 
@@ -447,7 +471,7 @@ function createPluginsFlagsFixer( context, classDeclaration ) {
 				`${ index ? '' : '\n\n' }${ indent }/**\n` +
 				`${ indent } * @inheritDoc\n` +
 				`${ indent } */\n` +
-				`${ indent }public static get ${ requiredFlag.name }(): ${ requiredFlag.returnValue } {\n` +
+				`${ indent }public static override get ${ requiredFlag.name }(): ${ requiredFlag.returnValue } {\n` +
 				`${ indent }\treturn ${ requiredFlag.returnValue };\n` +
 				`${ indent }}${ isLastIndex ? '' : '\n\n' }`;
 
