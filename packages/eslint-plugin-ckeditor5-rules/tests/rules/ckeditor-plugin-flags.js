@@ -188,6 +188,62 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
+		// Should properly recognize missing required flags on plugin that extends mixin.
+		{
+			code: `
+				class FormatPainterUI extends /* #__PURE__ -- @preserve */ DomEmitterMixin( Plugin ) {
+					/**
+					 * @inheritDoc
+					 */
+					public static get pluginName() {
+						return 'FormatPainterUI' as const;
+					}
+				}
+			`,
+			output: `
+				class FormatPainterUI extends /* #__PURE__ -- @preserve */ DomEmitterMixin( Plugin ) {
+					/**
+					 * @inheritDoc
+					 */
+					public static get pluginName() {
+						return 'FormatPainterUI' as const;
+					}
+
+					/**
+					 * @inheritDoc
+					 */
+					public static override get isOfficialPlugin(): true {
+						return true;
+					}
+
+					/**
+					 * @inheritDoc
+					 */
+					public static override get isPremiumPlugin(): true {
+						return true;
+					}
+				}
+			`,
+			options: [
+				{
+					requiredFlags: [
+						{
+							name: 'isOfficialPlugin',
+							returnValue: true
+						},
+						{
+							name: 'isPremiumPlugin',
+							returnValue: true
+						}
+					]
+				}
+			],
+			errors: [
+				{ messageId: 'missingRequiredFlag' },
+				{ messageId: 'missingRequiredFlag' }
+			]
+		},
+
 		// Should properly fix non spaced method definition when there are multiple required flags.
 		{
 			code: `

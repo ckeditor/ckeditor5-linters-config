@@ -559,12 +559,70 @@ function createRemoveClassMembersFixer( context, classDeclaration, names ) {
  */
 function isPluginClassDeclaration( classDeclaration ) {
 	// Check if the class extends the Plugin or ContextPlugin class.
-	if ( ![ 'Plugin', 'ContextPlugin' ].includes( classDeclaration.superClass?.name ) ) {
+	const extendedClassNames = extractFlatExtendedClassNames( classDeclaration );
+
+	if ( !extendedClassNames.some( extendedClass => [ 'Plugin', 'ContextPlugin' ].includes( extendedClass ) ) ) {
 		return false;
 	}
 
 	// Check if the class has a static getter method that returns the plugin name.
 	return !!getPluginNameMethod( classDeclaration );
+}
+
+/**
+ * Extracts all class names from the class declaration. It takes into account extended classes.
+ *
+ * @param {Object} classDeclaration
+ * @returns {Array.<String>} The list of class names that the class extends.
+ * @example
+ *
+ * Scenario #1, let's assume we have the following class declaration:
+ *
+ * ```
+ * class TestPlugin extends Plugin {
+ * 	static get pluginName() { return 'TestPlugin'; }
+ * }
+ * ```
+ *
+ * extractFlatExtendedClassNames( node ); // [ 'Plugin' ]
+ *
+ * ---
+ *
+ * Scenario #2, let's assume we have the following class declaration:
+ *
+ * ```
+ * class TestPlugin extends MagicMixin( Plugin, Plugin2 ) {
+ * 	static get pluginName() { return 'TestPlugin'; }
+ * }
+ * ```
+ *
+ * extractFlatExtendedClassNames( node ); // [ 'Plugin', 'Plugin2' ]
+ */
+function extractFlatExtendedClassNames( classDeclaration ) {
+	function unrollExtendStatements( node ) {
+		if ( !node ) {
+			return [];
+		}
+
+		// It looks like class extends another class using mixin.
+		// Let's extract all class names from the mixin walking through the arguments.
+		// Example of the mixin extend: `class TestPlugin extends MagicMixin( BasePlugin, BasePlugin2, ... ) { ... }`
+		if ( node.type === 'CallExpression' &&
+				node.callee.type === 'Identifier' &&
+				node.callee.name.endsWith( 'Mixin' ) ) {
+			return ( node.callee.parent?.arguments || [] ).flatMap( unrollExtendStatements );
+		}
+
+		// It looks like we encountered normal class extend identifier. Let's collect it.
+		if ( node.type === 'Identifier' && node.name ) {
+			return [ node.name ];
+		}
+
+		// It looks like we encountered another class extend. Let's ignore it.
+		return [];
+	}
+
+	return unrollExtendStatements( classDeclaration.superClass );
 }
 
 /**
