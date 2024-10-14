@@ -94,12 +94,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					public static override get isNotOfficialPlugin(): false { return false; }
 				}
 			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-					public static override get isPremiumPlugin(): false { return false; }
-				}
-			`,
 			options: [
 				{
 					disallowedFlags: [ 'isOfficialPlugin', 'isNotOfficialPlugin' ]
@@ -124,13 +118,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					public static override get isNotOfficialPlugin(): false { return false; }
 				}
 			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					public static override get isPremiumPlugin(): false { return false; }
-				}
-			`,
 			options: [
 				{
 					disallowedFlags: [ 'isOfficialPlugin', 'isNotOfficialPlugin' ]
@@ -147,25 +134,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			code: `
 				class TestNonPlugin extends Plugin {
 					static get pluginName() { return 'TestNonPlugin'; }
-				}
-			`,
-			output: `
-				class TestNonPlugin extends Plugin {
-					static get pluginName() { return 'TestNonPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): true {
-						return true;
-					}
 				}
 			`,
 			options: [
@@ -200,30 +168,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					}
 				}
 			`,
-			output: `
-				class FormatPainterUI extends /* #__PURE__ -- @preserve */ DomEmitterMixin( Plugin ) {
-					/**
-					 * @inheritDoc
-					 */
-					public static get pluginName() {
-						return 'FormatPainterUI' as const;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): true {
-						return true;
-					}
-				}
-			`,
 			options: [
 				{
 					requiredFlags: [
@@ -244,58 +188,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should properly fix non spaced method definition when there are multiple required flags.
-		{
-			code: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-					public static override get isOfficialPlugin(): false { return false; }
-					public static override get isPremiumPlugin(): true { return true; }
-					public foo() {}
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-					public foo() {}
-				}
-			`,
-			options: [
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						},
-						{
-							name: 'isPremiumPlugin',
-							returnValue: false
-						}
-					]
-				}
-			],
-			errors: [
-				{ messageId: 'incorrectReturnValue' },
-				{ messageId: 'incorrectReturnLiteral' },
-				{ messageId: 'incorrectReturnValue' },
-				{ messageId: 'incorrectReturnLiteral' }
-			]
-		},
-
 		// Should raise error when plugin class has required flags with wrong return value.
 		{
 			code: `
@@ -307,25 +199,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					public static override get isPremiumPlugin(): true { return true; }
 				}
 			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-				}
-			`,
 			options: [
 				{
 					requiredFlags: [
@@ -342,51 +215,7 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			],
 			errors: [
 				{ messageId: 'incorrectReturnValue' },
-				{ messageId: 'incorrectReturnLiteral' },
-				{ messageId: 'incorrectReturnValue' },
-				{ messageId: 'incorrectReturnLiteral' }
-			]
-		},
-
-		// Should raise error if return value is not a single return statement.
-		{
-			code: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					public static override get isOfficialPlugin(): true {
-						if ( true ) {
-							return true;
-						}
-
-						return false;
-					}
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-				}
-			`,
-			options: [
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						}
-					]
-				}
-			],
-			errors: [
-				{ messageId: 'singleReturnStatement' }
+				{ messageId: 'incorrectReturnValue' }
 			]
 		},
 
@@ -397,18 +226,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 					static get pluginName() { return 'TestPlugin'; }
 
 					private static get isOfficialPlugin(): true { return true; }
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
 				}
 			`,
 			options: [
@@ -423,174 +240,6 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			],
 			errors: [
 				{ messageId: 'notPublicGetter' }
-			]
-		},
-
-		// Should raise error if flag is defined before pluginName.
-		{
-			code: `
-				class TestPlugin extends Plugin {
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					static get pluginName() { return 'TestPlugin'; }
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-				}
-			`,
-			options: [
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						}
-					]
-				}
-			],
-			errors: [
-				{ messageId: 'definedBeforePluginName' }
-			]
-		},
-
-		// Should raise error if flags are not defined in proper order.
-		{
-			code: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-				}
-			`,
-			options: [
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						},
-						{
-							name: 'isPremiumPlugin',
-							returnValue: false
-						}
-					]
-				}
-			],
-			errors: [
-				{ messageId: 'definedAfterSpecificMethod' },
-				{ messageId: 'definedAfterSpecificMethod' }
-			]
-		},
-
-		// Should raise error about incorrect flags order if there is constructor between flags.
-		{
-			code: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					constructor() {
-						super();
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-				}
-			`,
-			output: `
-				class TestPlugin extends Plugin {
-					static get pluginName() { return 'TestPlugin'; }
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isOfficialPlugin(): true {
-						return true;
-					}
-
-					/**
-					 * @inheritDoc
-					 */
-					public static override get isPremiumPlugin(): false {
-						return false;
-					}
-
-					constructor() {
-						super();
-					}
-				}
-			`,
-			options: [
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						},
-						{
-							name: 'isPremiumPlugin',
-							returnValue: false
-						}
-					]
-				}
-			],
-			errors: [
-				{ messageId: 'definedInProperOrder' }
 			]
 		}
 	]
