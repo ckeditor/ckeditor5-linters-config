@@ -57,7 +57,8 @@ module.exports = {
 		return {
 			'ClassDeclaration:exit'( classDeclaration ) {
 				if ( isPluginClassDeclaration( classDeclaration ) ) {
-					analyzePluginClass( context, classDeclaration );
+					checkIfThereAreNoDisallowedFlags( context, classDeclaration );
+					checkIfAllFlagsAreProperlyDefined( context, classDeclaration );
 				}
 			}
 		};
@@ -82,27 +83,6 @@ function getRequiredFlagsConfig( context ) {
  */
 function getDisallowedFlagsConfig( context ) {
 	return context.options[ 0 ]?.disallowedFlags ?? [];
-}
-
-/**
- * Analyzes the plugin class declaration and performs all necessary checks and reports errors if needed.
- * What it does:
- *
- * 	* It checks if there are no disallowed flags.
- * 	* It checks if all required flags are defined in the class declaration.
- * 	* It checks if all required flags are defined after the `pluginName` method.
- * 	* It checks if all required flags are defined in the proper order (after each other).
- *
- * While checking the order might be not super important, it's a good practice to keep the flags in the same order
- * to avoid situations where the flags are scattered across the class. It unifies alignment of the methods with
- * auto-fixer which enforces defining all flags after the `pluginName` method (mostly because it simplifies the fixer).
- *
- * @param {Object} context The ESLint rule context.
- * @param {Object} classDeclaration The class declaration node to analyze.
- */
-function analyzePluginClass( context, classDeclaration ) {
-	checkIfThereAreNoDisallowedFlags( context, classDeclaration );
-	checkIfAllFlagsAreProperlyDefined( context, classDeclaration );
 }
 
 /**
