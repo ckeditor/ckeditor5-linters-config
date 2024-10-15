@@ -1,6 +1,36 @@
 Changelog
 =========
 
+## [8.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v7.1.1...v8.0.0) (2024-10-15)
+
+### MINOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* Defining `isOfficialPlugin` and `isPremiumPlugin` flags in plugins is no longer allowed, as they are now restricted to internal use only.
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Add the `ckeditor5/ckeditor-plugin-flags` rule that disallows creating certain flags in plugins and enforces proper code style for allowed ones. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/bdc3234706a406af5e813169f2aa56b67b4e9e3b))
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Disallow defining `isOfficialPlugin` and `isPremiumPlugin` flags in plugins, restricting them to internal use only. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/bdc3234706a406af5e813169f2aa56b67b4e9e3b))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/8.0.0): v7.1.1 => v8.0.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/8.0.0): v7.1.1 => v8.0.0
+
+Other releases:
+
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/8.0.0): v7.1.1 => v8.0.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/8.0.0): v7.1.1 => v8.0.0
+</details>
+
+
 ## [7.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v7.1.0...v7.1.1) (2024-10-02)
 
 Internal changes only (updated dependencies, documentation, etc.).
@@ -102,28 +132,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/6.0.0): v5.3.2 => v6.0.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/6.0.0): v5.3.2 => v6.0.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/6.0.0): v5.3.2 => v6.0.0
-</details>
-
-
-## [5.3.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v5.3.1...v5.3.2) (2024-03-08)
-
-### Bug fixes
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Improve autofixer for `'.'` imports to prepare a relative path to the `index.js` file rather than an absolute path to the imported file. Closes [ckeditor/ckeditor5#15880](https://github.com/ckeditor/ckeditor5/issues/15880). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/e978016bc39211b7a675dda6d53a30dac369eac0))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/5.3.2): v5.3.1 => v5.3.2
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/5.3.2): v5.3.1 => v5.3.2
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/5.3.2): v5.3.1 => v5.3.2
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/5.3.2): v5.3.1 => v5.3.2
 </details>
 
 ---
