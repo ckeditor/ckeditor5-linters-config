@@ -10,7 +10,6 @@ const PLUGIN_NAME_METHOD_NAME = 'pluginName';
 module.exports = {
 	meta: {
 		type: 'problem',
-		fixable: 'code',
 		docs: {
 			description: 'Enforce the presence of the plugin flags.',
 			category: 'CKEditor5'
