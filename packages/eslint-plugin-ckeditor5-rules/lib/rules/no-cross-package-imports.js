@@ -27,6 +27,10 @@ module.exports = {
 
 		return {
 			ImportDeclaration: node => {
+				if ( node.importKind === 'type' ) {
+					return;
+				}
+
 				// Find the name of the current processed package.
 				const processedPackage = context.getFilename().replace( context.getCwd(), '' );
 
