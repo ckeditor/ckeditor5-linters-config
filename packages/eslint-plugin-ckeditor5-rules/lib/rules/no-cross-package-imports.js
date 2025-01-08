@@ -27,6 +27,10 @@ module.exports = {
 
 		return {
 			ImportDeclaration: node => {
+				if ( node.importKind === 'type' ) {
+					return;
+				}
+
 				// Find the name of the current processed package.
 				const processedPackage = context.getFilename().replace( context.getCwd(), '' );
 
@@ -38,7 +42,7 @@ module.exports = {
 				}
 
 				// If so, verify whether imported path imports a module from CKEditor 5.
-				if ( node.importKind !== 'type' && CKEDITOR5_IMPORT_REGEXP.test( node.source.value ) ) {
+				if ( CKEDITOR5_IMPORT_REGEXP.test( node.source.value ) ) {
 					context.report( {
 						node,
 						message: 'This package cannot import CKEditor 5 packages.'
