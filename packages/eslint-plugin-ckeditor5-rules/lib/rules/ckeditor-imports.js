@@ -37,6 +37,7 @@ const DLL_PACKAGES = [
 	'undo',
 	'upload',
 	'utils',
+	'watchdog',
 	'widget'
 ];
 
