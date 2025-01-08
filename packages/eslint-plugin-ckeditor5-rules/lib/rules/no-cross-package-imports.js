@@ -38,7 +38,7 @@ module.exports = {
 				}
 
 				// If so, verify whether imported path imports a module from CKEditor 5.
-				if ( CKEDITOR5_IMPORT_REGEXP.test( node.source.value ) ) {
+				if ( node.importKind !== 'type' && CKEDITOR5_IMPORT_REGEXP.test( node.source.value ) ) {
 					context.report( {
 						node,
 						message: 'This package cannot import CKEditor 5 packages.'
