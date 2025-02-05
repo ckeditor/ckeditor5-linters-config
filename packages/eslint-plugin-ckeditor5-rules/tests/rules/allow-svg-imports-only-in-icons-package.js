@@ -17,10 +17,6 @@ ruleTester.run(
 	{
 		valid: [
 			{
-				code: 'import Icon from \'./icon.svg\';',
-				filename: '/some/docs/path/file.js'
-			},
-			{
 				code: 'export { default as Icon } from \'./icon.svg\';',
 				filename: '/packages/ckeditor5-icons/src/index.ts'
 			}
@@ -31,7 +27,7 @@ ruleTester.run(
 				filename: '/some/path/src/invalid.ts',
 				errors: [
 					{
-						message: 'SVG imports are only allowed in docs and the `@ckeditor/ckeditor5-icons` package.'
+						message: 'SVG imports are only allowed in the `@ckeditor/ckeditor5-icons` package.'
 					}
 				]
 			},
@@ -40,7 +36,7 @@ ruleTester.run(
 				filename: '/some/path/src/invalid.ts',
 				errors: [
 					{
-						message: 'SVG imports are only allowed in docs and the `@ckeditor/ckeditor5-icons` package.'
+						message: 'SVG imports are only allowed in the `@ckeditor/ckeditor5-icons` package.'
 					}
 				]
 			}

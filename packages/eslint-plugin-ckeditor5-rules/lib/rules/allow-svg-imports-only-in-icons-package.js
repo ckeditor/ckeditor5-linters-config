@@ -18,22 +18,16 @@ module.exports = {
 		}
 	},
 	create( { filename, report } ) {
+		if ( filename.includes( 'ckeditor5-icons' ) ) {
+			return {};
+		}
+
 		function validatePath( node ) {
-			const ignored = [
-				'docs',
-				'ckeditor5-icons'
-			];
-
-			if ( ignored.some( name => filename.includes( name ) ) ) {
-				return;
-			}
-
 			if ( !node.source ) {
 				return;
 			}
 
-			const url = node.source.value;
-			const extention = extname( url );
+			const extention = extname( node.source.value );
 
 			if ( !extention || extention !== '.svg' ) {
 				return;
@@ -41,7 +35,7 @@ module.exports = {
 
 			report( {
 				node,
-				message: 'SVG imports are only allowed in docs and the `@ckeditor/ckeditor5-icons` package.'
+				message: 'SVG imports are only allowed in the `@ckeditor/ckeditor5-icons` package.'
 			} );
 		}
 
