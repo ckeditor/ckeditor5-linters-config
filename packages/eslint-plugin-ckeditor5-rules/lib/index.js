@@ -17,7 +17,6 @@ module.exports = {
 		'license-header': require( './rules/license-header' ),
 		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
-		'no-build-extensions': require( './rules/no-build-extensions' ),
 		'no-istanbul-in-debug-code': require( './rules/no-istanbul-in-debug-code' ),
 		'allow-declare-module-only-in-augmentation-file': require( './rules/allow-declare-module-only-in-augmentation-file' ),
 		'allow-imports-only-from-main-package-entry-point': require( './rules/allow-imports-only-from-main-package-entry-point.js' ),
