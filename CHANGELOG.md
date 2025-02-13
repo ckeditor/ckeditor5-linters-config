@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [9.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v9.0.0...v9.1.0) (2025-02-13)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Add the `allow-svg-imports-only-in-icons-package` rule. ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/fd10b81cf877684b65cfaf0ad77e7fdfd2b4dd2f))
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/9.1.0): v9.0.0 => v9.1.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/9.1.0): v9.0.0 => v9.1.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/9.1.0): v9.0.0 => v9.1.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/9.1.0): v9.0.0 => v9.1.0
+</details>
+
+
 ## [9.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v8.0.0...v9.0.0) (2025-01-08)
 
 ### MINOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -100,31 +125,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/7.1.0): v7.0.0 => v7.1.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/7.1.0): v7.0.0 => v7.1.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/7.1.0): v7.0.0 => v7.1.0
-</details>
-
-
-## [7.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v6.0.0...v7.0.0) (2024-09-04)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Enable 'no-unused-vars' rule. See [ckeditor/ckeditor5#17010](https://github.com/ckeditor/ckeditor5/issues/17010). ([commit](https://github.com/ckeditor/ckeditor5-linters-config/commit/0145f1b04c821bcab5c1ed7546f13f1206cd4f87))
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/7.0.0): v6.0.0 => v7.0.0
-
-Other releases:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/7.0.0): v6.0.0 => v7.0.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/7.0.0): v6.0.0 => v7.0.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/7.0.0): v6.0.0 => v7.0.0
 </details>
 
 ---
