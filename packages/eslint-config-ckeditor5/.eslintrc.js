@@ -537,10 +537,7 @@ module.exports = {
 			files: [
 				'docs/**/*.@(js|ts)',
 				'packages/*/docs/**/*.@(js|ts)'
-			],
-			rules: {
-				'ckeditor5-rules/no-build-extensions': 'error'
-			}
+			]
 		}
 	]
 };
