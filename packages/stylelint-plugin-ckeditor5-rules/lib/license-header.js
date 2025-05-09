@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-/* eslint-env node */
-
 // Leading comment in a file will be considered license, and thus eligible
 // for automatic fixing if it contains any of the strings below:
 const LICENSE_IDENTIFIERS = [
