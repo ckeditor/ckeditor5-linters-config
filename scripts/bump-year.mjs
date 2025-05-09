@@ -5,8 +5,6 @@
  * For licensing, see LICENSE.md.
  */
 
-/* eslint-env node */
-
 /*
 
 Usage:
@@ -22,7 +20,7 @@ import { bumpYear } from '@ckeditor/ckeditor5-dev-bump-year';
 bumpYear( {
 	cwd: process.cwd(),
 	globPatterns: [
-		{ // LICENSE.md, .eslintrc.js, etc.
+		{
 			pattern: '*',
 			options: {
 				dot: true
@@ -38,9 +36,6 @@ bumpYear( {
 					'**/tests/fixtures/**'
 				]
 			}
-		},
-		{
-			pattern: 'packages/*/.eslintrc.js'
 		}
 	]
 } );

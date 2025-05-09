@@ -8,7 +8,7 @@
 const RuleTester = require( 'eslint' ).RuleTester;
 
 const ruleTester = new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020
 	}

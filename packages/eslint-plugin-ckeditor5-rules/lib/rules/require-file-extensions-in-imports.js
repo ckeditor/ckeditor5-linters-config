@@ -21,7 +21,7 @@ module.exports = {
 		docs: {
 			description: 'Require file extensions in imports',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#mandatory-file-extensions-in-imports-ckeditor5-rulesrequire-file-extensions-in-imports'
 		},
 		fixable: 'code',
@@ -79,7 +79,7 @@ module.exports = {
 				 */
 
 				// Resolve URL to absolute filesystem path.
-				const resolvedPath = resolver( dirname( context.getFilename() ), url );
+				const resolvedPath = resolver( dirname( context.filename ), url );
 
 				// Turn `/absolute/path/to/file.js` into `[ 'absolute', 'path', 'to', 'file' ]`.
 				const { dir: pathDir, name: pathName, ext: pathExt } = parse( resolvedPath );

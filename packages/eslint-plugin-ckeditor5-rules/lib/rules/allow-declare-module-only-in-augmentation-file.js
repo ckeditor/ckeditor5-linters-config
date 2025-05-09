@@ -13,7 +13,7 @@ module.exports = {
 		docs: {
 			description: 'Allow using module augmentation for "@ckeditor/ckeditor5-core" modules only in the "/src/augmentation.ts" files.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#declaring-module-augmentation-for-the-core-package-ckeditor5-rulesallow-declare-module-only-in-augmentation-file'
 		}
 	},
@@ -25,7 +25,7 @@ module.exports = {
 					return;
 				}
 
-				const normalizedPath = upath.toUnix( context.getFilename() );
+				const normalizedPath = upath.toUnix( context.filename );
 
 				if ( normalizedPath.endsWith( '/src/augmentation.ts' ) ) {
 					// Skip if module declaration is already in the specified file.
@@ -34,7 +34,7 @@ module.exports = {
 
 				context.report( {
 					node,
-					// eslint-disable-next-line max-len
+					// eslint-disable-next-line @stylistic/max-len
 					message: 'Module augmentation for the "@ckeditor/ckeditor5-core" package is only allowed in "src/augmentation.ts" files.'
 				} );
 			}

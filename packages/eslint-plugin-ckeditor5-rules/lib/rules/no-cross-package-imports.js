@@ -17,7 +17,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow imports from CKEditor 5 in specified packages.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#cross-package-imports-ckeditor5-rulesno-cross-package-imports'
 		},
 		schema: []
@@ -32,7 +32,7 @@ module.exports = {
 				}
 
 				// Find the name of the current processed package.
-				const processedPackage = context.getFilename().replace( context.getCwd(), '' );
+				const processedPackage = context.filename.replace( context.cwd, '' );
 
 				// Check whether the package can import from CKEditor 5.
 				const shouldCheckPackage = disallowedPackages.some( pack => processedPackage.includes( pack ) );

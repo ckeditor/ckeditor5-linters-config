@@ -5,8 +5,6 @@
  * For licensing, see LICENSE.md.
  */
 
-/* eslint-env node */
-
 import fs from 'fs-extra';
 import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 import { Listr } from 'listr2';

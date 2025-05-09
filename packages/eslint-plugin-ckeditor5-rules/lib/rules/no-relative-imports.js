@@ -11,7 +11,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow relative imports from CKEditor5 packages.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-between-packages-ckeditor5-rulesno-relative-imports'
 		},
 		fixable: 'code',

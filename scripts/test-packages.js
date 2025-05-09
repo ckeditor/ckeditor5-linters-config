@@ -30,7 +30,7 @@ for ( const packageName of PACKAGES_TO_TEST ) {
 		console.log( `\n✅ Tests for "${ packageName }" complete.\n` );
 
 		completed.push( packageName );
-	} catch ( err ) {
+	} catch {
 		console.log( `\n❌ Tests for "${ packageName }" finished with an error.\n` );
 
 		failed.push( packageName );
