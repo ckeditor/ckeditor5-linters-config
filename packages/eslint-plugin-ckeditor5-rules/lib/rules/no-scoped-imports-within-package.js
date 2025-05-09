@@ -14,7 +14,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow scoped import like "@ckeditor/*" to the same package where the import declaration is located.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#imports-within-a-package-ckeditor5-rulesno-scoped-imports-within-package'
 		},
 		schema: []
@@ -50,8 +50,8 @@ function callbackFactory( context ) {
 			return;
 		}
 
-		const directory = upath.dirname( context.getFilename() );
-		const cwd = upath.normalizeTrim( context.getCwd() );
+		const directory = upath.dirname( context.filename );
+		const cwd = upath.normalizeTrim( context.cwd );
 		const packageName = getPackageName( directory, cwd );
 
 		if ( !packageName ) {

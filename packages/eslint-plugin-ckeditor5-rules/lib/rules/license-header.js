@@ -43,7 +43,7 @@ module.exports = {
 
 function licenseHeaderRule( context, headerLines ) {
 	const headerText = headerLines.join( '\n' );
-	const sourceCode = context.getSourceCode();
+	const sourceCode = context.sourceCode;
 	const fullSourceString = sourceCode.lines.join( '\n' );
 
 	const comments = sourceCode.getAllComments();

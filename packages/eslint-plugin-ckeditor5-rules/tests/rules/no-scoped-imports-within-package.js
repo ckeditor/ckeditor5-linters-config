@@ -35,7 +35,7 @@ const errors = [
 ];
 
 const ruleTester = new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020
 	}

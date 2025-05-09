@@ -13,7 +13,7 @@ module.exports = {
 		docs: {
 			description: 'Allow `.svg` imports only in the `@ckeditor/ckeditor5-icons` package',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#svg-imports-only-in-the-ckeditorckeditor5-icons-package'
 		}
 	},

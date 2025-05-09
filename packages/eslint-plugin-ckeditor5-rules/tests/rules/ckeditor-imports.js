@@ -22,7 +22,7 @@ const DLL_USE_FULL_NAME_IMPORT = {
 };
 
 const ruleTester = new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020
 	},

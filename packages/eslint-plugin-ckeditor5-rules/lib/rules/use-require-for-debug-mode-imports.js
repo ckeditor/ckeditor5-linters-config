@@ -24,7 +24,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow using the `import` keyword for modules used in debug mode.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-modules-in-debug-comments-ckeditor5-rulesuse-require-for-debug-mode-imports'
 		},
 		fixable: 'code',
@@ -36,7 +36,7 @@ module.exports = {
 	create( context ) {
 		return {
 			Program() {
-				const source = context.getSourceCode();
+				const source = context.sourceCode;
 				const comments = source.getAllComments();
 
 				for ( const comment of comments ) {
