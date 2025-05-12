@@ -35,6 +35,9 @@
     "@inquirer/prompts": "^6.0.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
     "eslint": "^9.26.0",
+    "eslint-config-ckeditor5": "^9.1.0",
+    "eslint-plugin-ckeditor5-rules": "^9.1.0",
+    "globals": "^16.1.0",
     "husky": "^8.0.2",
     "lint-staged": "^15.0.0",
     "listr2": "^8.0.0"
