@@ -10,10 +10,15 @@ CKEditor 5 ESLint preset
 npm i --save-dev eslint-config-ckeditor5
 ```
 
-Configure ESLint with a `.eslintrc` file using the following contents:
+[Configure ESLint](https://eslint.org/docs/latest/use/configure/configuration-files#configuration-file) using the following contents:
 
 ```js
-{
-	"extends": "ckeditor5"
-}
+import { defineConfig } from 'eslint/config';
+import ckeditor5Config from 'eslint-config-ckeditor5';
+
+export default defineConfig( [
+	{
+		extends: ckeditor5Config
+	}
+] );
 ```

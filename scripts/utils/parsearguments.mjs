@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-/* eslint-env node */
-
 import os from 'os';
 import minimist from 'minimist';
 

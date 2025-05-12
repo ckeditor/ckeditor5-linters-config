@@ -18,11 +18,11 @@
     "release:prepare-packages": "node ./scripts/preparepackages.mjs",
     "release:publish-packages": "node ./scripts/publishpackages.mjs",
     "test": "node ./scripts/test-packages.js",
-    "clean": "npx rimraf package-lock.json yarn.lock ./**/node_modules",
+    "clean": "npx rimraf --glob package-lock.json yarn.lock ./**/node_modules",
     "reinstall": "yarn run clean && yarn install"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,10 @@
     "@ckeditor/ckeditor5-dev-release-tools": "^49.0.0",
     "@inquirer/prompts": "^6.0.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
-    "eslint": "^8.21.0",
+    "eslint": "^9.26.0",
+    "eslint-config-ckeditor5": "^9.1.0",
+    "eslint-plugin-ckeditor5-rules": "^9.1.0",
+    "globals": "^16.1.0",
     "husky": "^8.0.2",
     "lint-staged": "^15.0.0",
     "listr2": "^8.0.0"
@@ -44,10 +47,6 @@
       "eslint --quiet"
     ]
   },
-  "eslintIgnore": [
-    "coverage/**",
-    "packages/*/node_modules/**"
-  ],
   "workspaces": {
     "packages": [
       "packages/*"

@@ -6,9 +6,12 @@
 'use strict';
 
 const RuleTester = require( 'eslint' ).RuleTester;
+const parser = require( '@typescript-eslint/parser' );
 
 const ruleTester = new RuleTester( {
-	parser: require.resolve( '@typescript-eslint/parser' )
+	languageOptions: {
+		parser
+	}
 } );
 
 ruleTester.run(
@@ -31,7 +34,7 @@ ruleTester.run(
 				filename: '/some/path/src/invalid.ts',
 				errors: [
 					{
-						// eslint-disable-next-line max-len
+						// eslint-disable-next-line @stylistic/max-len
 						message: 'Module augmentation for the "@ckeditor/ckeditor5-core" package is only allowed in "src/augmentation.ts" files.'
 					}
 				]

@@ -17,7 +17,7 @@ module.exports = {
 	create( context ) {
 		return {
 			Program() {
-				const source = context.getSourceCode();
+				const source = context.sourceCode;
 				const comments = source.getAllComments();
 
 				for ( const comment of comments ) {

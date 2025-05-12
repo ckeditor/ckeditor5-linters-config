@@ -54,7 +54,6 @@ module.exports = {
 		docs: {
 			description: 'Disallow legacy imports from CKEditor5 packages.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#no-legacy-imports'
 		},
 		fixable: 'code',

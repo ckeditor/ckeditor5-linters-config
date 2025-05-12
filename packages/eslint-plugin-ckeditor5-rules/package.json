@@ -27,22 +27,19 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
     "directory": "packages/eslint-plugin-ckeditor5-rules"
   },
-  "devDependencies": {
-    "eslint": "^7.0.0",
-    "eslint-config-ckeditor5": "^9.1.0",
-    "glob": "^10.0.0",
-    "lodash": "^4.17.21"
-  },
-  "peerDependencies": {
-    "eslint": ">=7.0.0"
-  },
   "dependencies": {
     "@es-joy/jsdoccomment": "^0.40.1",
-    "@typescript-eslint/parser": "^5.52.0",
     "enhanced-resolve": "^5.15.0",
     "fs-extra": "^11.1.1",
     "resolve.exports": "^2.0.2",
     "upath": "^2.0.1",
     "validate-npm-package-name": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.26.0",
+    "glob": "^10.0.0",
+    "lodash": "^4.17.21",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.32.0"
   }
 }

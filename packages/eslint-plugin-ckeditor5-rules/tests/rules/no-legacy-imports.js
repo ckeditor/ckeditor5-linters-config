@@ -6,6 +6,7 @@
 'use strict';
 
 const RuleTester = require( 'eslint' ).RuleTester;
+const parser = require( '@typescript-eslint/parser' );
 const rule = require( '../../lib/rules/no-legacy-imports' );
 const fs = require( 'fs-extra' );
 const upath = require( 'upath' );
@@ -48,7 +49,9 @@ const removeMock = mockPackageJson( {
 } );
 
 const ruleTester = new RuleTester( {
-	parser: require.resolve( '@typescript-eslint/parser' )
+	languageOptions: {
+		parser
+	}
 } );
 
 ruleTester.run( 'no-legacy-imports', rule, {

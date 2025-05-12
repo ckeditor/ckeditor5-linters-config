@@ -11,7 +11,7 @@ module.exports = {
 		docs: {
 			description: 'Disallow relative imports from CKEditor5 packages.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#description-of-an-error-ckeditor5-rulesckeditor-error-message'
 		},
 		fixable: 'code',
@@ -55,7 +55,7 @@ module.exports = {
 					// At this point CKEditorError has properly formatted errorId.
 					const errorId = message;
 
-					if ( !hasMatchingAnnotation( context.getSourceCode(), errorId ) ) {
+					if ( !hasMatchingAnnotation( context.sourceCode, errorId ) ) {
 						context.report( {
 							node: firstArgument,
 							messageId: 'missingErrorAnnotation',
