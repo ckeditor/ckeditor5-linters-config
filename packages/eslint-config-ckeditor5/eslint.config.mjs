@@ -11,8 +11,6 @@ import mocha from 'eslint-plugin-mocha';
 import stylistic from '@stylistic/eslint-plugin';
 import ckeditor5Rules from 'eslint-plugin-ckeditor5-rules';
 
-const METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE = [ 'requires', 'pluginName' ];
-
 const rulesGeneral = [
 	{
 		plugins: {
@@ -316,7 +314,7 @@ const rulesTypeScript = [
 			'@typescript-eslint/consistent-type-imports': 'error',
 
 			'@typescript-eslint/explicit-module-boundary-types': [ 'error', {
-				allowedNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE,
+				allowedNames: [ 'requires', 'pluginName' ],
 				allowArgumentsExplicitlyTypedAsAny: true
 			} ],
 
@@ -419,7 +417,7 @@ const rulesSourceCode = [
 			'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
 
 			'ckeditor5-rules/require-as-const-returns-in-methods': [ 'error', {
-				methodNames: METHODS_THAT_USE_AS_CONST_INSTEAD_OF_RETURN_TYPE
+				methodNames: [ 'requires', 'pluginName' ]
 			} ],
 
 			'ckeditor5-rules/ckeditor-plugin-flags': [ 'error', {
