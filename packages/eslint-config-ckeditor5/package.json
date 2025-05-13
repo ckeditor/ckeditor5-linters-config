@@ -19,9 +19,6 @@
     "eslint.config.mjs",
     "CHANGELOG.md"
   ],
-  "engines": {
-    "node": ">=22.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
