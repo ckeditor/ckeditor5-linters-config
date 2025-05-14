@@ -380,7 +380,9 @@ const rulesTypeScript = [
 
 			'@stylistic/member-delimiter-style': 'error',
 
-			'@stylistic/type-annotation-spacing': 'error'
+			'@stylistic/type-annotation-spacing': 'error',
+
+			'@stylistic/type-generic-spacing ': 'error'
 		}
 	}
 ];
