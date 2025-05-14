@@ -1,6 +1,26 @@
 Changelog
 =========
 
+## [10.0.0-alpha.3](https://github.com/ckeditor/ckeditor5-linters-config/compare/v10.0.0-alpha.2...v10.0.0-alpha.3) (2025-05-14)
+
+Internal changes only (updated dependencies, documentation, etc.).
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
+</details>
+
+
 ## [10.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v10.0.0-alpha.1...v10.0.0-alpha.2) (2025-05-14)
 
 Internal changes only (updated dependencies, documentation, etc.).
