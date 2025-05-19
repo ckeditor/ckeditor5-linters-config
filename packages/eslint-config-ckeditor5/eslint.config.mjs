@@ -285,12 +285,6 @@ const rulesTypeScript = [
 			ts
 		},
 
-		languageOptions: {
-			parserOptions: {
-				projectService: true
-			}
-		},
-
 		extends: [ 'ts/recommended' ],
 
 		files: [ '**/*.@(ts|tsx)' ],
@@ -320,8 +314,6 @@ const rulesTypeScript = [
 			'@typescript-eslint/consistent-type-imports': [ 'error', {
 				fixStyle: 'inline-type-imports'
 			} ],
-
-			'@typescript-eslint/consistent-type-exports': 'error',
 
 			'@typescript-eslint/explicit-module-boundary-types': [ 'error', {
 				allowedNames: [ 'requires', 'pluginName' ],
