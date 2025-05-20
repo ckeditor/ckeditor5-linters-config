@@ -311,7 +311,9 @@ const rulesTypeScript = [
 				objectLiteralTypeAssertions: 'allow-as-parameter'
 			} ],
 
-			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/consistent-type-imports': [ 'error', {
+				fixStyle: 'inline-type-imports'
+			} ],
 
 			'@typescript-eslint/explicit-module-boundary-types': [ 'error', {
 				allowedNames: [ 'requires', 'pluginName' ],
