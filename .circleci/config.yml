@@ -69,7 +69,7 @@ commands:
             CKE5_GITHUB_ORGANIZATION="ckeditor"
             CKE5_GITHUB_REPOSITORY="ckeditor5-linters-config"
             CKE5_CIRCLE_APPROVAL_JOB_NAME="release_approval"
-            CKE5_GITHUB_RELEASE_BRANCH="epic/ck/18475-eslint9"
+            CKE5_GITHUB_RELEASE_BRANCH="master"
 
             echo export CKE5_CIRCLE_APPROVAL_JOB_NAME=$CKE5_CIRCLE_APPROVAL_JOB_NAME >> $BASH_ENV
             echo export CKE5_GITHUB_RELEASE_BRANCH=$CKE5_GITHUB_RELEASE_BRANCH >> $BASH_ENV
@@ -126,7 +126,7 @@ jobs:
       - bootstrap_repository_command
       - run:
           name: Check if packages are ready to be released
-          command: yarn run release:prepare-packages --verbose --compile-only --branch=epic/ck/18475-eslint9
+          command: yarn run release:prepare-packages --verbose --compile-only
 
   trigger_release_process:
     machine: true
@@ -162,11 +162,11 @@ jobs:
           command: |
             #!/bin/bash
 
-            CKE5_LATEST_COMMIT_HASH=$( git log -n 1 --pretty=format:%H origin/epic/ck/18475-eslint9 )
+            CKE5_LATEST_COMMIT_HASH=$( git log -n 1 --pretty=format:%H origin/master )
             CKE5_TRIGGER_COMMIT_HASH=<< pipeline.parameters.triggerCommitHash >>
 
             if [[ "${CKE5_LATEST_COMMIT_HASH}" != "${CKE5_TRIGGER_COMMIT_HASH}" ]]; then
-              echo "There is a newer commit in the repository on the \`#epic/ck/18475-eslint9\` branch. Use its build to start the release."
+              echo "There is a newer commit in the repository on the \`#master\` branch. Use its build to start the release."
               circleci-agent step halt
             fi
       - npm_login_command
@@ -192,10 +192,10 @@ jobs:
           command: yarn ckeditor5-dev-ci-circle-disable-auto-cancel-builds
       - run:
           name: Prepare the new version to release
-          command: npm run release:prepare-packages -- --verbose --branch=epic/ck/18475-eslint9
+          command: npm run release:prepare-packages -- --verbose
       - run:
           name: Publish the packages
-          command: npm run release:publish-packages -- --verbose --branch=epic/ck/18475-eslint9
+          command: npm run release:publish-packages -- --verbose
       - run:
           name: Enable the redundant workflows option
           command: yarn ckeditor5-dev-ci-circle-enable-auto-cancel-builds
@@ -226,7 +226,7 @@ workflows:
           filters:
             branches:
               only:
-                - epic/ck/18475-eslint9
+                - master
       - notify_ci_failure:
           filters:
             branches:
