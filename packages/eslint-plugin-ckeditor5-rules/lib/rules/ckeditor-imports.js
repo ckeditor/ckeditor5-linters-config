@@ -47,14 +47,14 @@ module.exports = {
 		docs: {
 			description: 'Disallow direct imports of packages that belong to CKEditor 5 DLL.',
 			category: 'CKEditor5',
-			// eslint-disable-next-line max-len
+			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#dll-builds-ckeditor5-rulesckeditor-imports'
 		},
 		fixable: 'code',
 		schema: []
 	},
 	create( context ) {
-		const matchResult = context.getFilename().replace( context.getCwd(), '' ).match( SHORT_PACKAGE_NAME_PATH_REGEXP );
+		const matchResult = context.filename.replace( context.cwd, '' ).match( SHORT_PACKAGE_NAME_PATH_REGEXP );
 		const currentFileShortPackageName = matchResult ? matchResult[ 1 ] : null;
 
 		return {

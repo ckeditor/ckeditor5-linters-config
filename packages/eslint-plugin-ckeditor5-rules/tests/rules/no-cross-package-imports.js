@@ -9,10 +9,11 @@ const path = require( 'path' );
 const RuleTester = require( 'eslint' ).RuleTester;
 
 const ruleTester = new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020
-	}, settings: {
+	},
+	settings: {
 		disallowedCrossImportsPackages: [
 			'ckeditor5-watchdog'
 		]
