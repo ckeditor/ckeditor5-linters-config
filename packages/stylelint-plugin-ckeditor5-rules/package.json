@@ -26,12 +26,12 @@
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
   },
   "devDependencies": {
-    "jest": "^27.5.1",
-    "jest-preset-stylelint": "^5.0.1",
-    "stylelint": "^13.13.1"
+    "jest": "^29.7.0",
+    "jest-preset-stylelint": "^7.3.0",
+    "stylelint": "^16.19.1"
   },
   "peerDependencies": {
-    "stylelint": ">=13.5.0"
+    "stylelint": ">=16.0.0"
   },
   "jest": {
     "testMatch": [
