@@ -1,11 +1,12 @@
 {
 	"extends": "stylelint-config-recommended",
 	"plugins": [
+		"@stylistic/stylelint-plugin",
 		"stylelint-plugin-ckeditor5-rules/lib/license-header"
 	],
 	"rules": {
 		"at-rule-no-unknown": null,
-		"indentation": "tab",
+		"@stylistic/indentation": "tab",
 		"declaration-property-value-disallowed-list": {
 			"/.*/": [
 				"/#/",
