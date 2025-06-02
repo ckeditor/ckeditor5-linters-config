@@ -11,7 +11,7 @@
   ],
   "private": true,
   "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
+    "postinstall": "node ./scripts/postinstall.mjs",
     "lint": "eslint --quiet \"**/*.{js,mjs}\"",
     "precommit": "lint-staged",
     "changelog": "node ./scripts/changelog.mjs",
@@ -32,14 +32,14 @@
     "@ckeditor/ckeditor5-dev-bump-year": "^49.0.0",
     "@ckeditor/ckeditor5-dev-ci": "^49.0.0",
     "@ckeditor/ckeditor5-dev-release-tools": "^49.0.0",
-    "@inquirer/prompts": "^6.0.0",
+    "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
     "eslint": "^9.26.0",
     "eslint-config-ckeditor5": "^10.0.0",
     "eslint-plugin-ckeditor5-rules": "^10.0.0",
     "globals": "^16.1.0",
-    "husky": "^8.0.2",
-    "lint-staged": "^15.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
     "listr2": "^8.0.0"
   },
   "lint-staged": {
