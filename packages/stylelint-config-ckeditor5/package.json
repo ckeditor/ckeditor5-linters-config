@@ -28,6 +28,6 @@
     "stylelint-plugin-ckeditor5-rules": "^10.0.0"
   },
   "peerDependencies": {
-    "stylelint": ">=16.0.0"
+    "stylelint": ">=15.0.0"
   }
 }
