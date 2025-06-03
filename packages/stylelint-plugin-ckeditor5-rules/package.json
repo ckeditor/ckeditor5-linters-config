@@ -25,10 +25,8 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
   },
-  "dependencies": {
-    "cross-env": "^7.0.3"
-  },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "jest-preset-stylelint": "^6.3.2",
     "stylelint": "^16.0.0"
