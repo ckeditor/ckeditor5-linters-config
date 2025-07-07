@@ -7,6 +7,7 @@ import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
+import markdown from '@eslint/markdown';
 import mocha from 'eslint-plugin-mocha';
 import stylistic from '@stylistic/eslint-plugin';
 import ckeditor5Rules from 'eslint-plugin-ckeditor5-rules';
@@ -24,6 +25,8 @@ const rulesGeneral = [
 			ecmaVersion: 2020,
 			sourceType: 'module'
 		},
+		
+		files: [ '**/*.@(js|ts|tsx)' ],
 
 		rules: {
 			/*
@@ -482,10 +485,27 @@ const rulesDocs = [
 	}
 ];
 
+const rulesChangelog = [
+	{
+		files: [ '**/*.md' ],
+
+		plugins: {
+			markdown
+		},
+
+		language: 'markdown/gfm',
+
+		languageOptions: {
+			frontmatter: 'yaml'
+		}
+	}
+];
+
 export default defineConfig( [
 	rulesGeneral,
 	rulesTypeScript,
 	rulesSourceCode,
 	rulesTests,
-	rulesDocs
+	rulesDocs,
+	rulesChangelog
 ] );
