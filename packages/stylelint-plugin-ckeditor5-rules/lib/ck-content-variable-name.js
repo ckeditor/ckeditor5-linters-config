@@ -4,7 +4,7 @@
  */
 
 const SELECTOR = '.ck-content';
-const PREFIX = '--ck-content';
+const PREFIX = '--ck-content-';
 
 const stylelint = require( 'stylelint' );
 
@@ -12,7 +12,7 @@ const { report, ruleMessages } = stylelint.utils;
 
 const ruleName = 'ckeditor5-rules/ck-content-variable-name';
 const messages = ruleMessages( ruleName, {
-	invalidSelector: `Variables inside the '${ SELECTOR }' selector have to use the '${ PREFIX }-*' prefix.`
+	invalidSelector: `Variables inside the '${ SELECTOR }' selector have to use the '${ PREFIX }*' prefix.`
 } );
 
 module.exports.ruleName = ruleName;
