@@ -2,9 +2,11 @@
 	"extends": "stylelint-config-recommended",
 	"plugins": [
 		"@stylistic/stylelint-plugin",
+		"stylelint-plugin-ckeditor5-rules/lib/ck-content-variable-name",
 		"stylelint-plugin-ckeditor5-rules/lib/license-header"
 	],
 	"rules": {
+		"ckeditor5-rules/ck-content-variable-name": false,
 		"at-rule-no-unknown": null,
 		"@stylistic/indentation": "tab",
 		"declaration-property-value-disallowed-list": {
