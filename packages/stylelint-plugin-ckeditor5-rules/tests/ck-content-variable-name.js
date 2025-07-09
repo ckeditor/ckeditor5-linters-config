@@ -111,6 +111,24 @@ global.testRule( {
 				'}',
 				''
 			].join( '\n' )
+		},
+		{
+			description: 'File containing ".ck-content" selector using comment variable name.',
+			code: [
+				'.ck-content {',
+				'	width: var(--comment-variable-name);',
+				'}',
+				''
+			].join( '\n' )
+		},
+		{
+			description: 'File containing ".ck-content" selector using suggestion variable name.',
+			code: [
+				'.ck-content {',
+				'	width: var(--suggestion-variable-name);',
+				'}',
+				''
+			].join( '\n' )
 		}
 	],
 

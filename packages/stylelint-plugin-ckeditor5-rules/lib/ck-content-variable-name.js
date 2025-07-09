@@ -5,6 +5,10 @@
 
 const SELECTOR = '.ck-content';
 const PREFIX = '--ck-content-';
+const IGNORED_VARIABLES = [
+	'-suggestion-',
+	'-comment-'
+];
 
 const stylelint = require( 'stylelint' );
 
@@ -43,6 +47,10 @@ function parseNodes( result, nodes = [], isInsideMatchingSelector = false ) {
 		}
 
 		if ( node.value.startsWith( 'var(' + PREFIX ) ) {
+			return;
+		}
+
+		if ( IGNORED_VARIABLES.some( ignored => node.value.includes( ignored ) ) ) {
 			return;
 		}
 

@@ -6,7 +6,6 @@
 		"stylelint-plugin-ckeditor5-rules/lib/license-header"
 	],
 	"rules": {
-		"ckeditor5-rules/ck-content-variable-name": true,
 		"at-rule-no-unknown": null,
 		"@stylistic/indentation": "tab",
 		"declaration-property-value-disallowed-list": {
@@ -16,5 +15,15 @@
 			]
 		},
 		"color-named": "never"
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/theme/**"
+			],
+			"rules": {
+				"ckeditor5-rules/ck-content-variable-name": true
+			}
+		}
+	]
 }
