@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [11.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v11.0.1...v11.1.0) (July 10, 2025)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Add the `validate-changelog-entry` rule for validating Markdown-based changelog entries. Closes [ckeditor/ckeditor5#18777](https://github.com/ckeditor/ckeditor5/issues/18777).
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/11.1.0): v11.0.1 => v11.1.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/11.1.0): v11.0.1 => v11.1.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/11.1.0): v11.0.1 => v11.1.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/11.1.0): v11.0.1 => v11.1.0
+</details>
+
+
 ## [11.0.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v11.0.0...v11.0.1) (2025-06-03)
 
 ### Other changes
@@ -100,26 +125,6 @@ Other releases:
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
-</details>
-
-
-## [10.0.0-alpha.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v10.0.0-alpha.1...v10.0.0-alpha.2) (2025-05-14)
-
-Internal changes only (updated dependencies, documentation, etc.).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/10.0.0-alpha.2): v10.0.0-alpha.1 => v10.0.0-alpha.2
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/10.0.0-alpha.2): v10.0.0-alpha.1 => v10.0.0-alpha.2
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/10.0.0-alpha.2): v10.0.0-alpha.1 => v10.0.0-alpha.2
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/10.0.0-alpha.2): v10.0.0-alpha.1 => v10.0.0-alpha.2
 </details>
 
 ---
