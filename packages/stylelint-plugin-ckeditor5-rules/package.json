@@ -12,6 +12,7 @@
     "lint",
     "ckeditor"
   ],
+  "main": "./lib/index.mjs",
   "files": [
     "lib",
     "CHANGELOG.md"

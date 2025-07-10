@@ -2,8 +2,7 @@
 	"extends": "stylelint-config-recommended",
 	"plugins": [
 		"@stylistic/stylelint-plugin",
-		"stylelint-plugin-ckeditor5-rules/lib/ck-content-variable-name.mjs",
-		"stylelint-plugin-ckeditor5-rules/lib/license-header.mjs"
+		"stylelint-plugin-ckeditor5-rules"
 	],
 	"rules": {
 		"at-rule-no-unknown": null,
