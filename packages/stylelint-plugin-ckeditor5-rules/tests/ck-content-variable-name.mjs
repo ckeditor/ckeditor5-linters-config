@@ -4,7 +4,7 @@
  */
 
 import { getTestRule } from 'jest-preset-stylelint';
-import ckContentVariableName from '../lib/ck-content-variable-name.js';
+import ckContentVariableName from '../lib/ck-content-variable-name.mjs';
 
 const { ruleName } = ckContentVariableName;
 
