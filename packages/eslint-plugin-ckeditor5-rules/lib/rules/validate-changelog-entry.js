@@ -40,7 +40,7 @@ module.exports = {
 		docs: {
 			description: 'Validate changelog entries.',
 			category: 'CKEditor5',
-			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/changelog-entries.html'
+			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#valid-changelog-entries'
 		},
 		schema: [
 			{
