@@ -3,60 +3,17 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
+import { getTestRule } from 'jest-preset-stylelint';
+import ckContentVariableName from '../lib/ck-content-variable-name.mjs';
 
-const { getTestRule } = require( 'jest-preset-stylelint' );
-const upath = require( 'upath' );
-const util = require( 'util' );
+const { ruleName } = ckContentVariableName;
 
-const PLUGIN_PATH = upath.join( __dirname, '..', 'lib', 'ck-content-variable-name.js' );
+const message = `Variables inside the '.ck-content' selector have to use the '--ck-content-*' prefix. (${ ruleName })`;
 
-global.testRule = getTestRule();
-
-const config = [
-	true
-];
-
-const { ruleName } = require( PLUGIN_PATH );
-
-const message = [
-	'Variables inside the \'.ck-content\' selector have to use the \'--ck-content-*\' prefix.',
-	'(ckeditor5-rules/ck-content-variable-name)'
-].join( ' ' );
-
-// For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
-// the plugin configuration and the checked code. It uses the `util.inspect()` function for making a string from the given `input`.
-// Lets override it and return an empty string for these values to avoid a mess in a console.
-// The original function is restored at the end of the file.
-const defaultInspectFunction = util.inspect;
-
-util.inspect = input => {
-	// To hide empty input.
-	if ( !input ) {
-		return '';
-	}
-
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L172.
-	if ( input === config ) {
-		return '';
-	}
-
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L173.
-	const stringsToHide = [ 'CKSource Holding', '.ck.ck-editor' ];
-	const shouldHide = stringsToHide.some( string => input.includes( string ) );
-
-	if ( shouldHide ) {
-		return '';
-	}
-
-	// In all other cases, function should function normally.
-	return defaultInspectFunction( input );
-};
-
-global.testRule( {
-	plugins: [ PLUGIN_PATH ],
+getTestRule()( {
+	plugins: [ ckContentVariableName ],
 	ruleName,
-	config,
+	config: true,
 
 	accept: [
 		{
@@ -86,6 +43,15 @@ global.testRule( {
 			code: [
 				'.ck-content {',
 				'	width: var(--ck-content-variable-name);',
+				'}',
+				''
+			].join( '\n' )
+		},
+		{
+			description: 'File containing the ".ck-content" selector using valid variable name with spacing.',
+			code: [
+				'.ck-content {',
+				'	width: var( --ck-content-variable-name );',
 				'}',
 				''
 			].join( '\n' )
@@ -179,6 +145,3 @@ global.testRule( {
 		}
 	]
 } );
-
-// Restore the original function.
-util.inspect = defaultInspectFunction;

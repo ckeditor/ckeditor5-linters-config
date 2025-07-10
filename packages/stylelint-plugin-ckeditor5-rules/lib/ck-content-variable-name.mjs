@@ -3,6 +3,13 @@
  * For licensing, see LICENSE.md.
  */
 
+import stylelint from 'stylelint';
+
+const {
+	createPlugin,
+	utils: { report, ruleMessages }
+} = stylelint;
+
 const SELECTOR = '.ck-content';
 const PREFIX = '--ck-content-';
 const IGNORED_VARIABLES = [
@@ -10,21 +17,19 @@ const IGNORED_VARIABLES = [
 	'-comment-'
 ];
 
-const stylelint = require( 'stylelint' );
-
-const { report, ruleMessages } = stylelint.utils;
-
 const ruleName = 'ckeditor5-rules/ck-content-variable-name';
 const messages = ruleMessages( ruleName, {
 	invalidSelector: `Variables inside the '${ SELECTOR }' selector have to use the '${ PREFIX }*' prefix.`
 } );
 
-module.exports.ruleName = ruleName;
-module.exports.messages = messages;
+ruleFunction.ruleName = ruleName;
+ruleFunction.messages = messages;
 
-module.exports = stylelint.createPlugin( ruleName, () => {
+export default createPlugin( ruleName, ruleFunction );
+
+function ruleFunction() {
 	return ( root, result ) => parseNodes( result, root.nodes );
-} );
+}
 
 function parseNodes( result, nodes = [], isInsideMatchingSelector = false ) {
 	nodes.forEach( node => {
@@ -46,7 +51,7 @@ function parseNodes( result, nodes = [], isInsideMatchingSelector = false ) {
 			return;
 		}
 
-		if ( node.value.startsWith( 'var(' + PREFIX ) ) {
+		if ( node.value.match( new RegExp( `var\\(\\s*?${ PREFIX }` ) ) ) {
 			return;
 		}
 
