@@ -33,9 +33,12 @@
     "fs-extra": "^11.1.1",
     "resolve.exports": "^2.0.2",
     "upath": "^2.0.1",
-    "validate-npm-package-name": "^6.0.0"
+    "validate-npm-package-name": "^6.0.0",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
+    "@eslint/markdown": "^6.6.0",
+    "dedent": "^1.6.0",
     "eslint": "^9.26.0",
     "glob": "^11.0.2",
     "lodash": "^4.17.21",

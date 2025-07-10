@@ -23,6 +23,7 @@ module.exports = {
 		'allow-svg-imports-only-in-icons-package': require( './rules/allow-svg-imports-only-in-icons-package.js' ),
 		'prevent-license-key-leak': require( './rules/prevent-license-key-leak' ),
 		'require-as-const-returns-in-methods': require( './rules/require-as-const-returns-in-methods' ),
-		'require-file-extensions-in-imports': require( './rules/require-file-extensions-in-imports' )
+		'require-file-extensions-in-imports': require( './rules/require-file-extensions-in-imports' ),
+		'validate-changelog-entry': require( './rules/validate-changelog-entry' )
 	}
 };
