@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [11.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v11.1.0...v11.1.1) (July 10, 2025)
+
+### Bug fixes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: The general ESLint rules should also match `.cjs` and `.mts` files. Closes [ckeditor/ckeditor5#18839](https://github.com/ckeditor/ckeditor5/issues/18839).
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/11.1.1): v11.1.0 => v11.1.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/11.1.1): v11.1.0 => v11.1.1
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/11.1.1): v11.1.0 => v11.1.1
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/11.1.1): v11.1.0 => v11.1.1
+</details>
+
+
 ## [11.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v11.0.1...v11.1.0) (July 10, 2025)
 
 ### Features
@@ -105,26 +127,6 @@ Other releases:
 
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/10.0.0): v9.1.0 => v10.0.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/10.0.0): v9.1.0 => v10.0.0
-</details>
-
-
-## [10.0.0-alpha.3](https://github.com/ckeditor/ckeditor5-linters-config/compare/v10.0.0-alpha.2...v10.0.0-alpha.3) (2025-05-14)
-
-Internal changes only (updated dependencies, documentation, etc.).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/10.0.0-alpha.3): v10.0.0-alpha.2 => v10.0.0-alpha.3
 </details>
 
 ---
