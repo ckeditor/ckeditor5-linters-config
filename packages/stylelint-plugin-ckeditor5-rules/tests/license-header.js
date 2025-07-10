@@ -6,7 +6,7 @@
 'use strict';
 
 import { getTestRule } from 'jest-preset-stylelint';
-import licenseHeader from '../lib/license-header.mjs';
+import licenseHeader from '../lib/license-header.js';
 
 const { ruleName } = licenseHeader;
 

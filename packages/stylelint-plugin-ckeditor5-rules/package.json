@@ -16,6 +16,7 @@
     "lib",
     "CHANGELOG.md"
   ],
+  "type": "module",
   "scripts": {
     "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand",
     "coverage": "yarn run test --coverage"
