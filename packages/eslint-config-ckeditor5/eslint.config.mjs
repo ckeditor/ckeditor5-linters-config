@@ -25,8 +25,8 @@ const rulesGeneral = [
 			ecmaVersion: 2020,
 			sourceType: 'module'
 		},
-		
-		files: [ '**/*.@(js|ts|tsx)' ],
+
+		files: [ '**/*.@(js|cjs|mjs|ts|tsx)' ],
 
 		rules: {
 			/*

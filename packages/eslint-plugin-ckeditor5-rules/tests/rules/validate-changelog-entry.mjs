@@ -323,7 +323,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			Change summary.
 			`,
 			options: [ { repositoryType: 'mono' } ]
-		},
+		}
 	],
 
 	invalid: [
@@ -523,6 +523,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			errors: [
 				'Invalid \'communityCredits\' value: \'%^&*\'.'
 			]
-		},
+		}
 	]
 } );
