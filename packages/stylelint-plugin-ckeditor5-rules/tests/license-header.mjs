@@ -5,28 +5,28 @@
 
 'use strict';
 
-const { getTestRule } = require( 'jest-preset-stylelint' );
-const path = require( 'path' );
-const util = require( 'util' );
+import { getTestRule } from 'jest-preset-stylelint';
+import licenseHeader from '../lib/license-header.mjs';
 
-const PLUGIN_PATH = path.join( __dirname, '..', 'lib', 'license-header.js' ).replace( /\\/g, '/' );
+const { ruleName } = licenseHeader;
 
-global.testRule = getTestRule();
-
-const config = [
-	true,
-	{
-		headerLines:
+const testOptions = {
+	plugins: [ licenseHeader ],
+	ruleName,
+	config: [
+		true,
+		{
+			headerLines:
 			[
 				'/*',
 				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			]
-	}
-];
+		}
+	]
+};
 
-const { ruleName } = require( PLUGIN_PATH );
 const messages = {
 	missingLicense: `This file does not begin with a license header. (${ ruleName })`,
 	notLicense: `This file begins with a comment that is not a license header. (${ ruleName })`,
@@ -35,39 +35,8 @@ const messages = {
 	trailingSpacing: `Missing empty line after the license. (${ ruleName })`
 };
 
-// For reasons that we don't understand, the `jest-preset-stylelint` package created additional `describe()` blocks for
-// the plugin configuration and the checked code. It uses the `util.inspect()` function for making a string from the given `input`.
-// Lets override it and return an empty string for these values to avoid a mess in a console.
-// The original function is restored at the end of the file.
-const defaultInspectFunction = util.inspect;
-
-util.inspect = input => {
-	// To hide empty input.
-	if ( !input ) {
-		return '';
-	}
-
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L172.
-	if ( input === config ) {
-		return '';
-	}
-
-	// To hide: https://github.com/stylelint/jest-preset-stylelint/blob/3606955a27a22be789b9372b5dafaaab25401f7f/getTestRule.js#L173.
-	const stringsToHide = [ 'CKSource Holding', '.ck.ck-editor' ];
-	const shouldHide = stringsToHide.some( string => input.includes( string ) );
-
-	if ( shouldHide ) {
-		return '';
-	}
-
-	// In all other cases, function should function normally.
-	return defaultInspectFunction( input );
-};
-
-global.testRule( {
-	plugins: [ PLUGIN_PATH ],
-	ruleName,
-	config,
+getTestRule()( {
+	...testOptions,
 
 	accept: [
 		{
@@ -257,10 +226,8 @@ global.testRule( {
 	]
 } );
 
-global.testRule( {
-	plugins: [ PLUGIN_PATH ],
-	ruleName,
-	config,
+getTestRule()( {
+	...testOptions,
 	fix: true,
 
 	reject: [
@@ -475,6 +442,3 @@ global.testRule( {
 		}
 	]
 } );
-
-// Restore the original function.
-util.inspect = defaultInspectFunction;

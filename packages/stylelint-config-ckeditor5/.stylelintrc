@@ -2,7 +2,7 @@
 	"extends": "stylelint-config-recommended",
 	"plugins": [
 		"@stylistic/stylelint-plugin",
-		"stylelint-plugin-ckeditor5-rules/lib/license-header"
+		"stylelint-plugin-ckeditor5-rules"
 	],
 	"rules": {
 		"at-rule-no-unknown": null,
@@ -14,5 +14,15 @@
 			]
 		},
 		"color-named": "never"
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/theme/**"
+			],
+			"rules": {
+				"ckeditor5-rules/ck-content-variable-name": true
+			}
+		}
+	]
 }

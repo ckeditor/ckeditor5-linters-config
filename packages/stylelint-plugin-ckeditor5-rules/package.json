@@ -12,13 +12,14 @@
     "lint",
     "ckeditor"
   ],
+  "main": "./lib/index.mjs",
   "files": [
     "lib",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand",
+    "coverage": "yarn run test --coverage"
   },
   "repository": {
     "type": "git",
@@ -27,8 +28,8 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "jest": "^29.7.0",
-    "jest-preset-stylelint": "^6.3.2",
+    "jest": "^30.0.4",
+    "jest-preset-stylelint": "^8.0.0",
     "stylelint": "^16.0.0"
   },
   "peerDependencies": {

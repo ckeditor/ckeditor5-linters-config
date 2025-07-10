@@ -3,16 +3,19 @@
  * For licensing, see LICENSE.md.
  */
 
+import stylelint from 'stylelint';
+
+const {
+	createPlugin,
+	utils: { report, ruleMessages }
+} = stylelint;
+
 // Leading comment in a file will be considered license, and thus eligible
 // for automatic fixing if it contains any of the strings below:
 const LICENSE_IDENTIFIERS = [
 	'Copyright',
 	'copyright'
 ];
-
-const stylelint = require( 'stylelint' );
-
-const { report, ruleMessages } = stylelint.utils;
 
 const ruleName = 'ckeditor5-rules/license-header';
 const messages = ruleMessages( ruleName, {
@@ -23,10 +26,12 @@ const messages = ruleMessages( ruleName, {
 	trailingSpacing: 'Missing empty line after the license.'
 } );
 
-module.exports.ruleName = ruleName;
-module.exports.messages = messages;
+ruleFunction.ruleName = ruleName;
+ruleFunction.messages = messages;
 
-module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primaryOption, secondaryOptionObject, context ) {
+export default createPlugin( ruleName, ruleFunction );
+
+function ruleFunction( primaryOption, secondaryOptionObject, context ) {
 	return function lint( root, result ) {
 		// The file can not be empty.
 		if ( !root.nodes.length ) {
@@ -34,7 +39,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				ruleName,
 				result,
 				message: messages.missingLicense,
-				line: 1
+				node: root
 			} );
 
 			return;
@@ -48,7 +53,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				ruleName,
 				result,
 				message: messages.missingLicense,
-				line: 1
+				node: firstNode
 			} );
 
 			return;
@@ -62,7 +67,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 				ruleName,
 				result,
 				message: messages.notLicense,
-				line: 1
+				node: firstNode
 			} );
 
 			return;
@@ -98,7 +103,7 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 					ruleName,
 					result,
 					message: messages.leadingSpacing,
-					line: 1
+					node: firstNode
 				} );
 			}
 		}
@@ -118,10 +123,9 @@ module.exports = stylelint.createPlugin( ruleName, function ruleFunction( primar
 					ruleName,
 					result,
 					message: messages.trailingSpacing,
-					line: firstNode.source.end.line,
-					column: firstNode.source.end.column
+					node: firstNode
 				} );
 			}
 		}
 	};
-} );
+}
