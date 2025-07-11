@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-linters-config",
-  "version": "11.1.0",
+  "version": "12.0.0",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -37,8 +37,8 @@
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
     "eslint": "^9.26.0",
-    "eslint-config-ckeditor5": "^11.1.0",
-    "eslint-plugin-ckeditor5-rules": "^11.1.0",
+    "eslint-config-ckeditor5": "^12.0.0",
+    "eslint-plugin-ckeditor5-rules": "^12.0.0",
     "globals": "^16.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.0",
