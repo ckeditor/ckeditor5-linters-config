@@ -14,7 +14,7 @@ const SHORT_PACKAGE_NAME_IMPORT_REGEXP = /@ckeditor\/ckeditor5?-([^/]+)/;
 const SHORT_PACKAGE_NAME_PATH_REGEXP = /ckeditor5?-([^/\\]+)/;
 
 // A regular expression for determining whether an imported path uses the `src/` directory.
-const CKEDITOR5_PACKAGE_IMPORT_REGEXP = /ckeditor5\/(?!src)/;
+const CKEDITOR5_PACKAGE_IMPORT_REGEXP = /^ckeditor5\/(?!src)/;
 
 // A regular expression for determining the short package name when importing using the `ckeditor5` package.
 const CKEDITOR5_SHORT_PACKAGE_NAME_REGEXP = /ckeditor5\/src\/(.*)/;

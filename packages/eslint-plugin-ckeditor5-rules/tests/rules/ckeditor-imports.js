@@ -39,6 +39,9 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/ckeditor-imports', ckeditorImports, {
 	valid: [
+		// Imports not starting with `ckeditor5`.
+		'import ckeditor5Config from \'./external/ckeditor5/eslint.config.mjs\';',
+
 		// Expected imports.
 		'import { Plugin } from \'ckeditor5/src/core\';',
 		'import { first, last } from \'ckeditor5/src/utils\';',
