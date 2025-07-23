@@ -5,6 +5,8 @@
 
 'use strict';
 
+const message = 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.';
+
 module.exports = {
 	meta: {
 		type: 'problem',
@@ -14,6 +16,7 @@ module.exports = {
 			// eslint-disable-next-line @stylistic/max-len
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-from-modules-ckeditor5-rulesallow-imports-only-from-main-package-entry-point'
 		},
+		fixable: 'code',
 		schema: []
 	},
 	create( context ) {
@@ -25,20 +28,40 @@ module.exports = {
 				}
 
 				const path = node.source.value;
+				const match = path.match( /@ckeditor\/[^/]+/ );
 
-				if ( !path.startsWith( '@ckeditor/' ) ) {
-					// Ignore imports that do not start with '@ckeditor/'.
+				if ( !match ) {
+					// Ignore imports that do not match with the '@ckeditor/package-name' pattern.
 					return;
 				}
 
-				if ( path.split( '/' ).length === 2 ) {
+				if ( path === match[ 0 ] ) {
 					// Ignore imports from the main package entry point.
 					return;
 				}
 
+				const defaultImport = node.specifiers.find( item => item.type === 'ImportDefaultSpecifier' );
+				const namedImport = node.specifiers.find( item => item.type === 'ImportSpecifier' );
+
+				// If import uses both default and named imports, we don't know how to fix it.
+				if ( defaultImport && namedImport ) {
+					return context.report( { node, message } );
+				}
+
 				context.report( {
 					node,
-					message: 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.'
+					message,
+					fix: fixer => {
+						const fixes = [
+							fixer.replaceTextRange( node.source.range, `'${ match[ 0 ] }'` )
+						];
+
+						if ( defaultImport ) {
+							fixes.push( fixer.replaceTextRange( defaultImport.range, `{ ${ defaultImport.local.name } }` ) );
+						}
+
+						return fixes;
+					}
 				} );
 			}
 		};
