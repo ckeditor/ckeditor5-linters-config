@@ -31,7 +31,7 @@ module.exports = {
 				const match = path.match( /@ckeditor\/[^/]+/ );
 
 				if ( !match ) {
-					// Ignore imports that do not match the with '@ckeditor/package-name' pattern.
+					// Ignore imports that do not match with the '@ckeditor/package-name' pattern.
 					return;
 				}
 
