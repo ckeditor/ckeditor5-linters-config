@@ -40,7 +40,7 @@ module.exports = {
 					return;
 				}
 
-				const isTestUtil = path.match( /@ckeditor\/[^/]+\/tests\/_utils\// );
+				const isTestUtil = path.match( /@ckeditor\/[^/]+\/tests\/(manual\/)?_utils\// );
 
 				if ( isTestUtil ) {
 					return;
