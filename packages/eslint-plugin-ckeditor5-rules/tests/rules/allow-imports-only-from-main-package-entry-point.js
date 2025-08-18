@@ -26,7 +26,8 @@ ruleTester.run(
 			'import { Table } from \'@ckeditor/ckeditor5-table\';',
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/_utils/helper.js\';',
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/manual/_utils/helper.js\';',
-			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils/helper.js\';'
+			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils/helper.js\';',
+			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils-tests/helper.js\';'
 		],
 		invalid: [
 			// Do not allow importing from the `src` folder.
