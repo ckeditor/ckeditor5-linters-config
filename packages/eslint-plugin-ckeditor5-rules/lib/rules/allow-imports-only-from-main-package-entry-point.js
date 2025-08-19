@@ -40,6 +40,12 @@ module.exports = {
 					return;
 				}
 
+				const isTestUtil = path.match( /\/tests\/(.+\/)*_utils/ );
+
+				if ( isTestUtil ) {
+					return;
+				}
+
 				const defaultImport = node.specifiers.find( item => item.type === 'ImportDefaultSpecifier' );
 				const namedImport = node.specifiers.find( item => item.type === 'ImportSpecifier' );
 
