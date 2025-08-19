@@ -40,7 +40,7 @@ module.exports = {
 					return;
 				}
 
-				const isTestUtil = path.includes( '/tests' ) && path.includes( '/_utils' );
+				const isTestUtil = path.match( /\/tests\/(.+\/)*_utils/ );
 
 				if ( isTestUtil ) {
 					return;
