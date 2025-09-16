@@ -22,7 +22,7 @@ for ( const packageName of PACKAGES_TO_TEST ) {
 	console.log( `\n🔷 Starting tests for "${ packageName }".\n` );
 
 	try {
-		execSync( 'yarn run test', {
+		execSync( 'pnpm run test', {
 			stdio: 'inherit',
 			cwd: path.join( packagesPath, packageName )
 		} );

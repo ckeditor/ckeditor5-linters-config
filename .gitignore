@@ -1,5 +1,6 @@
 **/node_modules/**
 **/coverage/**
 yarn.lock
+pnpm-lock.yaml
 .idea
 release/

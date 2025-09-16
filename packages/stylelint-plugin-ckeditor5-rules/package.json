@@ -18,8 +18,8 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand",
-    "coverage": "yarn run test --coverage"
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand",
+    "coverage": "pnpm run test --coverage"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,6 @@
     "directory": "packages/stylelint-plugin-ckeditor5-rules"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "jest": "^30.0.4",
     "jest-preset-stylelint": "^8.0.0",
     "stylelint": "^16.0.0"
