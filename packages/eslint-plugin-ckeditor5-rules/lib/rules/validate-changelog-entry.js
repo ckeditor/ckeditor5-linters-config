@@ -37,7 +37,6 @@ const NICK_NAME_PATTERN = /^(@?)[a-z0-9-_]+$/i;
 module.exports = {
 	meta: {
 		type: 'problem',
-		fixable: 'whitespace',
 		docs: {
 			description: 'Validate changelog entries.',
 			category: 'CKEditor5',
