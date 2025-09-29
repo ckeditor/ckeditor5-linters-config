@@ -37,6 +37,7 @@ const NICK_NAME_PATTERN = /^(@?)[a-z0-9-_]+$/i;
 module.exports = {
 	meta: {
 		type: 'problem',
+		fixable: 'whitespace',
 		docs: {
 			description: 'Validate changelog entries.',
 			category: 'CKEditor5',
@@ -121,6 +122,26 @@ module.exports = {
 								end: {
 									line: lineOffset + end.line,
 									column: end.col
+								}
+							}
+						} );
+					} );
+
+				doc.errors
+					.filter( ( { code } ) => code === 'TAB_AS_INDENT' )
+					.forEach( ( { linePos } ) => {
+						const lineOffset = node.position.start.line;
+
+						context.report( {
+							message: 'Indentation should use spaces instead of tabs.',
+							loc: {
+								start: {
+									line: lineOffset + linePos[ 0 ].line,
+									column: linePos[ 0 ].col
+								},
+								end: {
+									line: lineOffset + linePos[ 1 ].line,
+									column: linePos[ 1 ].col
 								}
 							}
 						} );
