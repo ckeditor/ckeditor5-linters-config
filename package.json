@@ -51,8 +51,5 @@
     "**/*.{js,mjs}": [
       "eslint --quiet"
     ]
-  },
-  "dependencies": {
-    "eslint-plugin-yml": "^1.18.0"
   }
 }
