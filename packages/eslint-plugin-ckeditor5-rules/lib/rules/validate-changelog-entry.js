@@ -125,6 +125,26 @@ module.exports = {
 							}
 						} );
 					} );
+
+				doc.errors
+					.filter( ( { code } ) => code === 'TAB_AS_INDENT' )
+					.forEach( ( { linePos } ) => {
+						const lineOffset = node.position.start.line;
+
+						context.report( {
+							message: 'Indentation should use spaces instead of tabs.',
+							loc: {
+								start: {
+									line: lineOffset + linePos[ 0 ].line,
+									column: linePos[ 0 ].col
+								},
+								end: {
+									line: lineOffset + linePos[ 1 ].line,
+									column: linePos[ 1 ].col
+								}
+							}
+						} );
+					} );
 			},
 
 			'root:exit'( node ) {

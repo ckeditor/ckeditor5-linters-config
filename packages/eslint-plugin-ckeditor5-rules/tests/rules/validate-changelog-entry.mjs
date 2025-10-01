@@ -523,6 +523,25 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			errors: [
 				'Invalid \'communityCredits\' value: \'%^&*\'.'
 			]
+		},
+
+		// Invalid indent using tabs.
+		{
+			code: dedent`
+			---
+			type: feature
+			scope:
+				- test
+				- test2
+			---
+
+			Change summary.
+			`,
+			options: [ { repositoryType: 'mono', allowedScopes: [ 'test', 'test2' ] } ],
+			errors: [
+				'Indentation should use spaces instead of tabs.',
+				'Indentation should use spaces instead of tabs.'
+			]
 		}
 	]
 } );

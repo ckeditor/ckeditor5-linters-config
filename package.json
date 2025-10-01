@@ -13,7 +13,7 @@
   "scripts": {
     "nice": "ckeditor5-dev-changelog-create-entry",
     "postinstall": "node ./scripts/postinstall.mjs",
-    "lint": "eslint --quiet \"**/*.{js,mjs}\"",
+    "lint": "eslint --quiet \"**/*\"",
     "precommit": "lint-staged",
     "release:prepare-changelog": "node ./scripts/preparechangelog.mjs",
     "release:prepare-packages": "node ./scripts/preparepackages.mjs",
