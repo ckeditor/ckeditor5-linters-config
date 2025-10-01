@@ -525,7 +525,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid intent using tabs.
+		// Invalid indent using tabs.
 		{
 			code: dedent`
 			---
