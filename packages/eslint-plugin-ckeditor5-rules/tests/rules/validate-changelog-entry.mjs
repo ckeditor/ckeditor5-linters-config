@@ -521,7 +521,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			`,
 			options: [ { repositoryType: 'mono' } ],
 			errors: [
-				'Invalid \'communityCredits\' value: \'%^&*\'.'
+				'Invalid \'communityCredits\' value: \'%^&*\'.',
+				'YAML syntax error: Plain value cannot start with directive indicator character %.'
 			]
 		},
 
@@ -534,13 +535,28 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 				- test
 				- test2
 			---
-
 			Change summary.
 			`,
 			options: [ { repositoryType: 'mono', allowedScopes: [ 'test', 'test2' ] } ],
 			errors: [
-				'Indentation should use spaces instead of tabs.',
-				'Indentation should use spaces instead of tabs.'
+				'YAML syntax error: Tabs are not allowed as indentation.',
+				'YAML syntax error: Tabs are not allowed as indentation.'
+			]
+		},
+
+		// Invalid indent.
+		{
+			code: dedent`
+			---
+			type: fix
+			closes:
+			8675
+			---
+			Change summary.
+			`,
+			options: [ { repositoryType: 'mono' } ],
+			errors: [
+				'YAML syntax error: Implicit map keys need to be followed by map values.'
 			]
 		}
 	]
