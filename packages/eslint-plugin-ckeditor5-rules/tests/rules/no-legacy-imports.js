@@ -18,18 +18,18 @@ function mockPackageJson( config ) {
 		const pkgJsonPath = upath.join( 'node_modules', location );
 
 		if ( fs.pathExistsSync( pkgJsonPath ) ) {
-			console.warn( `Cannot mock the "${ location }" file as it already exists.` );
+			console.warn( `⚠️  Cannot mock the "${ location }" file as it already exists.` );
 			continue;
 		}
 
 		fs.ensureFileSync( pkgJsonPath );
 		fs.writeFileSync( pkgJsonPath, content );
-		packagesToRemove.push( pkgJsonPath );
+		packagesToRemove.push( upath.dirname( pkgJsonPath ) );
 	}
 
 	return () => {
 		for ( const item of packagesToRemove ) {
-			fs.removeSync( upath.join( 'node_modules', item.split( '/' )[ 0 ] ) );
+			fs.removeSync( item );
 		}
 	};
 }
