@@ -1,6 +1,6 @@
 {
   "name": "stylelint-config-ckeditor5",
-  "version": "12.1.1",
+  "version": "12.2.0",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -25,7 +25,7 @@
   "dependencies": {
     "@stylistic/stylelint-plugin": "^3.1.2",
     "stylelint-config-recommended": "^16.0.0",
-    "stylelint-plugin-ckeditor5-rules": "^12.1.1"
+    "stylelint-plugin-ckeditor5-rules": "^12.2.0"
   },
   "peerDependencies": {
     "stylelint": ">=16.0.0"
