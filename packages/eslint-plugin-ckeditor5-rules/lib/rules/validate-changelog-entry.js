@@ -94,7 +94,8 @@ module.exports = {
 
 				const lineCounter = new yaml.LineCounter();
 				const doc = yaml.parseDocument( node.value, {
-					lineCounter
+					lineCounter,
+					prettyErrors: false
 				} );
 
 				const getKey = key => doc.contents?.items?.find( item => item.key.value === key );
@@ -126,25 +127,25 @@ module.exports = {
 						} );
 					} );
 
-				doc.errors
-					.filter( ( { code } ) => code === 'TAB_AS_INDENT' )
-					.forEach( ( { linePos } ) => {
-						const lineOffset = node.position.start.line;
+				doc.errors.forEach( ( { message, pos } ) => {
+					const lineOffset = node.position.start.line;
+					const start = lineCounter.linePos( pos[ 0 ] );
+					const end = lineCounter.linePos( pos[ 1 ] );
 
-						context.report( {
-							message: 'Indentation should use spaces instead of tabs.',
-							loc: {
-								start: {
-									line: lineOffset + linePos[ 0 ].line,
-									column: linePos[ 0 ].col
-								},
-								end: {
-									line: lineOffset + linePos[ 1 ].line,
-									column: linePos[ 1 ].col
-								}
+					context.report( {
+						message: `YAML syntax error: ${ message }.`,
+						loc: {
+							start: {
+								line: lineOffset + start.line,
+								column: start.col
+							},
+							end: {
+								line: lineOffset + end.line,
+								column: end.col
 							}
-						} );
+						}
 					} );
+				} );
 			},
 
 			'root:exit'( node ) {
