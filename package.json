@@ -23,7 +23,7 @@
     "reinstall": "pnpm run clean && pnpm install"
   },
   "engines": {
-    "node": ">=22.0.0",
+    "node": ">=24.11.0",
     "pnpm": ">=10.14.0",
     "yarn": "\n\n┌─────────────────────────┐\n│  Hey, we use pnpm now!  │\n└─────────────────────────┘\n\n"
   },
