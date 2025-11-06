@@ -5,7 +5,7 @@
  * For licensing, see LICENSE.md.
  */
 
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import * as releaseTools from '@ckeditor/ckeditor5-dev-release-tools';
 import { Listr } from 'listr2';
 import { ListrInquirerPromptAdapter } from '@listr2/prompt-adapter-inquirer';
@@ -47,13 +47,13 @@ const tasks = new Listr( [
 	{
 		title: 'Check the release directory.',
 		task: async ( ctx, task ) => {
-			const isAvailable = await fs.exists( RELEASE_DIRECTORY );
+			const isAvailable = fs.existsSync( RELEASE_DIRECTORY );
 
 			if ( !isAvailable ) {
-				return fs.ensureDir( RELEASE_DIRECTORY );
+				return fs.mkdirSync( RELEASE_DIRECTORY, { recursive: true } );
 			}
 
-			const isEmpty = ( await fs.readdir( RELEASE_DIRECTORY ) ).length === 0;
+			const isEmpty = fs.readdirSync( RELEASE_DIRECTORY ).length === 0;
 
 			if ( isEmpty ) {
 				return Promise.resolve();
@@ -61,7 +61,7 @@ const tasks = new Listr( [
 
 			// Do not ask when running on CI.
 			if ( cliArguments.ci ) {
-				return fs.emptyDir( RELEASE_DIRECTORY );
+				return fs.rmSync( RELEASE_DIRECTORY, { recursive: true, force: true } );
 			}
 
 			const shouldContinue = await task.prompt( ListrInquirerPromptAdapter )
@@ -73,7 +73,7 @@ const tasks = new Listr( [
 				return Promise.reject( 'Aborting as requested.' );
 			}
 
-			return fs.emptyDir( RELEASE_DIRECTORY );
+			return fs.rmSync( RELEASE_DIRECTORY, { recursive: true, force: true } );
 		}
 	},
 	{

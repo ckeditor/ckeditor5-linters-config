@@ -3,15 +3,11 @@
  * For licensing, see LICENSE.md.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
 import { PACKAGES_DIRECTORY } from './constants.mjs';
 
-const __filename = fileURLToPath( import.meta.url );
-const __dirname = path.dirname( __filename );
-
-const ROOT_DIRECTORY = path.join( __dirname, '..', '..' );
+const ROOT_DIRECTORY = path.join( import.meta.dirname, '..', '..' );
 const PACKAGES_PATH = path.join( ROOT_DIRECTORY, PACKAGES_DIRECTORY );
 
 // Name of available packages in the `packages/` directory.

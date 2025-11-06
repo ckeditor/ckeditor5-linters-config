@@ -5,8 +5,8 @@
 
 'use strict';
 
+const fs = require( 'node:fs' );
 const upath = require( 'upath' );
-const fs = require( 'fs-extra' );
 
 module.exports = {
 	meta: {
@@ -78,13 +78,10 @@ function callbackFactory( context ) {
  */
 function getPackageName( directory, cwd ) {
 	const packageJsonPath = upath.join( directory, 'package.json' );
+	const packageJson = loadJson( packageJsonPath, 'utf-8' );
 
-	if ( fs.pathExistsSync( packageJsonPath ) ) {
-		const packageJson = fs.readJsonSync( packageJsonPath, { throws: false } );
-
-		if ( packageJson ) {
-			return packageJson.name;
-		}
+	if ( packageJson ) {
+		return packageJson.name;
 	}
 
 	const parentDirectory = upath.dirname( directory );
@@ -94,4 +91,22 @@ function getPackageName( directory, cwd ) {
 	}
 
 	return null;
+}
+
+function loadJson( path ) {
+	if ( !fs.existsSync( path ) ) {
+		return;
+	}
+
+	const content = fs.readFileSync( path, 'utf-8' );
+
+	if ( !content ) {
+		return null;
+	}
+
+	try {
+		return JSON.parse( content );
+	} catch {
+		return null;
+	}
 }

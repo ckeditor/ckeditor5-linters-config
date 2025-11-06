@@ -6,7 +6,7 @@
 'use strict';
 
 const { normalize, extname, dirname, sep, parse } = require( 'upath' );
-const { isBuiltin } = require( 'module' );
+const { isBuiltin } = require( 'node:module' );
 const { exports: resolveExports } = require( 'resolve.exports' );
 const enhancedResolve = require( 'enhanced-resolve' );
 const isValidNpmPackageName = require( 'validate-npm-package-name' );

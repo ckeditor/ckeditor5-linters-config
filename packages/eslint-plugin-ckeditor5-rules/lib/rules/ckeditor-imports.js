@@ -5,7 +5,7 @@
 
 'use strict';
 
-const path = require( 'path' );
+const path = require( 'node:path' );
 
 // A regular expression for determining the short name of a package from a full package name.
 const SHORT_PACKAGE_NAME_IMPORT_REGEXP = /@ckeditor\/ckeditor5?-([^/]+)/;
