@@ -94,6 +94,16 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 		// Non-literal dynamic import() (cannot be safely analyzed).
 		{
 			code: 'const name = \'fs\'; const fs = await import(name);'
+		},
+
+		// Re-export
+		{
+			code: 'export { readFile } from \'node:fs/promises\';'
+		},
+
+		// Should not fail when there is no "from" in export.
+		{
+			code: 'const test = 123; export { test };'
 		}
 	],
 
@@ -147,6 +157,24 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 		{
 			code: 'const fs = await import(\'fs\')',
 			output: 'const fs = await import(\'node:fs\')',
+			errors: [
+				'Use \'node:\' prefix for built-in module \'fs\'.'
+			]
+		},
+
+		// ESM: Re-export
+		{
+			code: 'export { readFile } from \'fs\';',
+			output: 'export { readFile } from \'node:fs\';',
+			errors: [
+				'Use \'node:\' prefix for built-in module \'fs\'.'
+			]
+		},
+
+		// CJS: Re-export
+		{
+			code: 'module.exports = require(\'fs\');',
+			output: 'module.exports = require(\'node:fs\');',
 			errors: [
 				'Use \'node:\' prefix for built-in module \'fs\'.'
 			]

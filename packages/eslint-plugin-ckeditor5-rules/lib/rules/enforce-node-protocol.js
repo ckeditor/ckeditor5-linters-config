@@ -28,16 +28,30 @@ module.exports = {
 			// Handle dynamic `import()` calls.
 			ImportExpression: node => handleImport( node, context ),
 
-			// Handle `require()` calls.
+			// Handle `export { ... } from 'source'` re-exports.
+			ExportNamedDeclaration: node => handleImport( node, context ),
+
+			// Handle `export * from 'source'` re-exports.
+			ExportAllDeclaration: node => handleImport( node, context ),
+
+			// Handle `require()` calls (including CJS re-exports).
 			CallExpression: node => handleRequire( node, context )
 		};
 	}
 };
 
 /**
- * Handle import declarations and dynamic import expressions.
+ * Handle import-like nodes:
+ * - ImportDeclaration
+ * - ImportExpression
+ * - ExportNamedDeclaration (with `source`)
+ * - ExportAllDeclaration
  */
 function handleImport( { source }, context ) {
+	if ( !source || source.type !== 'Literal' ) {
+		return;
+	}
+
 	const value = source.value;
 
 	if (
@@ -70,7 +84,11 @@ function handleRequire( { callee, arguments: args }, context ) {
 
 	const value = args[ 0 ].value;
 
-	if ( value.startsWith( 'node:' ) || !isBuiltin( 'node:' + value ) ) {
+	if (
+		typeof value !== 'string' ||
+		value.startsWith( 'node:' ) ||
+		!isBuiltin( 'node:' + value )
+	) {
 		return;
 	}
 
