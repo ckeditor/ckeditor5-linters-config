@@ -3,15 +3,14 @@
  * For licensing, see LICENSE.md.
  */
 
-const fs = require( 'fs' );
+const fs = require( 'node:fs' );
 const upath = require( 'upath' );
-const { globSync } = require( 'glob' );
 const _ = require( 'lodash' );
 
 module.exports = function fixtureLoader( ruleName ) {
 	const cwd = upath.join( __dirname, 'fixtures', ruleName );
 
-	return globSync( '**/*.js', { cwd } )
+	return fs.globSync( '**/*.js', { cwd } )
 		.map( upath.normalize )
 		.reduce( ( result, fixtureRelativePath ) => {
 			const fixtureKey = fixtureRelativePath

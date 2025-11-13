@@ -33,7 +33,6 @@
   "dependencies": {
     "@es-joy/jsdoccomment": "^0.50.2",
     "enhanced-resolve": "^5.15.0",
-    "fs-extra": "^11.3.2",
     "resolve.exports": "^2.0.2",
     "upath": "^2.0.1",
     "validate-npm-package-name": "^6.0.0",
@@ -43,7 +42,6 @@
     "@eslint/markdown": "^6.6.0",
     "dedent": "^1.6.0",
     "eslint": "^9.26.0",
-    "glob": "^11.0.2",
     "lodash": "^4.17.21",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.32.0"

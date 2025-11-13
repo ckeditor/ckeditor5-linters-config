@@ -267,7 +267,9 @@ const rulesGeneral = [
 
 			'@stylistic/template-curly-spacing': [ 'error', 'always' ],
 
-			'@stylistic/yield-star-spacing': [ 'error', 'after' ]
+			'@stylistic/yield-star-spacing': [ 'error', 'after' ],
+
+			'ckeditor5-rules/enforce-node-protocol': 'error'
 
 			// This is too pedantic. It makes writing callbacks such as `value => value ? 1 : 2` impossible
 			// '@stylistic/no-confusing-arrow': 'error',

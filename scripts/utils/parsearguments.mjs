@@ -3,7 +3,7 @@
  * For licensing, see LICENSE.md.
  */
 
-import os from 'os';
+import os from 'node:os';
 import minimist from 'minimist';
 
 /**

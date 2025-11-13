@@ -12,6 +12,7 @@ module.exports = {
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
 		'ckeditor-imports': require( './rules/ckeditor-imports' ),
 		'ckeditor-plugin-flags': require( './rules/ckeditor-plugin-flags.js' ),
+		'enforce-node-protocol': require( './rules/enforce-node-protocol' ),
 		'no-cross-package-imports': require( './rules/no-cross-package-imports' ),
 		'no-scoped-imports-within-package': require( './rules/no-scoped-imports-within-package' ),
 		'license-header': require( './rules/license-header' ),

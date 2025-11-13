@@ -8,7 +8,7 @@
 const RuleTester = require( 'eslint' ).RuleTester;
 const parser = require( '@typescript-eslint/parser' );
 const rule = require( '../../lib/rules/no-legacy-imports' );
-const fs = require( 'fs-extra' );
+const fs = require( 'node:fs' );
 const upath = require( 'upath' );
 
 function mockPackageJson( config ) {
@@ -17,19 +17,21 @@ function mockPackageJson( config ) {
 	for ( const [ location, content ] of Object.entries( config ) ) {
 		const pkgJsonPath = upath.join( 'node_modules', location );
 
-		if ( fs.pathExistsSync( pkgJsonPath ) ) {
+		if ( fs.existsSync( pkgJsonPath ) ) {
 			console.warn( `⚠️  Cannot mock the "${ location }" file as it already exists.` );
 			continue;
 		}
 
-		fs.ensureFileSync( pkgJsonPath );
-		fs.writeFileSync( pkgJsonPath, content );
-		packagesToRemove.push( upath.dirname( pkgJsonPath ) );
+		const dir = upath.dirname( pkgJsonPath );
+
+		fs.mkdirSync( dir, { recursive: true } );
+		fs.writeFileSync( pkgJsonPath, content, 'utf-8' );
+		packagesToRemove.push( dir );
 	}
 
 	return () => {
 		for ( const item of packagesToRemove ) {
-			fs.removeSync( item );
+			fs.rmSync( item, { recursive: true, force: true } );
 		}
 	};
 }

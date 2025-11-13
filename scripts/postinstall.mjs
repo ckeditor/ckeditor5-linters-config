@@ -3,8 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 // When installing a repository as a dependency, the `.git` directory does not exist.
 // In such a case, husky should not attach its hooks as npm treats it as a package, not a git repository.

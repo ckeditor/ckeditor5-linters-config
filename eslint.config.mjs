@@ -3,8 +3,8 @@
  * For licensing, see LICENSE.md.
  */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 import ckeditor5Config from 'eslint-config-ckeditor5';

@@ -5,7 +5,7 @@
 
 'use strict';
 
-const path = require( 'path' );
+const path = require( 'node:path' );
 const RuleTester = require( 'eslint' ).RuleTester;
 
 const ruleTester = new RuleTester( {
