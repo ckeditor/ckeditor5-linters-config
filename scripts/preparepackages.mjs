@@ -132,7 +132,7 @@ const tasks = new Listr( [
 	{
 		title: 'Verify release directory.',
 		task: async () => {
-			const isEmpty = ( await fs.readdir( RELEASE_DIRECTORY ) ).length === 0;
+			const isEmpty = fs.readdirSync( RELEASE_DIRECTORY ).length === 0;
 
 			if ( !isEmpty ) {
 				return;

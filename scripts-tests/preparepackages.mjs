@@ -37,7 +37,7 @@ describe( 'scripts/preparepackages', () => {
 		} );
 
 		it( 'does not reject if the directory is not empty', async () => {
-			vi.mocked( fs.readdir ).mockResolvedValue( [ 'directoryFoo', 'file.txt' ] );
+			vi.mocked( fs.readdirSync ).mockReturnValue( [ 'directoryFoo', 'file.txt' ] );
 
 			try {
 				const result = await task();
@@ -49,7 +49,7 @@ describe( 'scripts/preparepackages', () => {
 		} );
 
 		it( 'does reject if the directory is empty', async () => {
-			vi.mocked( fs.readdir ).mockResolvedValue( [] );
+			vi.mocked( fs.readdirSync ).mockReturnValue( [] );
 
 			try {
 				await task();
