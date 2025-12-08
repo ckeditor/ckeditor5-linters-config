@@ -19,7 +19,7 @@ export default defineConfig( {
 		coverage: {
 			provider: 'v8',
 			include: [
-				'./scripts-tests/**'
+				'./scripts/**'
 			],
 			reporter: [ 'text' ]
 		}

@@ -49,7 +49,7 @@
     "listr2": "^8.0.0",
     "minimist": "^1.2.8",
     "upath": "^2.0.1",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   },
   "lint-staged": {
     "**/*.{js,mjs}": [
