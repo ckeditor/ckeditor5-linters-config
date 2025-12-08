@@ -19,6 +19,7 @@
     "release:prepare-packages": "node ./scripts/preparepackages.mjs",
     "release:publish-packages": "node ./scripts/publishpackages.mjs",
     "test": "node ./scripts/test-packages.js",
+    "test:scripts": "vitest --config ./scripts-tests/vitest.config.mjs --run",
     "clean": "pnpx rimraf --glob package-lock.json yarn.lock pnpm-lock.yaml \"./**/node_modules\"",
     "reinstall": "pnpm run clean && pnpm install"
   },
@@ -38,6 +39,7 @@
     "@ckeditor/ckeditor5-dev-release-tools": "^54.0.0",
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
+    "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^9.26.0",
     "eslint-config-ckeditor5": "^13.0.0",
     "eslint-plugin-ckeditor5-rules": "^13.0.0",
@@ -46,7 +48,8 @@
     "lint-staged": "^16.1.0",
     "listr2": "^8.0.0",
     "minimist": "^1.2.8",
-    "upath": "^2.0.1"
+    "upath": "^2.0.1",
+    "vitest": "^4.0.15"
   },
   "lint-staged": {
     "**/*.{js,mjs}": [
