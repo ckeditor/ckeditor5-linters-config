@@ -39,6 +39,7 @@
     "@ckeditor/ckeditor5-dev-release-tools": "^54.0.0",
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
+    "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^9.26.0",
     "eslint-config-ckeditor5": "^13.0.0",
     "eslint-plugin-ckeditor5-rules": "^13.0.0",
