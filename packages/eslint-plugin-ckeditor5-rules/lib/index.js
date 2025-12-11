@@ -10,7 +10,6 @@ module.exports = {
 		'no-legacy-imports': require( './rules/no-legacy-imports' ),
 		'no-relative-imports': require( './rules/no-relative-imports' ),
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
-		'ckeditor-imports': require( './rules/ckeditor-imports' ),
 		'ckeditor-plugin-flags': require( './rules/ckeditor-plugin-flags.js' ),
 		'enforce-node-protocol': require( './rules/enforce-node-protocol' ),
 		'no-cross-package-imports': require( './rules/no-cross-package-imports' ),
