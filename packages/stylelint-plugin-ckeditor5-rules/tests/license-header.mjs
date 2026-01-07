@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md.
  */
 
@@ -19,7 +19,7 @@ const testOptions = {
 			headerLines:
 			[
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			]
@@ -43,7 +43,7 @@ getTestRule()( {
 			description: 'File containing only the license, without trailing empty line.',
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */'
 			].join( '\n' )
@@ -52,7 +52,7 @@ getTestRule()( {
 			description: 'File containing only the license, with trailing empty line.',
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				''
@@ -62,7 +62,7 @@ getTestRule()( {
 			description: 'File containing the license and a CSS rule.',
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -107,7 +107,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/* ',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -122,7 +122,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				'* Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				'* Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -137,7 +137,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'  */',
 				'',
@@ -152,7 +152,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'*/',
 				'',
@@ -167,7 +167,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
 				' */',
@@ -183,7 +183,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
 				' */',
 				'',
@@ -199,7 +199,7 @@ getTestRule()( {
 			code: [
 				'',
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -214,7 +214,7 @@ getTestRule()( {
 			message: messages.trailingSpacing,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'.ck.ck-editor {',
@@ -236,7 +236,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/* ',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -247,7 +247,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -262,7 +262,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				'* Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				'* Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -273,7 +273,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -288,7 +288,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'  */',
 				'',
@@ -299,7 +299,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -314,7 +314,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				'*/',
 				'',
@@ -325,7 +325,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -340,7 +340,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' * This license has too much text.',
 				' */',
@@ -352,7 +352,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -367,7 +367,7 @@ getTestRule()( {
 			message: messages.incorrectContent,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md.',
 				' */',
 				'',
@@ -378,7 +378,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -394,7 +394,7 @@ getTestRule()( {
 			code: [
 				'',
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -405,7 +405,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
@@ -420,7 +420,7 @@ getTestRule()( {
 			message: messages.trailingSpacing,
 			code: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'.ck.ck-editor {',
@@ -430,7 +430,7 @@ getTestRule()( {
 			].join( '\n' ),
 			fixed: [
 				'/*',
-				' * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.',
+				' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 				' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license',
 				' */',
 				'',
