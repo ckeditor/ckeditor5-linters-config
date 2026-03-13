@@ -37,7 +37,7 @@ export default function parseArguments( cliArguments ) {
 			ci: false,
 			verbose: false,
 			'compile-only': false,
-			branch: 'master',
+			branch: 'master-v13',
 			'npm-tag': null,
 			'dry-run': false
 		}
@@ -94,7 +94,7 @@ function toCamelCase( value ) {
  *
  * @property {String} [from]
  *
- * @property {String} [branch='master']
+ * @property {String} [branch='master-v13']
  *
  * @property {Boolean} [compileOnly=false]
  *
