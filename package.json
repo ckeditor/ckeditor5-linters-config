@@ -33,10 +33,10 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^54.0.0",
-    "@ckeditor/ckeditor5-dev-changelog": "^54.0.0",
-    "@ckeditor/ckeditor5-dev-ci": "^54.0.0",
-    "@ckeditor/ckeditor5-dev-release-tools": "^54.0.0",
+    "@ckeditor/ckeditor5-dev-bump-year": "^55.0.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^55.0.0",
+    "@ckeditor/ckeditor5-dev-ci": "^55.0.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^55.0.0",
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
     "@vitest/coverage-v8": "^4.0.15",
