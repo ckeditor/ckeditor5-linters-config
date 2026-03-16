@@ -1,7 +1,7 @@
 CKEditor 5 linters configuration
 ================================
 
-[![CircleCI](https://circleci.com/gh/ckeditor/ckeditor5-linters-config.svg?style=shield)](https://app.circleci.com/pipelines/github/ckeditor/ckeditor5-linters-config?branch=master)
+[![CircleCI](https://circleci.com/gh/ckeditor/ckeditor5-linters-config.svg?style=shield)](https://app.circleci.com/pipelines/github/ckeditor/ckeditor5-linters-config?branch=master-v13)
 
 ## Issue tracker
 
@@ -48,7 +48,7 @@ CircleCI automates the release process and can release both channels: stable (`X
 
 Before you start, you need to prepare the changelog entries.
 
-1. Make sure the `#master` branch is up-to-date: `git fetch && git checkout master && git pull`.
+1. Make sure the `#master-v13` branch is up-to-date: `git fetch && git checkout master-v13 && git pull`.
 1. Prepare a release branch: `git checkout -b release-[YYYYMMDD]` where `YYYYMMDD` is the current day.
 1. Generate the changelog entries: `pnpm run release:prepare-changelog`.
 	* You can specify the release date by passing the `--date` option, e.g., `--date=2025-06-11`.
@@ -56,7 +56,7 @@ Before you start, you need to prepare the changelog entries.
 	* Read all the entries, correct poor wording and other issues, wrap code names in backticks to format them, etc.
 	* Add the missing `the/a` articles, `()` to method names, "it's" -> "its", etc.
 	* A newly introduced feature should have just one changelog entry – something like "The initial implementation of the FOO feature." with a description of what it does.
-1. Commit all changes and prepare a new pull request targeting the `#master` branch.
+1. Commit all changes and prepare a new pull request targeting the `#master-v13` branch.
 1. Ping the `@ckeditor/ckeditor-5-platform` team to review the pull request and trigger the release process.
 
 ## License

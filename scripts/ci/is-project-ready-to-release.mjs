@@ -12,7 +12,7 @@ const require = createRequire( import.meta.url );
 const { name: packageName } = require( '../../packages/eslint-config-ckeditor5/package.json' );
 
 const changelogVersion = releaseTools.getLastFromChangelog();
-const npmTag = releaseTools.getNpmTagFromVersion( changelogVersion );
+const npmTag = 'latest-v13';
 
 releaseTools.isVersionPublishableForTag( packageName, changelogVersion, npmTag )
 	.then( result => {
