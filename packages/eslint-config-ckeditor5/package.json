@@ -38,10 +38,10 @@
   },
   "devDependencies": {
     "eslint": "^9.26.0",
-    "typescript": "^5.0.0"
+    "typescript": "5.5.4"
   },
   "peerDependencies": {
     "eslint": "^9.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "5.5.4"
   }
 }
