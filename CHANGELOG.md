@@ -1,6 +1,32 @@
 Changelog
 =========
 
+## [14.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v13.0.0...v14.0.0) (March 16, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Removed the `ckeditor-imports` ESLint rule that was used for DLL import linting.
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Removed `no-legacy-imports` ESLint rule as it is no longer needed since DLL support has been dropped. Closes [ckeditor/ckeditor5#19522](https://github.com/ckeditor/ckeditor5/issues/19522).
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/14.0.0): v13.0.0 => v14.0.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/14.0.0): v13.0.0 => v14.0.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/14.0.0): v13.0.0 => v14.0.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/14.0.0): v13.0.0 => v14.0.0
+</details>
+
+
 ## [13.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v12.2.0...v13.0.0) (November 13, 2025)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -115,56 +141,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.1.0): v12.0.0 => v12.1.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.1.0): v12.0.0 => v12.1.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.1.0): v12.0.0 => v12.1.0
-</details>
-
-
-## [12.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v11.1.0...v12.0.0) (July 11, 2025)
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* **[stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5)**: Added a new rule: `ckeditor5-rules/ck-content-variable-name` (enabled by default). It enforces that all CSS variables used within the `.ck-content` selectors follow the `--ck-content-*` naming convention. This ensures consistent and scoped variable usage inside the editor content styles. Closes [ckeditor/ckeditor5#18805](https://github.com/ckeditor/ckeditor5/issues/18805).
-* **[stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules)**: The way how the rules from the `stylelint-plugin-ckeditor5-rules` package are loaded has been changed. See [ckeditor/ckeditor5#18805](https://github.com/ckeditor/ckeditor5/issues/18805).
-
-  Previously, each rule had to be imported in Stylelint config directly:
-
-  ```
-  "plugins": [
-      "stylelint-plugin-ckeditor5-rules/lib/license-header"
-  ],
-  ```
-
-  Now, the package exports all the rules, so it can be loaded instead of providing each rule separately:
-
-  ```
-  "plugins": [
-    "stylelint-plugin-ckeditor5-rules"
-  ],
-  ```
-
-  The way rules are configured remains unchanged:
-
-  ```
-  "rules": {
-    "ckeditor5-rules/license-header": [ ... ]
-  }
-  ```
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Major releases (contain major breaking changes):
-
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.0.0): v11.1.0 => v12.0.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.0.0): v11.1.0 => v12.0.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.0.0): v11.1.0 => v12.0.0
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/12.0.0): v11.1.0 => v12.0.0
 </details>
 
 ---
