@@ -4,6 +4,7 @@ packages:
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
+  - snyk
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
