@@ -199,6 +199,17 @@ jobs:
           path: ./release.zip
           when: always
 
+  upload_snyk_snapshots:
+    docker:
+      - image: cimg/node:24.11.0
+    resource_class: medium
+    steps:
+      - checkout
+      - bootstrap_repository_command
+      - run:
+          name: Upload Snyk snapshots
+          command: pnpm ckeditor5-dev-ci-trigger-snyk-scan --organization=4e518ef7-b5e1-4699-9b34-ac77e1da695f
+
 workflows:
   version: 2
   main:
@@ -213,6 +224,11 @@ workflows:
           requires:
             - validate_and_tests
             - release_prepare
+          filters:
+            branches:
+              only:
+                - master-v13
+      - upload_snyk_snapshots:
           filters:
             branches:
               only:
