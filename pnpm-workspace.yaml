@@ -11,6 +11,12 @@ minimumReleaseAgeExclude:
   - '@ckeditor/*'
   - '@cksource/*'
   - '*ckeditor5*'
+  - 'diff' # Remove after 2026-07-13.
+  - 'serialize-javascript' # Remove after 2026-07-13.
+
+overrides:
+  'diff@^7': '^8.0.3'
+  'serialize-javascript@^6': '^7.0.5'
 
 shellEmulator: true
 shamefullyHoist: true
