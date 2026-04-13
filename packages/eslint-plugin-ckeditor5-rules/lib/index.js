@@ -8,6 +8,7 @@
 module.exports = {
 	rules: {
 		'no-relative-imports': require( './rules/no-relative-imports' ),
+		'no-enum': require( './rules/no-enum' ),
 		'ckeditor-error-message': require( './rules/ckeditor-error-message' ),
 		'ckeditor-plugin-flags': require( './rules/ckeditor-plugin-flags.js' ),
 		'enforce-node-protocol': require( './rules/enforce-node-protocol' ),
