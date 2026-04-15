@@ -71,6 +71,19 @@ ruleTester.run( 'no-enum', require( '../../lib/rules/no-enum' ), {
 					message: errorMessage
 				}
 			]
+		},
+		{
+			code: `
+				enum Status {
+					Ready,
+					Busy
+				}
+			`,
+			errors: [
+				{
+					message: errorMessage
+				}
+			]
 		}
 	]
 } );
