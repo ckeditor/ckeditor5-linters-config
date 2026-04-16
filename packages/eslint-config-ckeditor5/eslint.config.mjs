@@ -415,6 +415,8 @@ const rulesSourceCode = [
 
 			'ckeditor5-rules/no-scoped-imports-within-package': 'error',
 
+			'ckeditor5-rules/no-enum': 'error',
+
 			'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
 
 			'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
