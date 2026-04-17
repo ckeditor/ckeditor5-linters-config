@@ -1,6 +1,38 @@
 Changelog
 =========
 
+## [15.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v14.1.0...v15.0.0) (April 17, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Enabled the new `ckeditor5-rules/no-enum` rule. Enums are now disallowed by default.
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added a new `ckeditor5-rules/no-enum` rule. It disallows usage of typescript Enums.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/15.0.0): v14.1.0 => v15.0.0
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/15.0.0): v14.1.0 => v15.0.0
+
+Other releases:
+
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/15.0.0): v14.1.0 => v15.0.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/15.0.0): v14.1.0 => v15.0.0
+</details>
+
+
 ## [14.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v14.0.0...v14.1.0) (April 9, 2026)
 
 ### Features
@@ -115,28 +147,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.2.0): v12.1.1 => v12.2.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.2.0): v12.1.1 => v12.2.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.2.0): v12.1.1 => v12.2.0
-</details>
-
-
-## [12.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v12.1.0...v12.1.1) (August 21, 2025)
-
-### Other changes
-
-* Updated the `allow-imports-only-from-main-package-entry-point` rule to allow non-entry point imports from paths matching: `/tests/**/_utils*`. See [ckeditor/ckeditor5#18860](https://github.com/ckeditor/ckeditor5/issues/18860).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.1.1): v12.1.0 => v12.1.1
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/12.1.1): v12.1.0 => v12.1.1
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.1.1): v12.1.0 => v12.1.1
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.1.1): v12.1.0 => v12.1.1
 </details>
 
 ---
