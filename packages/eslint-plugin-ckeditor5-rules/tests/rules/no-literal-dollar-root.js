@@ -191,6 +191,47 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-literal-dollar-root', require(
 			errors: [ { messageId: 'nameEqualsDollarRoot' } ]
 		},
 
+		// Pattern 1 with a logical-expression receiver — autofix skipped to avoid dropping parens and
+		// silently flipping `( a || b ).is( … )` into `a || b.is( … )`.
+		{
+			code: 'if ( ( a || b ).is( \'element\', \'$root\' ) ) {}',
+			output: null,
+			filename: featureFile,
+			options: allowlistOptions,
+			errors: [ { messageId: 'isElementDollarRoot' } ]
+		},
+		// Pattern 1 with a conditional-expression receiver — autofix skipped for the same reason.
+		{
+			code: 'if ( ( cond ? x : y ).is( \'element\', \'$root\' ) ) {}',
+			output: null,
+			filename: featureFile,
+			options: allowlistOptions,
+			errors: [ { messageId: 'isElementDollarRoot' } ]
+		},
+		// Pattern 2 with a logical-expression receiver — autofix skipped, but the message hint wraps the
+		// suggestion in parens so the rewrite text is itself valid.
+		{
+			code: 'if ( ( a || b ).name === \'$root\' ) {}',
+			output: null,
+			filename: featureFile,
+			options: allowlistOptions,
+			errors: [ {
+				messageId: 'nameEqualsDollarRoot',
+				data: { replacement: '( a || b ).is( \'rootElement\' )' }
+			} ]
+		},
+		// Pattern 2 (negated) with a conditional-expression receiver — autofix skipped, parens preserved in hint.
+		{
+			code: 'if ( ( cond ? x : y ).name !== \'$root\' ) {}',
+			output: null,
+			filename: featureFile,
+			options: allowlistOptions,
+			errors: [ {
+				messageId: 'nameEqualsDollarRoot',
+				data: { replacement: '!( cond ? x : y ).is( \'rootElement\' )' }
+			} ]
+		},
+
 		// Bare `$root` literal in a feature package.
 		{
 			code: 'const ROOT = \'$root\';',

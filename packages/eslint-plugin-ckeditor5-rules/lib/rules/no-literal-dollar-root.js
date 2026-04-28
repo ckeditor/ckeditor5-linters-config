@@ -59,16 +59,24 @@ module.exports = {
 					return;
 				}
 
-				context.report( {
+				const report = {
 					node,
-					messageId: 'isElementDollarRoot',
-					fix: fixer => {
+					messageId: 'isElementDollarRoot'
+				};
+
+				// AST node ranges exclude grouping parens, so splicing `getText( object )` for a complex receiver
+				// (e.g. `( a || b ).is( 'element', '$root' )`) would drop the parens and silently change operator
+				// precedence. Skip the autofix in those cases — the developer rewrites by hand.
+				if ( isSafeReceiver( node.callee.object ) ) {
+					report.fix = fixer => {
 						const objectText = sourceCode.getText( node.callee.object );
 						const accessor = node.callee.optional ? '?.' : '.';
 
 						return fixer.replaceText( node, `${ objectText }${ accessor }is( 'rootElement' )` );
-					}
-				} );
+					};
+				}
+
+				context.report( report );
 			},
 
 			BinaryExpression( node ) {
@@ -79,14 +87,25 @@ module.exports = {
 				}
 
 				const objectText = sourceCode.getText( match.object );
-				const replacement = match.negated ? `!${ objectText }.is( 'rootElement' )` : `${ objectText }.is( 'rootElement' )`;
+				const safeReceiver = isSafeReceiver( match.object );
+				// For unsafe receivers (e.g. `( a || b ).name === '$root'`) wrap the suggestion in parens so the
+				// hint text in the message is itself valid; the actual autofix is skipped — see CallExpression note.
+				const receiverText = safeReceiver ? objectText : `( ${ objectText } )`;
+				const replacement = match.negated ?
+					`!${ receiverText }.is( 'rootElement' )` :
+					`${ receiverText }.is( 'rootElement' )`;
 
-				context.report( {
+				const report = {
 					node,
 					messageId: 'nameEqualsDollarRoot',
-					data: { replacement },
-					fix: fixer => fixer.replaceText( node, replacement )
-				} );
+					data: { replacement }
+				};
+
+				if ( safeReceiver ) {
+					report.fix = fixer => fixer.replaceText( node, replacement );
+				}
+
+				context.report( report );
 			},
 
 			Literal( node ) {
@@ -189,6 +208,27 @@ function matchNameAccessor( node ) {
 
 function isStringLiteral( node, value ) {
 	return node && node.type === 'Literal' && node.value === value;
+}
+
+/**
+ * Whether splicing `sourceCode.getText( node )` directly into `${ text }.is( 'rootElement' )` is safe — i.e. the
+ * receiver does not need parens to keep its semantics. Only nodes that bind tighter than member access qualify.
+ */
+function isSafeReceiver( node ) {
+	if ( !node ) {
+		return false;
+	}
+
+	switch ( node.type ) {
+		case 'Identifier':
+		case 'MemberExpression':
+		case 'CallExpression':
+		case 'ChainExpression':
+		case 'ThisExpression':
+			return true;
+		default:
+			return false;
+	}
 }
 
 /**
