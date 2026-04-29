@@ -18,64 +18,92 @@ const rule = require( '../../lib/rules/require-explicit-data-context' );
 
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', rule, {
 	valid: [
-		// Explicit context provided.
+		// Explicit context provided to data.parse() / data.toModel().
 		'editor.data.parse( html, \'$documentFragment\' );',
 		'editor.data.toModel( view, \'$clipboardHolder\' );',
 		'this.data.parse( html, context );',
 		// Destructured `data` reference with explicit context.
 		'const { data } = editor; data.parse( html, \'$root\' );',
-		// No arguments — out of scope (different API misuse).
+		// No arguments — out of scope (different API misuse, not an omitted-context bug).
 		'editor.data.parse();',
-		// Method not in the list.
+		// Method not handled by this rule.
 		'editor.data.format( html );',
 		// Receiver is not `data`.
 		'editor.config.parse( raw );',
 		'JSON.parse( raw );',
 		'someOther.parse( html );',
+		'parser.parse( html );',
 		// Computed property access — not matched.
 		'editor[ \'data\' ].parse( html );',
-		// `parse` on something other than `data`.
-		'parser.parse( html );',
-		// Three or more arguments.
+		// Three or more arguments to parse — context is provided at index 1.
 		'editor.data.parse( html, \'$documentFragment\', extra );',
-		// Custom `methods` allowlist excludes `parse`.
-		{
-			code: 'editor.data.parse( html );',
-			options: [ { methods: [ 'toModel' ] } ]
-		}
+
+		// Explicit element name provided to createRoot.
+		'editor.model.document.createRoot( \'$inlineRoot\' );',
+		'editor.model.document.createRoot( \'$inlineRoot\', \'main\' );',
+		'this.model.document.createRoot( elementName );',
+		// `createRoot` not on a `document` receiver — out of scope.
+		'someUnrelated.createRoot();',
+
+		// Explicit element name provided to writer.addRoot.
+		'writer.addRoot( \'main\', \'$inlineRoot\' );',
+		'writer.addRoot( rootName, elementName );',
+		// `addRoot()` with no arguments — out of scope (rootName is required, this is a different bug).
+		'writer.addRoot();',
+
+		// `MultiRootEditor#addRoot( rootName, options? )` — different signature; receiver is `editor`/`this`/etc.,
+		// not `writer`. Must NOT be flagged: the method resolves its own default internally.
+		'editor.addRoot( \'myRoot\' );',
+		'this.addRoot( rootName );',
+		'multiRootEditor.addRoot( \'foo\' );'
 	],
 
 	invalid: [
-		// Canonical case: editor.data.parse( html ) without context.
+		// Canonical cases for data.parse() / data.toModel().
 		{
 			code: 'editor.data.parse( html );',
-			errors: [ { messageId: 'missingContext', data: { method: 'parse' } } ]
+			errors: [ { messageId: 'missingContext', data: { label: 'data.parse()' } } ]
 		},
-		// editor.data.toModel( view ) without context.
 		{
 			code: 'editor.data.toModel( view );',
-			errors: [ { messageId: 'missingContext', data: { method: 'toModel' } } ]
+			errors: [ { messageId: 'missingContext', data: { label: 'data.toModel()' } } ]
 		},
-		// `this.data.parse( html )`.
 		{
 			code: 'this.data.parse( html );',
-			errors: [ { messageId: 'missingContext', data: { method: 'parse' } } ]
+			errors: [ { messageId: 'missingContext', data: { label: 'data.parse()' } } ]
 		},
-		// Destructured `data` reference.
 		{
 			code: 'const { data } = editor; data.parse( html );',
-			errors: [ { messageId: 'missingContext', data: { method: 'parse' } } ]
+			errors: [ { messageId: 'missingContext', data: { label: 'data.parse()' } } ]
 		},
-		// Deep receiver chain.
 		{
 			code: 'foo.bar.editor.data.parse( html );',
-			errors: [ { messageId: 'missingContext', data: { method: 'parse' } } ]
+			errors: [ { messageId: 'missingContext', data: { label: 'data.parse()' } } ]
 		},
-		// Custom `methods` includes `convert`.
+
+		// `model.document.createRoot()` with no element name.
 		{
-			code: 'editor.data.convert( view );',
-			options: [ { methods: [ 'parse', 'toModel', 'convert' ] } ],
-			errors: [ { messageId: 'missingContext', data: { method: 'convert' } } ]
+			code: 'editor.model.document.createRoot();',
+			errors: [ { messageId: 'missingContext', data: { label: 'document.createRoot()' } } ]
+		},
+		{
+			code: 'this.model.document.createRoot();',
+			errors: [ { messageId: 'missingContext', data: { label: 'document.createRoot()' } } ]
+		},
+		// Bare `document.createRoot()` (covers destructured `const { document } = model` patterns).
+		{
+			code: 'document.createRoot();',
+			errors: [ { messageId: 'missingContext', data: { label: 'document.createRoot()' } } ]
+		},
+
+		// `writer.addRoot( rootName )` — element name omitted.
+		{
+			code: 'writer.addRoot( \'main\' );',
+			errors: [ { messageId: 'missingContext', data: { label: 'writer.addRoot()' } } ]
+		},
+		{
+			code: 'writer.addRoot( rootName );',
+			errors: [ { messageId: 'missingContext', data: { label: 'writer.addRoot()' } } ]
 		}
 	]
 } );
