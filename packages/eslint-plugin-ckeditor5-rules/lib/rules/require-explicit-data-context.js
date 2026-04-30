@@ -37,6 +37,13 @@ const RULES = [
 		matchReceiver: matchWriterReceiver,
 		isMissingContext: args => args.length === 1,
 		label: 'writer.addRoot()'
+	},
+	{
+		// `upcastDispatcher.convert( viewElementOrFragment, writer, context = [ '$root' ] )` — third arg is the schema context.
+		method: 'convert',
+		matchReceiver: matchUpcastDispatcherReceiver,
+		isMissingContext: args => args.length === 2,
+		label: 'upcastDispatcher.convert()'
 	}
 ];
 
@@ -141,4 +148,24 @@ function matchDocumentReceiver( node ) {
  */
 function matchWriterReceiver( node ) {
 	return Boolean( node ) && node.type === 'Identifier' && node.name === 'writer';
+}
+
+/**
+ * Matches a receiver whose final accessed property is `upcastDispatcher` (e.g. `editor.data.upcastDispatcher`).
+ * The upcast dispatcher is the only API in the engine that exposes a `convert()` method with a defaulted schema
+ * context, so this filter excludes unrelated `*.convert()` calls without false positives.
+ */
+function matchUpcastDispatcherReceiver( node ) {
+	if ( !node ) {
+		return false;
+	}
+
+	if ( node.type === 'Identifier' && node.name === 'upcastDispatcher' ) {
+		return true;
+	}
+
+	return node.type === 'MemberExpression' &&
+		!node.computed &&
+		node.property.type === 'Identifier' &&
+		node.property.name === 'upcastDispatcher';
 }

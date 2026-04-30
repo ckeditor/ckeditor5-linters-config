@@ -129,6 +129,17 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-literal-dollar-root', require(
 			code: 'this.listenTo( viewDocument, \'arrowKey\', handler, { \'context\': \'$root\' } );',
 			filename: featureFile,
 			options: allowlistOptions
+		},
+		// Other view-listener method names are also accepted.
+		{
+			code: 'view.on( \'arrowKey\', handler, { context: \'$root\' } );',
+			filename: featureFile,
+			options: allowlistOptions
+		},
+		{
+			code: 'emitter.once( \'arrowKey\', handler, { context: \'$root\' } );',
+			filename: featureFile,
+			options: allowlistOptions
 		}
 	],
 
@@ -278,6 +289,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-literal-dollar-root', require(
 		{
 			code: 'const ROOT = \'$root\';',
 			filename: engineFile,
+			errors: [ { messageId: 'literalDollarRoot' } ]
+		},
+
+		// `{ context: '$root' }` outside a view-listener call is NOT exempted — only `listenTo`/`on`/`once`/`off`
+		// receivers qualify. Any other API receiving an options object with `context` is flagged normally.
+		{
+			code: 'someApi( { context: \'$root\' } );',
+			filename: featureFile,
+			options: allowlistOptions,
+			errors: [ { messageId: 'literalDollarRoot' } ]
+		},
+		// Bare object literal not passed to any call — also flagged.
+		{
+			code: 'const opts = { context: \'$root\' };',
+			filename: featureFile,
+			options: allowlistOptions,
 			errors: [ { messageId: 'literalDollarRoot' } ]
 		}
 	]

@@ -55,7 +55,13 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', r
 		// not `writer`. Must NOT be flagged: the method resolves its own default internally.
 		'editor.addRoot( \'myRoot\' );',
 		'this.addRoot( rootName );',
-		'multiRootEditor.addRoot( \'foo\' );'
+		'multiRootEditor.addRoot( \'foo\' );',
+
+		// Explicit context provided to upcastDispatcher.convert().
+		'editor.data.upcastDispatcher.convert( viewFragment, writer, [ \'$documentFragment\' ] );',
+		'this.editor.data.upcastDispatcher.convert( viewFragment, writer, root );',
+		// `convert` not on an `upcastDispatcher` receiver — out of scope.
+		'units.convert( value, fromUnit );'
 	],
 
 	invalid: [
@@ -104,6 +110,16 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', r
 		{
 			code: 'writer.addRoot( rootName );',
 			errors: [ { messageId: 'missingContext', data: { label: 'writer.addRoot()' } } ]
+		},
+
+		// `upcastDispatcher.convert( viewFragment, writer )` — context omitted.
+		{
+			code: 'editor.data.upcastDispatcher.convert( viewFragment, writer );',
+			errors: [ { messageId: 'missingContext', data: { label: 'upcastDispatcher.convert()' } } ]
+		},
+		{
+			code: 'this.editor.data.upcastDispatcher.convert( viewFragment, writer );',
+			errors: [ { messageId: 'missingContext', data: { label: 'upcastDispatcher.convert()' } } ]
 		}
 	]
 } );

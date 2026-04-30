@@ -308,10 +308,15 @@ function isAllowedSchemaExtendForAttributes( literalNode ) {
 	return false;
 }
 
+const VIEW_LISTENER_METHODS = new Set( [ 'listenTo', 'on', 'once', 'off' ] );
+
 /**
- * Whether the literal is the value of a `context` property — covers view-event listener options like
- * `listenTo( …, { context: '$root' } )` and `{ context: [ isWidget, '$root' ] }`. In that position `'$root'`
- * is a view-tree bubbling target, not the schema element name.
+ * Whether the literal is the value of a `context` property on an options object passed to a view-event listener
+ * call — `listenTo( …, { context: '$root' } )`, `view.on( 'event', cb, { context: [ isWidget, '$root' ] } )`, etc.
+ * In that position `'$root'` is a view-tree bubbling target, not a schema element name.
+ *
+ * The check is intentionally narrow: only object literals passed to one of `listenTo`, `on`, `once`, `off` qualify,
+ * so an unrelated call like `someApi( { context: '$root' } )` still gets flagged.
  */
 function isAllowedViewEventContext( literalNode ) {
 	const direct = literalNode.parent;
@@ -332,14 +337,45 @@ function isAllowedViewEventContext( literalNode ) {
 	}
 
 	if ( propertyNode.key.type === 'Identifier' ) {
-		return propertyNode.key.name === 'context';
+		if ( propertyNode.key.name !== 'context' ) {
+			return false;
+		}
+	} else if ( propertyNode.key.type === 'Literal' ) {
+		if ( propertyNode.key.value !== 'context' ) {
+			return false;
+		}
+	} else {
+		return false;
 	}
 
-	if ( propertyNode.key.type === 'Literal' ) {
-		return propertyNode.key.value === 'context';
+	// The enclosing object literal must be an argument to a view-listener method call (`listenTo`, `on`, `once`, `off`).
+	const objectLiteral = propertyNode.parent;
+
+	if ( !objectLiteral || objectLiteral.type !== 'ObjectExpression' ) {
+		return false;
 	}
 
-	return false;
+	const callExpression = objectLiteral.parent;
+
+	if ( !callExpression || callExpression.type !== 'CallExpression' ) {
+		return false;
+	}
+
+	if ( !callExpression.arguments.includes( objectLiteral ) ) {
+		return false;
+	}
+
+	const callee = callExpression.callee;
+
+	if ( !callee || callee.type !== 'MemberExpression' || callee.computed ) {
+		return false;
+	}
+
+	if ( callee.property.type !== 'Identifier' ) {
+		return false;
+	}
+
+	return VIEW_LISTENER_METHODS.has( callee.property.name );
 }
 
 /**
