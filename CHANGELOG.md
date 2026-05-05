@@ -1,6 +1,31 @@
 Changelog
 =========
 
+## [15.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v15.0.0...v15.1.0) (May 5, 2026)
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added two ESLint rules that flag implicit `$root` schema-context usage: `ckeditor5-rules/no-literal-dollar-root` (disallows hardcoded `'$root'` literals outside engine/core) and `ckeditor5-rules/require-explicit-data-context` (requires an explicit context argument on `data.parse()`, `data.toModel()`, `model.document.createRoot()`, `writer.addRoot()`, and `upcastDispatcher.convert()` calls). See [ckeditor/ckeditor5#20026](https://github.com/ckeditor/ckeditor5/issues/20026). Closes [ckeditor/ckeditor5#20096](https://github.com/ckeditor/ckeditor5/issues/20096).
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/15.1.0): v15.0.0 => v15.1.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/15.1.0): v15.0.0 => v15.1.0
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/15.1.0): v15.0.0 => v15.1.0
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/15.1.0): v15.0.0 => v15.1.0
+</details>
+
+
 ## [15.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v14.1.0...v15.0.0) (April 17, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -118,35 +143,6 @@ Other releases:
 
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/13.0.0): v12.2.0 => v13.0.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/13.0.0): v12.2.0 => v13.0.0
-</details>
-
-
-## [12.2.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v12.1.1...v12.2.0) (October 22, 2025)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added validation to ensure that changeset files are indented using spaces instead of tabs. Closes [ckeditor/ckeditor5#19026](https://github.com/ckeditor/ckeditor5/issues/19026).
-
-### Bug fixes
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Report ESLint errors for all YAML syntax issues found in changelog files.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/12.2.0): v12.1.1 => v12.2.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.2.0): v12.1.1 => v12.2.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.2.0): v12.1.1 => v12.2.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.2.0): v12.1.1 => v12.2.0
 </details>
 
 ---
