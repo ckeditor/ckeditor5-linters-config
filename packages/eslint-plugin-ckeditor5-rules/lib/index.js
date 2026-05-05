@@ -19,6 +19,8 @@ module.exports = {
 		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
 		'no-istanbul-in-debug-code': require( './rules/no-istanbul-in-debug-code' ),
+		'no-literal-dollar-root': require( './rules/no-literal-dollar-root' ),
+		'require-explicit-data-context': require( './rules/require-explicit-data-context' ),
 		'allow-declare-module-only-in-augmentation-file': require( './rules/allow-declare-module-only-in-augmentation-file' ),
 		'allow-imports-only-from-main-package-entry-point': require( './rules/allow-imports-only-from-main-package-entry-point.js' ),
 		'allow-svg-imports-only-in-icons-package': require( './rules/allow-svg-imports-only-in-icons-package.js' ),
