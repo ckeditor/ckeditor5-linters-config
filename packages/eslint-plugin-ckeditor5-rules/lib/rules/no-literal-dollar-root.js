@@ -319,63 +319,95 @@ const VIEW_LISTENER_METHODS = new Set( [ 'listenTo', 'on', 'once', 'off' ] );
  * so an unrelated call like `someApi( { context: '$root' } )` still gets flagged.
  */
 function isAllowedViewEventContext( literalNode ) {
-	const direct = literalNode.parent;
-	let propertyNode = null;
+	const propertyNode = getOwningContextProperty( literalNode );
 
-	if ( direct && direct.type === 'Property' && direct.value === literalNode ) {
-		propertyNode = direct;
-	} else if ( direct && direct.type === 'ArrayExpression' ) {
-		const arrayParent = direct.parent;
+	if ( !isPropertyNamed( propertyNode, 'context' ) ) {
+		return false;
+	}
 
-		if ( arrayParent && arrayParent.type === 'Property' && arrayParent.value === direct ) {
-			propertyNode = arrayParent;
+	const callExpression = getEnclosingObjectArgumentCall( propertyNode );
+
+	return hasAllowedListenerMethod( callExpression );
+}
+
+/**
+ * Returns the `Property` AST node whose value is the literal — directly (`{ context: literal }`) or via an inline
+ * array (`{ context: [ ..., literal ] }`). Returns null when the literal is not in such a position.
+ */
+function getOwningContextProperty( literalNode ) {
+	const parent = literalNode.parent;
+
+	if ( parent && parent.type === 'Property' && parent.value === literalNode ) {
+		return parent;
+	}
+
+	if ( parent && parent.type === 'ArrayExpression' ) {
+		const propertyNode = parent.parent;
+
+		if ( propertyNode && propertyNode.type === 'Property' && propertyNode.value === parent ) {
+			return propertyNode;
 		}
 	}
 
+	return null;
+}
+
+/**
+ * Whether the property's key (identifier or string literal, never computed) equals `expectedName`.
+ */
+function isPropertyNamed( propertyNode, expectedName ) {
 	if ( !propertyNode || propertyNode.computed ) {
 		return false;
 	}
 
 	if ( propertyNode.key.type === 'Identifier' ) {
-		if ( propertyNode.key.name !== 'context' ) {
-			return false;
-		}
-	} else if ( propertyNode.key.type === 'Literal' ) {
-		if ( propertyNode.key.value !== 'context' ) {
-			return false;
-		}
-	} else {
-		return false;
+		return propertyNode.key.name === expectedName;
 	}
 
-	// The enclosing object literal must be an argument to a view-listener method call (`listenTo`, `on`, `once`, `off`).
-	const objectLiteral = propertyNode.parent;
+	if ( propertyNode.key.type === 'Literal' ) {
+		return propertyNode.key.value === expectedName;
+	}
+
+	return false;
+}
+
+/**
+ * Returns the call expression that receives the property's enclosing object literal as one of its arguments.
+ * Returns null when the property is not nested in a `<call>( …, { … }, … )` shape.
+ */
+function getEnclosingObjectArgumentCall( propertyNode ) {
+	const objectLiteral = propertyNode && propertyNode.parent;
 
 	if ( !objectLiteral || objectLiteral.type !== 'ObjectExpression' ) {
-		return false;
+		return null;
 	}
 
 	const callExpression = objectLiteral.parent;
 
 	if ( !callExpression || callExpression.type !== 'CallExpression' ) {
-		return false;
+		return null;
 	}
 
 	if ( !callExpression.arguments.includes( objectLiteral ) ) {
-		return false;
+		return null;
 	}
 
-	const callee = callExpression.callee;
+	return callExpression;
+}
 
-	if ( !callee || callee.type !== 'MemberExpression' || callee.computed ) {
-		return false;
-	}
+/**
+ * Whether the call's callee is a non-computed member expression invoking one of the allowed view-listener methods.
+ */
+function hasAllowedListenerMethod( callExpression ) {
+	const callee = callExpression && callExpression.callee;
 
-	if ( callee.property.type !== 'Identifier' ) {
-		return false;
-	}
-
-	return VIEW_LISTENER_METHODS.has( callee.property.name );
+	return Boolean(
+		callee &&
+		callee.type === 'MemberExpression' &&
+		!callee.computed &&
+		callee.property.type === 'Identifier' &&
+		VIEW_LISTENER_METHODS.has( callee.property.name )
+	);
 }
 
 /**

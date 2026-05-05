@@ -16,19 +16,19 @@
 const RULES = [
 	{
 		method: 'parse',
-		matchReceiver: matchDataReceiver,
+		matchReceiver: node => matchIdentifierReceiver( node, 'data' ),
 		isMissingContext: args => args.length === 1,
 		label: 'data.parse()'
 	},
 	{
 		method: 'toModel',
-		matchReceiver: matchDataReceiver,
+		matchReceiver: node => matchIdentifierReceiver( node, 'data' ),
 		isMissingContext: args => args.length === 1,
 		label: 'data.toModel()'
 	},
 	{
 		method: 'createRoot',
-		matchReceiver: matchDocumentReceiver,
+		matchReceiver: node => matchIdentifierReceiver( node, 'document' ),
 		isMissingContext: args => args.length === 0,
 		label: 'document.createRoot()'
 	},
@@ -41,7 +41,7 @@ const RULES = [
 	{
 		// `upcastDispatcher.convert( viewElementOrFragment, writer, context = [ '$root' ] )` — third arg is the schema context.
 		method: 'convert',
-		matchReceiver: matchUpcastDispatcherReceiver,
+		matchReceiver: node => matchIdentifierReceiver( node, 'upcastDispatcher' ),
 		isMissingContext: args => args.length === 2,
 		label: 'upcastDispatcher.convert()'
 	}
@@ -103,69 +103,31 @@ module.exports = {
 };
 
 /**
- * Matches `data`, `editor.data`, `this.data`, `foo.bar.data`, etc. — i.e. any reference whose final accessed property
- * is `data`, plus a bare `data` identifier (covers destructured `const { data } = editor` patterns).
+ * Matches a receiver whose final accessed property name (or bare identifier name) is `expectedName`. Covers both
+ * member-access chains (`editor.data`, `this.model.document`, `editor.data.upcastDispatcher`) and destructured /
+ * aliased identifiers (`const { data } = editor; data.parse(...)`).
  */
-function matchDataReceiver( node ) {
+function matchIdentifierReceiver( node, expectedName ) {
 	if ( !node ) {
 		return false;
 	}
 
-	if ( node.type === 'Identifier' && node.name === 'data' ) {
+	if ( node.type === 'Identifier' && node.name === expectedName ) {
 		return true;
 	}
 
 	return node.type === 'MemberExpression' &&
 		!node.computed &&
 		node.property.type === 'Identifier' &&
-		node.property.name === 'data';
-}
-
-/**
- * Matches a receiver whose final accessed property is `document` (e.g. `editor.model.document`, `this.model.document`).
- * The model document is the only `document` in the engine that exposes `createRoot()`, so this filter is enough to
- * exclude unrelated `*.createRoot()` calls without false positives.
- */
-function matchDocumentReceiver( node ) {
-	if ( !node ) {
-		return false;
-	}
-
-	if ( node.type === 'Identifier' && node.name === 'document' ) {
-		return true;
-	}
-
-	return node.type === 'MemberExpression' &&
-		!node.computed &&
-		node.property.type === 'Identifier' &&
-		node.property.name === 'document';
+		node.property.name === expectedName;
 }
 
 /**
  * Matches a receiver named `writer` (i.e. a `ModelWriter` from `model.change( writer => … )` or `model.enqueueChange`).
- * Crucially this excludes `MultiRootEditor#addRoot( rootName, options? )` — that public API has a different
- * second-arg shape (options object) and resolves the model element name internally, so it must not be flagged.
+ * Stricter than `matchIdentifierReceiver` — only a bare `writer` identifier qualifies, never `*.writer` chains.
+ * This excludes `MultiRootEditor#addRoot( rootName, options? )`, whose receiver is `editor` / `this` and which has
+ * a different signature (options object as the second arg, with the model element name resolved internally).
  */
 function matchWriterReceiver( node ) {
 	return Boolean( node ) && node.type === 'Identifier' && node.name === 'writer';
-}
-
-/**
- * Matches a receiver whose final accessed property is `upcastDispatcher` (e.g. `editor.data.upcastDispatcher`).
- * The upcast dispatcher is the only API in the engine that exposes a `convert()` method with a defaulted schema
- * context, so this filter excludes unrelated `*.convert()` calls without false positives.
- */
-function matchUpcastDispatcherReceiver( node ) {
-	if ( !node ) {
-		return false;
-	}
-
-	if ( node.type === 'Identifier' && node.name === 'upcastDispatcher' ) {
-		return true;
-	}
-
-	return node.type === 'MemberExpression' &&
-		!node.computed &&
-		node.property.type === 'Identifier' &&
-		node.property.name === 'upcastDispatcher';
 }
