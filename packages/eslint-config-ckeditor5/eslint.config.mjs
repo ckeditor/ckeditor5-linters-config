@@ -426,7 +426,7 @@ const rulesSourceCode = [
 			'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
 
 			'ckeditor5-rules/require-as-const-returns-in-methods': [ 'error', {
-				methodNames: [ 'requires', 'pluginName' ]
+				methodNames: [ 'pluginName' ]
 			} ],
 
 			'ckeditor5-rules/ckeditor-plugin-flags': [ 'error', {
