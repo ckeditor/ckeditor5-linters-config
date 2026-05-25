@@ -24,6 +24,7 @@ module.exports = {
 		'allow-declare-module-only-in-augmentation-file': require( './rules/allow-declare-module-only-in-augmentation-file' ),
 		'allow-imports-only-from-main-package-entry-point': require( './rules/allow-imports-only-from-main-package-entry-point.js' ),
 		'allow-svg-imports-only-in-icons-package': require( './rules/allow-svg-imports-only-in-icons-package.js' ),
+		'ck-content-variable-name': require( './rules/ck-content-variable-name' ),
 		'prevent-license-key-leak': require( './rules/prevent-license-key-leak' ),
 		'require-as-const-returns-in-methods': require( './rules/require-as-const-returns-in-methods' ),
 		'require-file-extensions-in-imports': require( './rules/require-file-extensions-in-imports' ),

@@ -15,8 +15,6 @@ This repository is a monorepo. It contains multiple npm packages.
 |---------|---------|--------------|
 | [`eslint-config-ckeditor5`](/packages/eslint-config-ckeditor5) | [![npm version](https://badge.fury.io/js/eslint-config-ckeditor5.svg)](https://www.npmjs.com/package/eslint-config-ckeditor5) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-config-ckeditor5) |
 | [`eslint-plugin-ckeditor5-rules`](/packages/eslint-plugin-ckeditor5-rules) | [![npm version](https://badge.fury.io/js/eslint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/eslint-plugin-ckeditor5-rules) |
-| [`stylelint-config-ckeditor5`](/packages/stylelint-config-ckeditor5) | [![npm version](https://badge.fury.io/js/stylelint-config-ckeditor5.svg)](https://www.npmjs.com/package/stylelint-config-ckeditor5) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/stylelint-config-ckeditor5) |
-| [`stylelint-plugin-ckeditor5-rules`](/packages/stylelint-plugin-ckeditor5-rules) | [![npm version](https://badge.fury.io/js/stylelint-plugin-ckeditor5-rules.svg)](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules) | ![Dependency Status](https://img.shields.io/librariesio/release/npm/stylelint-plugin-ckeditor5-rules) |
 
 ### Archived repositories
 

@@ -8,6 +8,7 @@ import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import markdown from '@eslint/markdown';
+import css from '@eslint/css';
 import mocha from 'eslint-plugin-mocha';
 import stylistic from '@stylistic/eslint-plugin';
 import ckeditor5Rules from 'eslint-plugin-ckeditor5-rules';
@@ -505,11 +506,33 @@ const rulesChangelog = [
 	}
 ];
 
+const rulesCss = [
+	{
+		files: [ '**/*.css' ],
+
+		plugins: {
+			css,
+			'ckeditor5-rules': ckeditor5Rules
+		},
+
+		language: 'css/css'
+	},
+
+	{
+		files: [ '**/theme/**/*.css' ],
+
+		rules: {
+			'ckeditor5-rules/ck-content-variable-name': 'error'
+		}
+	}
+];
+
 export default defineConfig( [
 	rulesGeneral,
 	rulesTypeScript,
 	rulesSourceCode,
 	rulesTests,
 	rulesDocs,
-	rulesChangelog
+	rulesChangelog,
+	rulesCss
 ] );
