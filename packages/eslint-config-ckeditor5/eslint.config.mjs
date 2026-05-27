@@ -515,7 +515,22 @@ const rulesCss = [
 			'ckeditor5-rules': ckeditor5Rules
 		},
 
-		language: 'css/css'
+		language: 'css/css',
+
+		rules: {
+			'ckeditor5-rules/css-indent': 'error',
+			'ckeditor5-rules/no-disallowed-color-formats': 'error',
+			'css/no-duplicate-imports': 'error',
+			'css/no-duplicate-keyframe-selectors': 'error',
+			'css/no-empty-blocks': 'error',
+			'css/no-invalid-at-rule-placement': 'error',
+			'css/no-invalid-at-rules': 'error',
+			'css/no-invalid-named-grid-areas': 'error',
+			'css/no-unmatchable-selectors': 'error',
+			'css/prefer-logical-properties': 'error',
+			'css/selector-complexity': 'error',
+			'css/use-baseline': [ 'error', { available: 'widely' } ]
+		}
 	},
 
 	{
