@@ -46,6 +46,11 @@ ruleTester.run( ruleName, rule, {
 			code: '.foo { color: var(--ck-color-red-shade); }'
 		},
 		{
+			// Custom property whose name contains "rgb" - no longer a false positive
+			// (was incorrectly flagged by the prior substring-based check).
+			code: '.foo { color: var(--ck-color-srgb); }'
+		},
+		{
 			// `transparent` is intentionally allowed.
 			code: '.foo { background: transparent; }'
 		},
@@ -60,6 +65,35 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Linear gradient using HSL stops.
 			code: '.foo { background: linear-gradient(hsl(0, 0%, 0%), hsl(0, 0%, 100%)); }'
+		},
+		{
+			// `color-mix(in srgb, ...)` - the `srgb` color space identifier must not
+			// be mistaken for `rgb()`.
+			code: '.foo { background: color-mix(in srgb, hsl(0, 0%, 0%), hsl(0, 0%, 100%)); }'
+		},
+		{
+			// `url(#fragment)` references an SVG fragment, not a hex color.
+			code: '.foo { background: url(#gradient); }'
+		},
+		{
+			// Named colors appearing inside a string value must not be flagged.
+			code: '.foo { grid-template-areas: "red red"; }'
+		},
+		{
+			// `font-family` values are identifiers but never colors.
+			code: '.foo { font-family: Red Hat Text; }'
+		},
+		{
+			// `content` strings can hold any text including named-color words.
+			code: '.foo { content: "blue"; }'
+		},
+		{
+			// `animation-name` is an identifier, not a color.
+			code: '.foo { animation-name: red; }'
+		},
+		{
+			// `tan()` is a math function; the identifier `tan` is not present.
+			code: '.foo { width: calc(100px * tan(45deg)); }'
 		}
 	],
 
@@ -80,9 +114,9 @@ ruleTester.run( ruleName, rule, {
 			errors: [ hexError ]
 		},
 		{
-			// Hex nested inside another function.
+			// Two hex colors inside a gradient - reported per occurrence.
 			code: '.foo { background: linear-gradient(#000, #fff); }',
-			errors: [ hexError ]
+			errors: [ hexError, hexError ]
 		},
 		{
 			// rgb() call.
@@ -95,9 +129,14 @@ ruleTester.run( ruleName, rule, {
 			errors: [ rgbError ]
 		},
 		{
-			// rgb() nested inside another function.
-			code: '.foo { background: linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255)); }',
+			// Uppercase RGB() - the prior substring `.includes('rgb')` missed this.
+			code: '.foo { color: RGB(0, 0, 0); }',
 			errors: [ rgbError ]
+		},
+		{
+			// Two rgb() calls inside a gradient - reported per occurrence.
+			code: '.foo { background: linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255)); }',
+			errors: [ rgbError, rgbError ]
 		},
 		{
 			// Named color `red`.
@@ -110,9 +149,9 @@ ruleTester.run( ruleName, rule, {
 			errors: [ namedColorError ]
 		},
 		{
-			// Named color inside a gradient.
+			// Named colors inside a gradient - reported per occurrence.
 			code: '.foo { background: linear-gradient(red, blue); }',
-			errors: [ namedColorError ]
+			errors: [ namedColorError, namedColorError ]
 		},
 		{
 			// Compound named color.
@@ -120,7 +159,12 @@ ruleTester.run( ruleName, rule, {
 			errors: [ namedColorError ]
 		},
 		{
-			// Multiple violations in one declaration are reported independently.
+			// Named color `tan` as an identifier value.
+			code: '.foo { color: tan; }',
+			errors: [ namedColorError ]
+		},
+		{
+			// Mixed hex and rgb() - each reported once on its own node.
 			code: '.foo { background: linear-gradient(#fff, rgb(0, 0, 0)); }',
 			errors: [ hexError, rgbError ]
 		}

@@ -55,7 +55,7 @@ function licenseHeaderRuleJs( context, headerLines ) {
 	const licenseComment = comments.find( comment => comment.type === 'Block' && comment.value.toLowerCase().includes( '@license' ) );
 
 	if ( !licenseComment ) {
-		const line = shebang ? 2 : 0;
+		const line = shebang ? 2 : 1;
 
 		context.report( {
 			loc: {
@@ -96,7 +96,7 @@ function licenseHeaderRuleJs( context, headerLines ) {
 
 	const contentBeforeLoc = {
 		start: {
-			line: 0,
+			line: shebang ? shebang.loc.end.line : 1,
 			column: shebang ? shebang.loc.end.column : 0
 		},
 		end: {
@@ -153,14 +153,14 @@ function licenseHeaderRuleCss( context, headerLines ) {
 	const licenseComment = comments.find( comment => {
 		const text = sourceCode.getText( comment );
 
-		return text.startsWith( '/*' ) && text.toLowerCase().includes( 'copyright' );
+		return text.startsWith( '/*' ) && text.toLowerCase().includes( '@license' );
 	} );
 
 	if ( !licenseComment ) {
 		context.report( {
 			loc: {
-				start: { line: 1, column: 0 },
-				end: { line: 1, column: 0 }
+				start: { line: 1, column: 1 },
+				end: { line: 1, column: 1 }
 			},
 			message: 'The license header is missing.',
 			fix: fixer => fixer.insertTextAfterRange( [ 0, 0 ], headerText + '\n\n' )
@@ -188,7 +188,7 @@ function licenseHeaderRuleCss( context, headerLines ) {
 		if ( whitespaceOnly ) {
 			context.report( {
 				loc: {
-					start: { line: 1, column: 0 },
+					start: { line: 1, column: 1 },
 					end: licenseComment.loc.start
 				},
 				message: 'Incorrect whitespace before the license header.',
@@ -197,7 +197,7 @@ function licenseHeaderRuleCss( context, headerLines ) {
 		} else {
 			context.report( {
 				loc: {
-					start: { line: 1, column: 0 },
+					start: { line: 1, column: 1 },
 					end: licenseComment.loc.start
 				},
 				message: 'Unexpected content before the license header.'

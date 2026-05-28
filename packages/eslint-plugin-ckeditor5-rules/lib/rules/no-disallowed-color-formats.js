@@ -5,30 +5,15 @@
 
 'use strict';
 
-// CSS <named-color> keywords from CSS Color Module Level 4. The `transparent`
-// and `currentcolor` keywords are intentionally not included - they are not
-// concrete color names but special-purpose keywords.
-const NAMED_COLORS = new Set( [
-	'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown',
-	'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 'darkcyan',
-	'darkgoldenrod', 'darkgray', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid',
-	'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet', 'deeppink',
-	'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'ghostwhite',
-	'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'grey', 'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender',
-	'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen',
-	'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray', 'lightslategrey', 'lightsteelblue',
-	'lightyellow', 'lime', 'limegreen', 'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple',
-	'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream',
-	'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod',
-	'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple',
-	'rebeccapurple', 'red', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver',
-	'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise',
-	'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'
-] );
+const cssTree = require( '@eslint/css-tree' );
 
-// Matches a word that is not preceded or followed by a word character or hyphen.
-// Designed to skip identifiers inside `var(--name-with-color-token)`.
-const IDENTIFIER_TOKEN = /(?<![\w-])[a-z]+(?![\w-])/g;
+const NAMED_COLORS = new Set(
+	cssTree.lexer.types[ 'named-color' ].syntax.terms
+		.filter( term => term.type === 'Keyword' )
+		.map( term => term.name )
+);
+
+const COLOR_ACCEPTING_PROPERTIES = buildColorAcceptingProperties();
 
 module.exports = {
 	meta: {
@@ -47,43 +32,126 @@ module.exports = {
 	},
 
 	create( context ) {
-		const sourceCode = context.sourceCode;
-
 		return {
-			'Rule > Block Declaration'( node ) {
-				const valueText = sourceCode.getText( node.value );
+			'Rule > Block Declaration Hash'( node ) {
+				context.report( {
+					node,
+					messageId: 'disallowedHex'
+				} );
+			},
 
-				if ( valueText.includes( '#' ) ) {
-					context.report( {
-						node: node.value,
-						messageId: 'disallowedHex'
-					} );
-				}
+			'Rule > Block Declaration Function'( node ) {
+				const name = typeof node.name === 'string' ? node.name.toLowerCase() : '';
 
-				if ( valueText.includes( 'rgb' ) ) {
+				if ( name === 'rgb' || name === 'rgba' ) {
 					context.report( {
-						node: node.value,
+						node,
 						messageId: 'disallowedRgb'
 					} );
 				}
+			},
 
-				if ( containsNamedColor( valueText ) ) {
-					context.report( {
-						node: node.value,
-						messageId: 'disallowedNamedColor'
-					} );
+			'Rule > Block Declaration'( node ) {
+				const propertyName = typeof node.property === 'string' ? node.property.toLowerCase() : '';
+
+				if ( !COLOR_ACCEPTING_PROPERTIES.has( propertyName ) ) {
+					return;
 				}
+
+				cssTree.walk( node.value, sub => {
+					if ( sub.type !== 'Identifier' ) {
+						return;
+					}
+
+					if ( sub.name.startsWith( '--' ) ) {
+						return;
+					}
+
+					if ( NAMED_COLORS.has( sub.name.toLowerCase() ) ) {
+						context.report( {
+							node: sub,
+							messageId: 'disallowedNamedColor'
+						} );
+					}
+				} );
 			}
 		};
 	}
 };
 
-function containsNamedColor( valueText ) {
-	const tokens = valueText.toLowerCase().match( IDENTIFIER_TOKEN );
+/**
+ * Property names whose CSS grammar references `<color>` somewhere - the properties for
+ * which an identifier value (e.g. `red`) could legitimately be a color.
+ */
+function buildColorAcceptingProperties() {
+	const result = new Set();
 
-	if ( !tokens ) {
+	for ( const propertyName of Object.keys( cssTree.lexer.properties ) ) {
+		if ( propertyAcceptsColor( propertyName ) ) {
+			result.add( propertyName );
+		}
+	}
+
+	return result;
+}
+
+function propertyAcceptsColor( propertyName ) {
+	const definition = cssTree.lexer.properties[ propertyName ];
+
+	if ( !definition || !definition.syntax ) {
 		return false;
 	}
 
-	return tokens.some( token => NAMED_COLORS.has( token ) );
+	return syntaxReferencesColor( definition.syntax, new Set( [ `P:${ propertyName }` ] ) );
+}
+
+/**
+ * Whether a CSS syntax tree (transitively, through type and property references) reaches the `<color>` type.
+ */
+function syntaxReferencesColor( syntax, visited ) {
+	let found = false;
+
+	cssTree.definitionSyntax.walk( syntax, node => {
+		if ( found ) {
+			return;
+		}
+
+		if ( node.type === 'Type' ) {
+			if ( node.name === 'color' ) {
+				found = true;
+
+				return;
+			}
+
+			const key = `T:${ node.name }`;
+
+			if ( visited.has( key ) ) {
+				return;
+			}
+
+			visited.add( key );
+
+			const typeDefinition = cssTree.lexer.types[ node.name ];
+
+			if ( typeDefinition && typeDefinition.syntax && syntaxReferencesColor( typeDefinition.syntax, visited ) ) {
+				found = true;
+			}
+		} else if ( node.type === 'Property' ) {
+			const key = `P:${ node.name }`;
+
+			if ( visited.has( key ) ) {
+				return;
+			}
+
+			visited.add( key );
+
+			const propertyDefinition = cssTree.lexer.properties[ node.name ];
+
+			if ( propertyDefinition && propertyDefinition.syntax && syntaxReferencesColor( propertyDefinition.syntax, visited ) ) {
+				found = true;
+			}
+		}
+	} );
+
+	return found;
 }

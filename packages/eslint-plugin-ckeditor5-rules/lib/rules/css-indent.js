@@ -14,14 +14,88 @@ module.exports = {
 		},
 		schema: [],
 		messages: {
-			leadingSpace: 'Expected tab indentation, found leading space(s).'
+			incorrectIndent: 'Incorrect indentation: expected {{expected}}, found {{actual}}.'
 		}
 	},
 
 	create( context ) {
+		const sourceCode = context.sourceCode;
+
+		// Expected indent for each line is the sum of two contributions:
+		//   - blockDepth: one tab per nested `{ ... }` level.
+		//   - parenDepth: one extra tab for each multi-line `( ... )` enclosing the line.
+		const blockDepth = new Map();
+		const parenDepth = new Map();
+		const rawLines = new Set();
+		const declarationContinuationLines = new Set();
+
+		let depth = 0;
+
+		/**
+		 * Records that lines strictly between `(` and `)` get one extra tab of
+		 * expected indent. Single-line constructs contribute nothing.
+		 */
+		function addParenContribution( node ) {
+			if ( node.loc.start.line >= node.loc.end.line ) {
+				return;
+			}
+
+			for ( let l = node.loc.start.line + 1; l <= node.loc.end.line - 1; l++ ) {
+				parenDepth.set( l, ( parenDepth.get( l ) || 0 ) + 1 );
+			}
+		}
+
 		return {
-			StyleSheet() {
-				const sourceCode = context.sourceCode;
+			Block( node ) {
+				depth++;
+
+				const innerStart = node.loc.start.line + 1;
+				const innerEnd = node.loc.end.line - 1;
+
+				for ( let l = innerStart; l <= innerEnd; l++ ) {
+					blockDepth.set( l, depth );
+				}
+			},
+
+			'Block:exit'() {
+				depth--;
+			},
+
+			Function( node ) {
+				addParenContribution( node );
+			},
+
+			/**
+			 * Pseudo-class selectors with arguments (`:not(...)`, `:is(...)`, ...) carry
+			 * their own parens and contribute to indent the same way as functions.
+			 */
+			PseudoClassSelector( node ) {
+				addParenContribution( node );
+			},
+
+			Declaration( node ) {
+				if ( node.loc.start.line >= node.loc.end.line ) {
+					return;
+				}
+
+				for ( let l = node.loc.start.line + 1; l <= node.loc.end.line; l++ ) {
+					declarationContinuationLines.add( l );
+				}
+			},
+
+			/**
+			 * Custom-property values (`--foo: ...`) and tolerant-parse fallback content
+			 * (e.g. `& { ... }` inside `@starting-style`) come through as Raw blobs. Their
+			 * inner lines are skipped from the indent check - there is no AST to anchor
+			 * an expected indent on.
+			 */
+			Raw( node ) {
+				for ( let l = node.loc.start.line + 1; l <= node.loc.end.line; l++ ) {
+					rawLines.add( l );
+				}
+			},
+
+			'StyleSheet:exit'() {
 				const lines = sourceCode.lines;
 
 				// Continuation lines of a multi-line block comment legitimately start
@@ -29,38 +103,79 @@ module.exports = {
 				const commentContinuationLines = new Set();
 
 				for ( const comment of sourceCode.comments || [] ) {
-					for ( let line = comment.loc.start.line + 1; line <= comment.loc.end.line; line++ ) {
-						commentContinuationLines.add( line );
+					for ( let l = comment.loc.start.line + 1; l <= comment.loc.end.line; l++ ) {
+						commentContinuationLines.add( l );
 					}
 				}
 
 				for ( let i = 0; i < lines.length; i++ ) {
 					const lineNumber = i + 1;
+					const line = lines[ i ];
+
+					if ( /^\s*$/.test( line ) ) {
+						continue;
+					}
 
 					if ( commentContinuationLines.has( lineNumber ) ) {
 						continue;
 					}
 
-					const line = lines[ i ];
-
-					// Only flag lines that begin with a space and contain any
-					// non-whitespace content. Lines that start with a tab - even
-					// if followed by spaces for continuation alignment - are fine.
-					if ( !/^ +\S/.test( line ) ) {
+					if ( rawLines.has( lineNumber ) ) {
 						continue;
 					}
 
-					const leadingSpaces = line.match( /^ +/ )[ 0 ].length;
+					// Declaration continuation lines without a paren contribution
+					// (multi-line strings, chained values) are not enforced - indent is
+					// only checked inside parens.
+					if ( declarationContinuationLines.has( lineNumber ) && !parenDepth.has( lineNumber ) ) {
+						continue;
+					}
+
+					const expectedDepth = ( blockDepth.get( lineNumber ) ?? 0 ) + ( parenDepth.get( lineNumber ) ?? 0 );
+					const leading = ( line.match( /^[\t ]*/ ) || [ '' ] )[ 0 ];
+					const expectedLeading = '\t'.repeat( expectedDepth );
+
+					if ( leading === expectedLeading ) {
+						continue;
+					}
 
 					context.report( {
 						loc: {
-							start: { line: lineNumber, column: 0 },
-							end: { line: lineNumber, column: leadingSpaces }
+							start: { line: lineNumber, column: 1 },
+							end: { line: lineNumber, column: leading.length + 1 }
 						},
-						messageId: 'leadingSpace'
+						messageId: 'incorrectIndent',
+						data: {
+							expected: describeIndent( expectedLeading ),
+							actual: describeIndent( leading )
+						}
 					} );
 				}
 			}
 		};
 	}
 };
+
+function describeIndent( str ) {
+	if ( str === '' ) {
+		return 'none';
+	}
+
+	const tabs = ( str.match( /\t/g ) || [] ).length;
+	const spaces = ( str.match( / /g ) || [] ).length;
+	const parts = [];
+
+	if ( tabs ) {
+		parts.push( formatPlural( 'tab', tabs ) );
+	}
+
+	if ( spaces ) {
+		parts.push( formatPlural( 'space', spaces ) );
+	}
+
+	return parts.join( ' and ' );
+}
+
+function formatPlural( word, number ) {
+	return `${ number } ${ word }${ number === 1 ? '' : 's' }`;
+}

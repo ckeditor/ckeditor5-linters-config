@@ -5,36 +5,53 @@
 
 'use strict';
 
-const SELECTOR = '.ck-content';
-const PREFIX = '--ck-content-';
-const IGNORED_VARIABLES = [
-	'-suggestion-',
-	'-comment-'
-];
+const cssTree = require( '@eslint/css-tree' );
+
+const SELECTOR_CLASS = 'ck-content';
+const PREFIX = `--${ SELECTOR_CLASS }-`;
 
 module.exports = {
 	meta: {
 		type: 'problem',
 		docs: {
 			description:
-				`Inside the '${ SELECTOR }' selector, only CSS variables prefixed with '${ PREFIX }' may be consumed via var(...).`,
+				`Inside the '.${ SELECTOR_CLASS }' selector, only CSS variables prefixed with '${ PREFIX }' may be consumed via var(...).`,
 			category: 'CKEditor5'
 		},
-		schema: [],
+		schema: [
+			{
+				type: 'object',
+				additionalProperties: false,
+				properties: {
+					ignoredVariableSubstrings: {
+						type: 'array',
+						items: {
+							type: 'string'
+						}
+					}
+				}
+			}
+		],
 		messages: {
 			invalidVariable:
-				`Variables inside the '${ SELECTOR }' selector have to use the '${ PREFIX }*' prefix.`
+				`Variables inside the '.${ SELECTOR_CLASS }' selector have to use the '${ PREFIX }*' prefix.`
 		}
 	},
 
 	create( context ) {
-		const sourceCode = context.sourceCode;
+		const [ { ignoredVariableSubstrings = [] } = {} ] = context.options;
 		const matchingRuleStack = [];
 
 		function isMatchingSelector( ruleNode ) {
-			const selectorText = sourceCode.getText( ruleNode.prelude );
+			let found = false;
 
-			return selectorText.includes( SELECTOR );
+			cssTree.walk( ruleNode.prelude, sub => {
+				if ( sub.type === 'ClassSelector' && sub.name === SELECTOR_CLASS ) {
+					found = true;
+				}
+			} );
+
+			return found;
 		}
 
 		function isInsideMatchingSelector() {
@@ -50,28 +67,36 @@ module.exports = {
 				matchingRuleStack.pop();
 			},
 
-			'Rule > Block Declaration'( node ) {
-				const insideMatchingSelector = matchingRuleStack[ matchingRuleStack.length - 1 ];
-
-				if ( !insideMatchingSelector ) {
+			'Rule > Block Declaration Function'( node ) {
+				if ( !isInsideMatchingSelector() ) {
 					return;
 				}
 
-				const valueText = sourceCode.getText( node.value );
-
-				if ( !valueText.includes( 'var(' ) ) {
+				if ( typeof node.name !== 'string' || node.name.toLowerCase() !== 'var' ) {
 					return;
 				}
 
-				const usesAllowedPrefix = new RegExp( `var\\(\\s*${ PREFIX }` ).test( valueText );
+				let firstIdentifier = null;
 
-				if ( usesAllowedPrefix ) {
+				for ( const child of node.children ) {
+					if ( child.type === 'Identifier' ) {
+						firstIdentifier = child;
+
+						break;
+					}
+				}
+
+				if ( !firstIdentifier ) {
 					return;
 				}
 
-				const isIgnored = IGNORED_VARIABLES.some( ignored => valueText.includes( ignored ) );
+				const variableName = firstIdentifier.name;
 
-				if ( isIgnored ) {
+				if ( variableName.startsWith( PREFIX ) ) {
+					return;
+				}
+
+				if ( ignoredVariableSubstrings.some( ignored => variableName.includes( ignored ) ) ) {
 					return;
 				}
 

@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@es-joy/jsdoccomment": "^0.50.2",
+    "@eslint/css-tree": "^4.0.4",
     "enhanced-resolve": "^5.15.0",
     "resolve.exports": "^2.0.2",
     "upath": "^2.0.1",

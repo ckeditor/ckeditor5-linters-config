@@ -21,7 +21,7 @@ const ruleTester = new RuleTester( {
 
 const headerLines = [
 	'/*',
-	' * Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
+	' * @license Copyright (c) 2003-2026, CKSource Holding sp. z o.o. All rights reserved.',
 	' * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options',
 	' */'
 ];
@@ -70,11 +70,28 @@ ruleTester.run( ruleName, rule, {
 			output: header + '\n\n'
 		},
 		{
-			// Wrong wording inside the header comment.
+			// First comment carries @license but the wording is wrong - replaced.
 			options,
-			code: '/*\n * Copyright (c) something else.\n */\n\n' + body + '\n',
+			code: '/*\n * @license Copyright (c) something else.\n */\n\n' + body + '\n',
 			errors: [ incorrectHeaderError ],
 			output: header + '\n\n' + body + '\n'
+		},
+		{
+			// First comment has no @license tag - the prior heuristic mistook a
+			// later "copyright" comment for the header and replaced it. The new
+			// rule treats this as missing and prepends a proper header above.
+			options,
+			code: '/* Editor styles. */\n\n/* (c) 2026 something */\n\n' + body + '\n',
+			errors: [ missingHeaderError ],
+			output: header + '\n\n/* Editor styles. */\n\n/* (c) 2026 something */\n\n' + body + '\n'
+		},
+		{
+			// First comment lacks @license and contains the word "copyright" -
+			// previously misidentified as the license header.
+			options,
+			code: '/* Editor styles, copyright Acme. */\n\n' + body + '\n',
+			errors: [ missingHeaderError ],
+			output: header + '\n\n/* Editor styles, copyright Acme. */\n\n' + body + '\n'
 		},
 		{
 			// Whitespace before the header.
