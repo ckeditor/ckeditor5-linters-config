@@ -52,6 +52,15 @@ module.exports = {
 			},
 
 			'Rule > Block Declaration'( node ) {
+				// `@eslint/css` exposes custom-property values (`--foo: ...`) as a Raw
+				// token, so the AST visitors above don't see what's inside; re-parse
+				// the raw text via css-tree to recover the value AST.
+				if ( node.value && node.value.type === 'Raw' ) {
+					checkRawValue( context, node.value );
+
+					return;
+				}
+
 				const propertyName = typeof node.property === 'string' ? node.property.toLowerCase() : '';
 
 				if ( !COLOR_ACCEPTING_PROPERTIES.has( propertyName ) ) {
@@ -78,6 +87,66 @@ module.exports = {
 		};
 	}
 };
+
+function checkRawValue( context, rawNode ) {
+	const text = typeof rawNode.value === 'string' ? rawNode.value : '';
+
+	if ( !text.trim() ) {
+		return;
+	}
+
+	let ast;
+
+	try {
+		ast = cssTree.parse( text, { context: 'value', positions: true } );
+	} catch {
+		return;
+	}
+
+	cssTree.walk( ast, sub => {
+		if ( sub.type === 'Hash' ) {
+			reportInRaw( context, rawNode, sub, 'disallowedHex' );
+		} else if ( sub.type === 'Function' ) {
+			const fnName = typeof sub.name === 'string' ? sub.name.toLowerCase() : '';
+
+			if ( fnName === 'rgb' || fnName === 'rgba' ) {
+				reportInRaw( context, rawNode, sub, 'disallowedRgb' );
+			}
+		} else if ( sub.type === 'Identifier' ) {
+			const idName = typeof sub.name === 'string' ? sub.name.toLowerCase() : '';
+
+			if ( !idName.startsWith( '--' ) && NAMED_COLORS.has( idName ) ) {
+				reportInRaw( context, rawNode, sub, 'disallowedNamedColor' );
+			}
+		}
+	} );
+}
+
+function reportInRaw( context, rawNode, subNode, messageId ) {
+	if ( !subNode.loc ) {
+		context.report( { node: rawNode, messageId } );
+
+		return;
+	}
+
+	context.report( {
+		loc: {
+			start: translatePosition( subNode.loc.start, rawNode.loc.start ),
+			end: translatePosition( subNode.loc.end, rawNode.loc.start )
+		},
+		messageId
+	} );
+}
+
+// Line 1 of the sub-parsed value starts mid-file at `rawStart.column`; later lines
+// start at file column 1, so only line 1 needs the column anchor shift.
+function translatePosition( pos, rawStart ) {
+	if ( pos.line === 1 ) {
+		return { line: rawStart.line, column: rawStart.column + pos.column - 1 };
+	}
+
+	return { line: rawStart.line + pos.line - 1, column: pos.column };
+}
 
 /**
  * Property names whose CSS grammar references `<color>` somewhere - the properties for

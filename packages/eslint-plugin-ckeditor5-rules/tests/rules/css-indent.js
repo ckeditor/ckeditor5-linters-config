@@ -66,10 +66,17 @@ ruleTester.run( ruleName, rule, {
 			code: '.foo {\n\tbackground: outer(\n\t\tinner(\n\t\t\thsl(0, 0%, 0%)\n\t\t)\n\t);\n}\n'
 		},
 		{
-			// Custom-property values (`--foo: …`) parse as a Raw blob, so their
-			// continuation lines are skipped - the rule has no AST to anchor an
-			// expected indent on inside an opaque value.
+			// Multi-line custom-property value: indent inside `(...)` is enforced even
+			// though the value is a Raw blob.
 			code: ':root {\n\t--foo: linear-gradient(\n\t\twhite,\n\t\tblack\n\t);\n}\n'
+		},
+		{
+			// Custom-property continuation lines outside any parens are not enforced.
+			code: ':root {\n\t--foo: a\n\t\tb\n\t\tc;\n}\n'
+		},
+		{
+			// Custom-property value with nested parens - each level adds a tab.
+			code: ':root {\n\t--foo: outer(\n\t\tinner(\n\t\t\twhite\n\t\t)\n\t);\n}\n'
 		},
 		{
 			// `@starting-style { & { ... } }` is parsed as a `Raw` blob in tolerant mode
@@ -168,6 +175,20 @@ ruleTester.run( ruleName, rule, {
 				{
 					messageId: 'incorrectIndent',
 					data: { expected: '2 tabs', actual: '1 tab' }
+				}
+			]
+		},
+		{
+			// Bad indent inside a custom-property value's parens.
+			code: ':root {\n\t--ck-gradient: linear-gradient(\n   hsl(0, 0%, 0%),\n hsl(0, 0%, 100%)\n\t);\n}\n',
+			errors: [
+				{
+					messageId: 'incorrectIndent',
+					data: { expected: '2 tabs', actual: '3 spaces' }
+				},
+				{
+					messageId: 'incorrectIndent',
+					data: { expected: '2 tabs', actual: '1 space' }
 				}
 			]
 		}

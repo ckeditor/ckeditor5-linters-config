@@ -94,6 +94,18 @@ ruleTester.run( ruleName, rule, {
 		{
 			// `tan()` is a math function; the identifier `tan` is not present.
 			code: '.foo { width: calc(100px * tan(45deg)); }'
+		},
+		{
+			// Custom property with a non-color value must not false-positive.
+			code: ':root { --ck-spacing: 10px; }'
+		},
+		{
+			// HSL inside a custom property is allowed.
+			code: ':root { --ck-color-bg: hsl(0, 0%, 100%); }'
+		},
+		{
+			// `var(--...)` reference inside a custom property is allowed.
+			code: ':root { --ck-color-aliased: var(--ck-color-base); }'
 		}
 	],
 
@@ -167,6 +179,26 @@ ruleTester.run( ruleName, rule, {
 			// Mixed hex and rgb() - each reported once on its own node.
 			code: '.foo { background: linear-gradient(#fff, rgb(0, 0, 0)); }',
 			errors: [ hexError, rgbError ]
+		},
+		{
+			// Hex inside a custom-property value (Raw token).
+			code: ':root { --ck-color-bg: #fff; }',
+			errors: [ hexError ]
+		},
+		{
+			// rgb() inside a custom-property value.
+			code: ':root { --ck-color-bg: rgb(0, 0, 0); }',
+			errors: [ rgbError ]
+		},
+		{
+			// Named color inside a custom-property value.
+			code: ':root { --ck-color-bg: red; }',
+			errors: [ namedColorError ]
+		},
+		{
+			// Custom-property value with several violations - each reported per occurrence.
+			code: ':root { --ck-gradient: linear-gradient(#fff, rgb(0, 0, 0), red); }',
+			errors: [ hexError, rgbError, namedColorError ]
 		}
 	]
 } );

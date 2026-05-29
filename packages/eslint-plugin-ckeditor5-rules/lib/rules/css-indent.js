@@ -30,6 +30,7 @@ module.exports = {
 		const declarationContinuationLines = new Set();
 
 		let depth = 0;
+		let currentDeclaration = null;
 
 		/**
 		 * Records that lines strictly between `(` and `)` get one extra tab of
@@ -74,6 +75,8 @@ module.exports = {
 			},
 
 			Declaration( node ) {
+				currentDeclaration = node;
+
 				if ( node.loc.start.line >= node.loc.end.line ) {
 					return;
 				}
@@ -83,13 +86,25 @@ module.exports = {
 				}
 			},
 
+			'Declaration:exit'() {
+				currentDeclaration = null;
+			},
+
 			/**
-			 * Custom-property values (`--foo: ...`) and tolerant-parse fallback content
-			 * (e.g. `& { ... }` inside `@starting-style`) come through as Raw blobs. Their
-			 * inner lines are skipped from the indent check - there is no AST to anchor
-			 * an expected indent on.
+			 * `@eslint/css` exposes two unrelated shapes as `Raw`: custom-property values
+			 * (`--foo: ...`), which can still carry paren-bearing function calls we want
+			 * indent enforced on, and tolerant-parse fallback (e.g. `& { ... }` inside
+			 * `@starting-style`), which has no AST to anchor against.
 			 */
 			Raw( node ) {
+				const property = currentDeclaration && typeof currentDeclaration.property === 'string' ? currentDeclaration.property : '';
+
+				if ( property.startsWith( '--' ) ) {
+					scanRawParens( node, parenDepth );
+
+					return;
+				}
+
 				for ( let l = node.loc.start.line + 1; l <= node.loc.end.line; l++ ) {
 					rawLines.add( l );
 				}
@@ -178,4 +193,68 @@ function describeIndent( str ) {
 
 function formatPlural( word, number ) {
 	return `${ number } ${ word }${ number === 1 ? '' : 's' }`;
+}
+
+/**
+ * Same paren-depth model as `addParenContribution`, but driven by a character
+ * scan since Raw has no AST. Strings and CSS block comments are skipped so
+ * their parens don't skew the depth.
+ */
+function scanRawParens( rawNode, parenDepth ) {
+	const text = typeof rawNode.value === 'string' ? rawNode.value : '';
+
+	if ( !text ) {
+		return;
+	}
+
+	let line = rawNode.loc.start.line;
+	let stringDelimiter = null;
+	let inComment = false;
+	const openLineStack = [];
+
+	for ( let i = 0; i < text.length; i++ ) {
+		const ch = text[ i ];
+
+		if ( ch === '\n' ) {
+			line++;
+
+			continue;
+		}
+
+		if ( inComment ) {
+			if ( ch === '*' && text[ i + 1 ] === '/' ) {
+				inComment = false;
+				i++;
+			}
+
+			continue;
+		}
+
+		if ( stringDelimiter ) {
+			if ( ch === '\\' ) {
+				i++;
+			} else if ( ch === stringDelimiter ) {
+				stringDelimiter = null;
+			}
+
+			continue;
+		}
+
+		if ( ch === '/' && text[ i + 1 ] === '*' ) {
+			inComment = true;
+			i++;
+		} else if ( ch === '"' || ch === '\'' ) {
+			stringDelimiter = ch;
+		} else if ( ch === '(' ) {
+			openLineStack.push( line );
+		} else if ( ch === ')' ) {
+			const openLine = openLineStack.pop();
+
+			if ( openLine !== undefined && openLine < line ) {
+				for ( let l = openLine + 1; l <= line - 1; l++ ) {
+					parenDepth.set( l, ( parenDepth.get( l ) || 0 ) + 1 );
+				}
+			}
+		}
+	}
 }
