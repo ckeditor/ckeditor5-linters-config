@@ -11,6 +11,7 @@ minimumReleaseAgeExclude:
   - '@ckeditor/*'
   - '@cksource/*'
   - '*ckeditor5*'
+  - '@eslint/css' # Remove after 2026-06-01
 
 shellEmulator: true
 shamefullyHoist: true
