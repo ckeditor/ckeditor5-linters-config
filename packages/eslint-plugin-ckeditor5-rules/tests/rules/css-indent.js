@@ -110,6 +110,7 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Missing indentation: declaration at depth 1 with zero leading whitespace.
 			code: '.foo {\ncolor: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ {
 				messageId: 'incorrectIndent',
 				data: { expected: '1 tab', actual: 'none' }
@@ -118,6 +119,7 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Too few tabs: declaration at depth 2 with one tab.
 			code: '.foo {\n\t& .bar {\n\tcolor: hsl(0, 0%, 0%);\n\t}\n}\n',
+			output: '.foo {\n\t& .bar {\n\t\tcolor: hsl(0, 0%, 0%);\n\t}\n}\n',
 			errors: [ {
 				messageId: 'incorrectIndent',
 				data: { expected: '2 tabs', actual: '1 tab' }
@@ -126,6 +128,7 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Too many tabs: declaration at depth 1 with two tabs.
 			code: '.foo {\n\t\tcolor: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ {
 				messageId: 'incorrectIndent',
 				data: { expected: '1 tab', actual: '2 tabs' }
@@ -134,16 +137,19 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Two-space indent on a declaration.
 			code: '.foo {\n  color: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ incorrectIndent ]
 		},
 		{
 			// Four-space indent on a declaration.
 			code: '.foo {\n    color: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ incorrectIndent ]
 		},
 		{
 			// Space-indented nested rule. Three offending lines: opening, declaration, closing.
 			code: '.foo {\n  & .bar {\n    color: hsl(0, 0%, 0%);\n  }\n}\n',
+			output: '.foo {\n\t& .bar {\n\t\tcolor: hsl(0, 0%, 0%);\n\t}\n}\n',
 			errors: [
 				incorrectIndent,
 				incorrectIndent,
@@ -153,11 +159,13 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Single leading space.
 			code: '.foo {\n color: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ incorrectIndent ]
 		},
 		{
 			// Mixed tab and spaces.
 			code: '.foo {\n\t color: hsl(0, 0%, 0%);\n}\n',
+			output: '.foo {\n\tcolor: hsl(0, 0%, 0%);\n}\n',
 			errors: [ {
 				messageId: 'incorrectIndent',
 				data: { expected: '1 tab', actual: '1 tab and 1 space' }
@@ -167,6 +175,7 @@ ruleTester.run( ruleName, rule, {
 			// Multi-line function with continuation lines NOT at outer + 1
 			// (here at outer depth instead). Each offending continuation reports.
 			code: '.foo {\n\tbackground: linear-gradient(\n\thsl(0, 0%, 0%),\n\thsl(0, 0%, 100%)\n\t);\n}\n',
+			output: '.foo {\n\tbackground: linear-gradient(\n\t\thsl(0, 0%, 0%),\n\t\thsl(0, 0%, 100%)\n\t);\n}\n',
 			errors: [
 				{
 					messageId: 'incorrectIndent',
@@ -181,6 +190,7 @@ ruleTester.run( ruleName, rule, {
 		{
 			// Bad indent inside a custom-property value's parens.
 			code: ':root {\n\t--ck-gradient: linear-gradient(\n   hsl(0, 0%, 0%),\n hsl(0, 0%, 100%)\n\t);\n}\n',
+			output: ':root {\n\t--ck-gradient: linear-gradient(\n\t\thsl(0, 0%, 0%),\n\t\thsl(0, 0%, 100%)\n\t);\n}\n',
 			errors: [
 				{
 					messageId: 'incorrectIndent',
@@ -191,6 +201,34 @@ ruleTester.run( ruleName, rule, {
 					data: { expected: '2 tabs', actual: '1 space' }
 				}
 			]
+		},
+		{
+			// The closing `)` line of a multi-line declaration value is enforced at the block
+			// depth; here it sits at column 0 instead of one tab.
+			code: '.foo {\n\tbackground: linear-gradient(\n\t\thsl(0, 0%, 0%)\n);\n}\n',
+			output: '.foo {\n\tbackground: linear-gradient(\n\t\thsl(0, 0%, 0%)\n\t);\n}\n',
+			errors: [ {
+				messageId: 'incorrectIndent',
+				data: { expected: '1 tab', actual: 'none' }
+			} ]
+		},
+		{
+			// The closing `)` line indented too deep (two tabs where the block depth is one).
+			code: '.foo {\n\tbackground: linear-gradient(\n\t\thsl(0, 0%, 0%)\n\t\t);\n}\n',
+			output: '.foo {\n\tbackground: linear-gradient(\n\t\thsl(0, 0%, 0%)\n\t);\n}\n',
+			errors: [ {
+				messageId: 'incorrectIndent',
+				data: { expected: '1 tab', actual: '2 tabs' }
+			} ]
+		},
+		{
+			// The closing `)` line of a multi-line custom-property value (a Raw token) is enforced too.
+			code: ':root {\n\t--ck-gradient: linear-gradient(\n\t\twhite,\n\t\tblack\n);\n}\n',
+			output: ':root {\n\t--ck-gradient: linear-gradient(\n\t\twhite,\n\t\tblack\n\t);\n}\n',
+			errors: [ {
+				messageId: 'incorrectIndent',
+				data: { expected: '1 tab', actual: 'none' }
+			} ]
 		}
 	]
 } );

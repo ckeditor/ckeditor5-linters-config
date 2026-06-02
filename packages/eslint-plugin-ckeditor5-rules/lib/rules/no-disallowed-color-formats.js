@@ -51,13 +51,15 @@ module.exports = {
 				}
 			},
 
-			'Rule > Block Declaration'( node ) {
-				// `@eslint/css` exposes custom-property values (`--foo: ...`) as a Raw
-				// token, so the AST visitors above don't see what's inside; re-parse
-				// the raw text via css-tree to recover the value AST.
-				if ( node.value && node.value.type === 'Raw' ) {
-					checkRawValue( context, node.value );
+			// `@eslint/css` exposes custom-property values (`--foo: ...`) and `var()` fallbacks
+			// (`var(--x, ...)`) as Raw tokens, so the visitors above don't see what's inside.
+			'Rule > Block Declaration Raw'( node ) {
+				checkRawValue( context, node );
+			},
 
+			'Rule > Block Declaration'( node ) {
+				// Raw values (custom properties, var() fallbacks) are handled separately above.
+				if ( !node.value || node.value.type === 'Raw' ) {
 					return;
 				}
 
@@ -89,9 +91,15 @@ module.exports = {
 };
 
 function checkRawValue( context, rawNode ) {
-	const text = typeof rawNode.value === 'string' ? rawNode.value : '';
+	if ( !rawNode.loc ) {
+		return;
+	}
 
-	if ( !text.trim() ) {
+	checkRawText( context, rawNode.value, rawNode.loc.start );
+}
+
+function checkRawText( context, text, anchor ) {
+	if ( typeof text !== 'string' || !text.trim() ) {
 		return;
 	}
 
@@ -105,47 +113,57 @@ function checkRawValue( context, rawNode ) {
 
 	cssTree.walk( ast, sub => {
 		if ( sub.type === 'Hash' ) {
-			reportInRaw( context, rawNode, sub, 'disallowedHex' );
+			reportAt( context, sub.loc, anchor, 'disallowedHex' );
 		} else if ( sub.type === 'Function' ) {
 			const fnName = typeof sub.name === 'string' ? sub.name.toLowerCase() : '';
 
 			if ( fnName === 'rgb' || fnName === 'rgba' ) {
-				reportInRaw( context, rawNode, sub, 'disallowedRgb' );
+				reportAt( context, sub.loc, anchor, 'disallowedRgb' );
 			}
 		} else if ( sub.type === 'Identifier' ) {
 			const idName = typeof sub.name === 'string' ? sub.name.toLowerCase() : '';
 
+			// Known, accepted limitation: a Raw value (custom property or var() fallback) carries
+			// no grammar telling us whether it holds a color, so a named-color keyword used as a
+			// non-color value (`--ck-font-family: Red Hat Text`, `--ck-animation-name: red`) is a
+			// false positive. Hex and rgb() above are unambiguous and never affected.
 			if ( !idName.startsWith( '--' ) && NAMED_COLORS.has( idName ) ) {
-				reportInRaw( context, rawNode, sub, 'disallowedNamedColor' );
+				reportAt( context, sub.loc, anchor, 'disallowedNamedColor' );
 			}
+		} else if ( sub.type === 'Raw' ) {
+			// css-tree keeps nested `var()` fallbacks as their own Raw
+			// (e.g. `var(--x, var(--y, #fff))`), so recurse to reach the disallowed color.
+			checkRawText( context, sub.value, translatePosition( sub.loc.start, anchor ) );
 		}
 	} );
 }
 
-function reportInRaw( context, rawNode, subNode, messageId ) {
-	if ( !subNode.loc ) {
-		context.report( { node: rawNode, messageId } );
+function reportAt( context, subLoc, anchor, messageId ) {
+	if ( !subLoc ) {
+		context.report( { loc: { start: anchor, end: anchor }, messageId } );
 
 		return;
 	}
 
 	context.report( {
 		loc: {
-			start: translatePosition( subNode.loc.start, rawNode.loc.start ),
-			end: translatePosition( subNode.loc.end, rawNode.loc.start )
+			start: translatePosition( subLoc.start, anchor ),
+			end: translatePosition( subLoc.end, anchor )
 		},
 		messageId
 	} );
 }
 
-// Line 1 of the sub-parsed value starts mid-file at `rawStart.column`; later lines
-// start at file column 1, so only line 1 needs the column anchor shift.
-function translatePosition( pos, rawStart ) {
+/**
+ * Line 1 of the sub-parsed value starts mid-file at `anchor.column`; later lines
+ * start at file column 1, so only line 1 needs the column anchor shift.
+ */
+function translatePosition( pos, anchor ) {
 	if ( pos.line === 1 ) {
-		return { line: rawStart.line, column: rawStart.column + pos.column - 1 };
+		return { line: anchor.line, column: anchor.column + pos.column - 1 };
 	}
 
-	return { line: rawStart.line + pos.line - 1, column: pos.column };
+	return { line: anchor.line + pos.line - 1, column: pos.column };
 }
 
 /**

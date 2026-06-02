@@ -12,6 +12,7 @@ module.exports = {
 			description: 'Enforce tab indentation in CSS files.',
 			category: 'CKEditor5'
 		},
+		fixable: 'whitespace',
 		schema: [],
 		messages: {
 			incorrectIndent: 'Incorrect indentation: expected {{expected}}, found {{actual}}.'
@@ -26,6 +27,7 @@ module.exports = {
 		//   - parenDepth: one extra tab for each multi-line `( ... )` enclosing the line.
 		const blockDepth = new Map();
 		const parenDepth = new Map();
+		const parenCloseLines = new Set();
 		const rawLines = new Set();
 		const declarationContinuationLines = new Set();
 
@@ -34,7 +36,8 @@ module.exports = {
 
 		/**
 		 * Records that lines strictly between `(` and `)` get one extra tab of
-		 * expected indent. Single-line constructs contribute nothing.
+		 * expected indent. Single-line constructs contribute nothing. The line the
+		 * `)` sits on is remembered so its indentation (at the outer depth) is enforced.
 		 */
 		function addParenContribution( node ) {
 			if ( node.loc.start.line >= node.loc.end.line ) {
@@ -44,6 +47,8 @@ module.exports = {
 			for ( let l = node.loc.start.line + 1; l <= node.loc.end.line - 1; l++ ) {
 				parenDepth.set( l, ( parenDepth.get( l ) || 0 ) + 1 );
 			}
+
+			parenCloseLines.add( node.loc.end.line );
 		}
 
 		return {
@@ -100,7 +105,7 @@ module.exports = {
 				const property = currentDeclaration && typeof currentDeclaration.property === 'string' ? currentDeclaration.property : '';
 
 				if ( property.startsWith( '--' ) ) {
-					scanRawParens( node, parenDepth );
+					scanRawParens( node, parenDepth, parenCloseLines );
 
 					return;
 				}
@@ -139,10 +144,15 @@ module.exports = {
 						continue;
 					}
 
+					// The closing line of a multi-line paren must be enforced (at the outer depth),
+					// but only when `)` starts the line - a `)` sharing a line with content is a
+					// normal inner line.
+					const isParenCloseLine = parenCloseLines.has( lineNumber ) && /^\s*\)/.test( line );
+
 					// Declaration continuation lines without a paren contribution
 					// (multi-line strings, chained values) are not enforced - indent is
-					// only checked inside parens.
-					if ( declarationContinuationLines.has( lineNumber ) && !parenDepth.has( lineNumber ) ) {
+					// only checked inside parens and on the closing paren line.
+					if ( declarationContinuationLines.has( lineNumber ) && !parenDepth.has( lineNumber ) && !isParenCloseLine ) {
 						continue;
 					}
 
@@ -163,6 +173,12 @@ module.exports = {
 						data: {
 							expected: describeIndent( expectedLeading ),
 							actual: describeIndent( leading )
+						},
+						fix( fixer ) {
+							// CSS source columns are 1-based, so column 1 is the line start.
+							const lineStart = sourceCode.getIndexFromLoc( { line: lineNumber, column: 1 } );
+
+							return fixer.replaceTextRange( [ lineStart, lineStart + leading.length ], expectedLeading );
 						}
 					} );
 				}
@@ -200,7 +216,7 @@ function formatPlural( word, number ) {
  * scan since Raw has no AST. Strings and CSS block comments are skipped so
  * their parens don't skew the depth.
  */
-function scanRawParens( rawNode, parenDepth ) {
+function scanRawParens( rawNode, parenDepth, parenCloseLines ) {
 	const text = typeof rawNode.value === 'string' ? rawNode.value : '';
 
 	if ( !text ) {
@@ -254,6 +270,8 @@ function scanRawParens( rawNode, parenDepth ) {
 				for ( let l = openLine + 1; l <= line - 1; l++ ) {
 					parenDepth.set( l, ( parenDepth.get( l ) || 0 ) + 1 );
 				}
+
+				parenCloseLines.add( line );
 			}
 		}
 	}

@@ -73,6 +73,18 @@ ruleTester.run( ruleName, rule, {
 			// Multiple substrings in the option list.
 			options: [ { ignoredVariableSubstrings: [ '-color-base-', '-foo-' ] } ],
 			code: '.ck-content { background: var(--ck-color-base-bg); width: var(--ck-foo-width); }'
+		},
+		{
+			// Allowed-prefix variable inside a custom-property value (a Raw token).
+			code: '.ck-content { --ck-content-x: var(--ck-content-base); }'
+		},
+		{
+			// Allowed-prefix variable inside a `var()` fallback (a Raw token).
+			code: '.ck-content { width: var(--ck-content-x, var(--ck-content-fallback)); }'
+		},
+		{
+			// Custom-property values outside `.ck-content` are not constrained.
+			code: ':root { --foo: var(--bad); }'
 		}
 	],
 
@@ -131,6 +143,23 @@ ruleTester.run( ruleName, rule, {
 		{
 			// `.ck-content` followed by a descendant combinator + multiple classes.
 			code: '.ck-content ul .ck-something { box-shadow: 0 0 0 1px var(--bad); }',
+			errors: [ invalidVariableError ]
+		},
+		{
+			// Disallowed variable inside a custom-property value (a Raw token). The value is
+			// opaque to the AST visitor and must be recovered by re-parsing the raw text.
+			code: ':root,\n.ck-content {\n\t--ck-content-foo: var(--bad);\n}\n',
+			errors: [ invalidVariableError ]
+		},
+		{
+			// Disallowed variable inside a `var()` fallback (a Raw token).
+			code: '.ck-content { width: var(--ck-content-x, var(--bad)); }',
+			errors: [ invalidVariableError ]
+		},
+		{
+			// Disallowed variable nested inside a custom-property value's `var()` fallback -
+			// requires recursing into nested Raw tokens.
+			code: '.ck-content { --ck-content-foo: var(--ck-content-x, var(--bad)); }',
 			errors: [ invalidVariableError ]
 		}
 	]

@@ -106,6 +106,14 @@ ruleTester.run( ruleName, rule, {
 		{
 			// `var(--...)` reference inside a custom property is allowed.
 			code: ':root { --ck-color-aliased: var(--ck-color-base); }'
+		},
+		{
+			// HSL inside a `var()` fallback (a Raw token) is allowed.
+			code: '.foo { color: var(--ck-color-text, hsl(0, 0%, 0%)); }'
+		},
+		{
+			// A custom-property reference inside a `var()` fallback is allowed.
+			code: '.foo { color: var(--ck-color-text, var(--ck-color-base)); }'
 		}
 	],
 
@@ -199,6 +207,27 @@ ruleTester.run( ruleName, rule, {
 			// Custom-property value with several violations - each reported per occurrence.
 			code: ':root { --ck-gradient: linear-gradient(#fff, rgb(0, 0, 0), red); }',
 			errors: [ hexError, rgbError, namedColorError ]
+		},
+		{
+			// Hex inside a `var()` fallback (a Raw token).
+			code: '.foo { color: var(--ck-color-text, #fff); }',
+			errors: [ hexError ]
+		},
+		{
+			// rgb() inside a `var()` fallback.
+			code: '.foo { background: var(--ck-color-bg, rgb(0, 0, 0)); }',
+			errors: [ rgbError ]
+		},
+		{
+			// Named color inside a `var()` fallback.
+			code: '.foo { border-color: var(--ck-color-border, red); }',
+			errors: [ namedColorError ]
+		},
+		{
+			// Disallowed color nested in a `var()` fallback's own fallback -
+			// requires recursing into nested Raw tokens.
+			code: '.foo { color: var(--ck-color-text, var(--ck-color-alt, #fff)); }',
+			errors: [ hexError ]
 		}
 	]
 } );
