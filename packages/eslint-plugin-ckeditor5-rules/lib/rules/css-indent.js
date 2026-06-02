@@ -248,6 +248,12 @@ function scanRawParens( rawNode, parenDepth, parenCloseLines ) {
 
 		if ( stringDelimiter ) {
 			if ( ch === '\\' ) {
+				// The escaped char is skipped via i++ below; if it is a newline, the loop's
+				// top-of-body line counter never sees it, so count it here.
+				if ( text[ i + 1 ] === '\n' ) {
+					line++;
+				}
+
 				i++;
 			} else if ( ch === stringDelimiter ) {
 				stringDelimiter = null;

@@ -103,6 +103,11 @@ ruleTester.run( ruleName, rule, {
 				'}',
 				''
 			].join( '\n' )
+		},
+		{
+			// A backslash-newline line continuation inside a custom-property string must not
+			// desync line counting for the parens that follow it.
+			code: ':root {\n\t--x: "a\\\nb" linear-gradient(\n\t\tc\n\t);\n}\n'
 		}
 	],
 
