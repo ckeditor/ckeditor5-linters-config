@@ -13,35 +13,45 @@ module.exports = {
 			category: 'CKEditor5'
 		},
 		fixable: 'code',
-		schema: [
-			{
-				type: 'object',
-				properties: {
-					headerLines: {
-						type: 'array'
-					}
-				},
-				additionalProperties: false
-			}
-		]
+		schema: {
+			type: 'array',
+			minItems: 1,
+			maxItems: 1,
+			items: [
+				{
+					type: 'object',
+					required: [ 'headerLines' ],
+					properties: {
+						headerLines: {
+							type: 'array',
+							items: {
+								type: 'string'
+							},
+							minItems: 1
+						}
+					},
+					additionalProperties: false
+				}
+			]
+		}
 	},
 
 	create( context ) {
-		const [ { headerLines } = {} ] = context.options;
-
-		if ( !headerLines ) {
-			console.error( 'The license-header rule is missing the "headerLines" configuration.' );
-		}
+		const [ { headerLines } ] = context.options;
 
 		return {
 			Program() {
-				licenseHeaderRule( context, headerLines );
+				licenseHeaderRuleJs( context, headerLines );
+			},
+
+			StyleSheet() {
+				licenseHeaderRuleCss( context, headerLines );
 			}
 		};
 	}
 };
 
-function licenseHeaderRule( context, headerLines ) {
+function licenseHeaderRuleJs( context, headerLines ) {
 	const headerText = headerLines.join( '\n' );
 	const sourceCode = context.sourceCode;
 	const fullSourceString = sourceCode.lines.join( '\n' );
@@ -51,7 +61,7 @@ function licenseHeaderRule( context, headerLines ) {
 	const licenseComment = comments.find( comment => comment.type === 'Block' && comment.value.toLowerCase().includes( '@license' ) );
 
 	if ( !licenseComment ) {
-		const line = shebang ? 2 : 0;
+		const line = shebang ? 2 : 1;
 
 		context.report( {
 			loc: {
@@ -92,7 +102,7 @@ function licenseHeaderRule( context, headerLines ) {
 
 	const contentBeforeLoc = {
 		start: {
-			line: 0,
+			line: shebang ? shebang.loc.end.line : 1,
 			column: shebang ? shebang.loc.end.column : 0
 		},
 		end: {
@@ -136,6 +146,88 @@ function licenseHeaderRule( context, headerLines ) {
 			},
 			message: 'Incorrect whitespace after the license header.',
 			fix: fixer => fixer.replaceTextRange( [ licenseComment.range[ 1 ], followingToken.range[ 0 ] ], '\n\n' )
+		} );
+	}
+}
+
+function licenseHeaderRuleCss( context, headerLines ) {
+	const headerText = headerLines.join( '\n' );
+	const sourceCode = context.sourceCode;
+	const fullSourceString = sourceCode.text;
+	const comments = sourceCode.comments || [];
+
+	const licenseComment = comments.find( comment => {
+		const text = sourceCode.getText( comment );
+
+		return text.startsWith( '/*' ) && text.toLowerCase().includes( '@license' );
+	} );
+
+	if ( !licenseComment ) {
+		context.report( {
+			loc: {
+				start: { line: 1, column: 1 },
+				end: { line: 1, column: 1 }
+			},
+			message: 'The license header is missing.',
+			fix: fixer => fixer.insertTextAfterRange( [ 0, 0 ], headerText + '\n\n' )
+		} );
+
+		return;
+	}
+
+	if ( sourceCode.getText( licenseComment ) !== headerText ) {
+		const range = sourceCode.getRange ? sourceCode.getRange( licenseComment ) : licenseComment.range;
+
+		context.report( {
+			loc: licenseComment.loc,
+			message: 'The license header is incorrect.',
+			fix: fixer => fixer.replaceTextRange( range, headerText )
+		} );
+	}
+
+	const licenseRange = sourceCode.getRange ? sourceCode.getRange( licenseComment ) : licenseComment.range;
+	const contentBefore = fullSourceString.slice( 0, licenseRange[ 0 ] );
+
+	if ( contentBefore.length > 0 ) {
+		const whitespaceOnly = /^\s+$/.test( contentBefore );
+
+		if ( whitespaceOnly ) {
+			context.report( {
+				loc: {
+					start: { line: 1, column: 1 },
+					end: licenseComment.loc.start
+				},
+				message: 'Incorrect whitespace before the license header.',
+				fix: fixer => fixer.replaceTextRange( [ 0, licenseRange[ 0 ] ], '' )
+			} );
+		} else {
+			context.report( {
+				loc: {
+					start: { line: 1, column: 1 },
+					end: licenseComment.loc.start
+				},
+				message: 'Unexpected content before the license header.'
+			} );
+		}
+	}
+
+	const contentAfter = fullSourceString.slice( licenseRange[ 1 ] );
+	const followingContent = contentAfter.replace( /^\s+/, '' );
+
+	if ( followingContent.length > 0 && !contentAfter.startsWith( '\n\n' ) ) {
+		context.report( {
+			loc: {
+				start: licenseComment.loc.end,
+				end: licenseComment.loc.end
+			},
+			message: 'Incorrect whitespace after the license header.',
+			fix: fixer => {
+				const trailingWhitespaceMatch = contentAfter.match( /^\s*/ );
+				const trailingWhitespaceLength = trailingWhitespaceMatch ? trailingWhitespaceMatch[ 0 ].length : 0;
+				const end = licenseRange[ 1 ] + trailingWhitespaceLength;
+
+				return fixer.replaceTextRange( [ licenseRange[ 1 ], end ], '\n\n' );
+			}
 		} );
 	}
 }
