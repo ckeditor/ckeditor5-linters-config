@@ -18,10 +18,6 @@ Changelog
 * **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added a new `ckeditor5-rules/ck-content-variable-name` rule for CSS files. The rule requires variables used inside `.ck-content` selectors to use the `--ck-content-*` prefix. Exemptions can be configured with the `ignoredVariableSubstrings` option.
 * **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Extended `ckeditor5-rules/license-header` to validate CSS files. Missing, incorrect, or incorrectly positioned CSS license headers are reported and can be automatically fixed.
 
-### Other changes
-
-* Readme simplification.
-
 ### Released packages
 
 Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
