@@ -13,25 +13,31 @@ module.exports = {
 			category: 'CKEditor5'
 		},
 		fixable: 'code',
-		schema: [
-			{
-				type: 'object',
-				properties: {
-					headerLines: {
-						type: 'array'
-					}
-				},
-				additionalProperties: false
-			}
-		]
+		schema: {
+			type: 'array',
+			minItems: 1,
+			maxItems: 1,
+			items: [
+				{
+					type: 'object',
+					required: [ 'headerLines' ],
+					properties: {
+						headerLines: {
+							type: 'array',
+							items: {
+								type: 'string'
+							},
+							minItems: 1
+						}
+					},
+					additionalProperties: false
+				}
+			]
+		}
 	},
 
 	create( context ) {
-		const [ { headerLines } = {} ] = context.options;
-
-		if ( !headerLines ) {
-			console.error( 'The license-header rule is missing the "headerLines" configuration.' );
-		}
+		const [ { headerLines } ] = context.options;
 
 		return {
 			Program() {

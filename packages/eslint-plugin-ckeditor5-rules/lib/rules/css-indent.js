@@ -117,6 +117,8 @@ module.exports = {
 				}
 
 				if ( functionDepth > 0 ) {
+					// Raw fallback values inside functions are still covered by the enclosing
+					// function's paren-depth contribution, so do not mark them as opaque.
 					return;
 				}
 
