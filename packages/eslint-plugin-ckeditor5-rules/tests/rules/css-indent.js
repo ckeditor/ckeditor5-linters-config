@@ -57,6 +57,11 @@ ruleTester.run( ruleName, rule, {
 			code: '.foo {\n\tbackground: linear-gradient(\n\t\tto right,\n\t\thsl(0, 0%, 0%),\n\t\thsl(0, 0%, 100%)\n\t);\n}\n'
 		},
 		{
+			// Multi-line `var()` fallback: the fallback value is a Raw token, but its line is
+			// still inside `var(...)` parens and gets exactly one extra tab.
+			code: '.foo {\n\tcolor: var(\n\t\t--ck-color-text,\n\t\thsl(0, 0%, 0%)\n\t);\n}\n'
+		},
+		{
 			// Multi-line selector with a multi-line :not() function. Continuation lines
 			// inside :not() parens are at outer + 1.
 			code: '.outer {\n\t&.ck-foo *:not(\n\t\t.a,\n\t\t.b,\n\t\t.c\n\t) {\n\t\tcolor: hsl(0, 0%, 0%);\n\t}\n}\n'
@@ -191,6 +196,16 @@ ruleTester.run( ruleName, rule, {
 					data: { expected: '2 tabs', actual: '1 tab' }
 				}
 			]
+		},
+		{
+			// Bad indent inside a multi-line `var()` fallback. The fallback value is a Raw token,
+			// but the enclosing `var(...)` still determines the expected indentation.
+			code: '.foo {\n\tcolor: var(\n\t\t--ck-color-text,\n hsl(0, 0%, 0%)\n\t);\n}\n',
+			output: '.foo {\n\tcolor: var(\n\t\t--ck-color-text,\n\t\thsl(0, 0%, 0%)\n\t);\n}\n',
+			errors: [ {
+				messageId: 'incorrectIndent',
+				data: { expected: '2 tabs', actual: '1 space' }
+			} ]
 		},
 		{
 			// Bad indent inside a custom-property value's parens.

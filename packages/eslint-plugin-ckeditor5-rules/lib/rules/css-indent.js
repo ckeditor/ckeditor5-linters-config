@@ -33,6 +33,7 @@ module.exports = {
 
 		let depth = 0;
 		let currentDeclaration = null;
+		let functionDepth = 0;
 
 		/**
 		 * Records that lines strictly between `(` and `)` get one extra tab of
@@ -68,7 +69,12 @@ module.exports = {
 			},
 
 			Function( node ) {
+				functionDepth++;
 				addParenContribution( node );
+			},
+
+			'Function:exit'() {
+				functionDepth--;
 			},
 
 			/**
@@ -107,6 +113,10 @@ module.exports = {
 				if ( property.startsWith( '--' ) ) {
 					scanRawParens( node, parenDepth, parenCloseLines );
 
+					return;
+				}
+
+				if ( functionDepth > 0 ) {
 					return;
 				}
 
