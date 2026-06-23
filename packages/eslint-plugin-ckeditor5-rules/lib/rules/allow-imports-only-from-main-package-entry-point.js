@@ -5,7 +5,13 @@
 
 'use strict';
 
+const fs = require( 'node:fs' );
+const { findPackageJSON } = require( 'node:module' );
+const { pathToFileURL } = require( 'node:url' );
+const resolveExports = require( 'resolve.exports' ).exports;
+
 const message = 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.';
+const packageJsonCache = new Map();
 
 module.exports = {
 	meta: {
@@ -37,6 +43,11 @@ module.exports = {
 
 				if ( path === match[ 0 ] ) {
 					// Ignore imports from the main package entry point.
+					return;
+				}
+
+				if ( isExportedPackageSubpath( path, match[ 0 ], context ) ) {
+					// Ignore imports from package subpaths explicitly defined in the `exports` field.
 					return;
 				}
 
@@ -73,3 +84,33 @@ module.exports = {
 		};
 	}
 };
+
+function isExportedPackageSubpath( importPath, packageName, context ) {
+	try {
+		const packageJsonPath = findPackageJSON( importPath, pathToFileURL( context.physicalFilename ) );
+		const packageJson = readPackageJson( packageJsonPath );
+		const subpath = `.${ importPath.slice( packageName.length ) }`;
+
+		if ( !Object.hasOwn( packageJson.exports, subpath ) ) {
+			return false;
+		}
+
+		resolveExports( packageJson, subpath );
+
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+function readPackageJson( packageJsonPath ) {
+	if ( !packageJsonCache.has( packageJsonPath ) ) {
+		try {
+			packageJsonCache.set( packageJsonPath, JSON.parse( fs.readFileSync( packageJsonPath, 'utf8' ) ) );
+		} catch {
+			packageJsonCache.set( packageJsonPath, null );
+		}
+	}
+
+	return packageJsonCache.get( packageJsonPath );
+}
