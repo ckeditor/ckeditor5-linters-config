@@ -91,7 +91,7 @@ function isExportedPackageSubpath( importPath, packageName, context ) {
 		const packageJson = readPackageJson( packageJsonPath );
 		const subpath = `.${ importPath.slice( packageName.length ) }`;
 
-		if ( !Object.hasOwn( packageJson.exports, subpath ) ) {
+		if ( !packageJson?.exports ) {
 			return false;
 		}
 
