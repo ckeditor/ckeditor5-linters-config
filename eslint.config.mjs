@@ -17,6 +17,13 @@ const projectPackages = fs
 
 export default defineConfig( [
 	{
+		ignores: [
+			'coverage/**',
+			'release/**',
+			'packages/*/tests/fixtures/**'
+		]
+	},
+	{
 		extends: ckeditor5Config,
 
 		plugins: {
@@ -30,11 +37,6 @@ export default defineConfig( [
 				...globals.node
 			}
 		},
-
-		ignores: [
-			'coverage/**',
-			'packages/*/tests/fixtures/**'
-		],
 
 		rules: {
 			'no-console': 'off',
