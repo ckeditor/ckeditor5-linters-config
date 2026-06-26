@@ -1,6 +1,26 @@
 Changelog
 =========
 
+## [16.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v16.0.0...v16.1.0) (June 26, 2026)
+
+### Other changes
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `allow-imports-only-from-main-package-entry-point` ESLint rule now allows imports from explicitly exported package subpaths declared in `package.json`.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/16.1.0): v16.0.0 => v16.1.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/16.1.0): v16.0.0 => v16.1.0
+</details>
+
+
 ## [16.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v15.1.0...v16.0.0) (June 9, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -111,32 +131,6 @@ Other releases:
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/14.1.0): v14.0.0 => v14.1.0
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/14.1.0): v14.0.0 => v14.1.0
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/14.1.0): v14.0.0 => v14.1.0
-</details>
-
-
-## [14.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v13.0.0...v14.0.0) (March 16, 2026)
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Removed the `ckeditor-imports` ESLint rule that was used for DLL import linting.
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Removed `no-legacy-imports` ESLint rule as it is no longer needed since DLL support has been dropped. Closes [ckeditor/ckeditor5#19522](https://github.com/ckeditor/ckeditor5/issues/19522).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Major releases (contain major breaking changes):
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/14.0.0): v13.0.0 => v14.0.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/14.0.0): v13.0.0 => v14.0.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/14.0.0): v13.0.0 => v14.0.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/14.0.0): v13.0.0 => v14.0.0
 </details>
 
 ---
