@@ -420,8 +420,6 @@ const rulesSourceCode = [
 
 			'ckeditor5-rules/no-enum': 'error',
 
-			'ckeditor5-rules/use-require-for-debug-mode-imports': 'error',
-
 			'ckeditor5-rules/no-istanbul-in-debug-code': 'error',
 
 			'ckeditor5-rules/allow-declare-module-only-in-augmentation-file': 'error',
