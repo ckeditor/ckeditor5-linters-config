@@ -167,6 +167,12 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			errors: [
 				'Missing file extension in import/export "@ckeditor/ckeditor5-dev-utils/lib/index"'
 			]
+		},
+		{
+			code: 'export { Linter } from "eslint/lib/foo/bar";',
+			errors: [
+				'Missing file extension in import/export "eslint/lib/foo/bar"'
+			]
 		}
 	]
 } );

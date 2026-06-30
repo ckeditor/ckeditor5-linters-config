@@ -198,5 +198,9 @@ function isExternalPackage( url ) {
 		return false;
 	}
 
-	return resolveExports( packageJson, url ).every( extname );
+	try {
+		return resolveExports( packageJson, url ).every( extname );
+	} catch {
+		return false;
+	}
 }
