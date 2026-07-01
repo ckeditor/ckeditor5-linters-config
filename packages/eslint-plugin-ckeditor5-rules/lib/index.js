@@ -16,7 +16,6 @@ module.exports = {
 		'no-default-export': require( './rules/no-default-export' ),
 		'no-scoped-imports-within-package': require( './rules/no-scoped-imports-within-package' ),
 		'license-header': require( './rules/license-header' ),
-		'use-require-for-debug-mode-imports': require( './rules/use-require-for-debug-mode-imports' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
 		'no-istanbul-in-debug-code': require( './rules/no-istanbul-in-debug-code' ),
 		'no-literal-dollar-root': require( './rules/no-literal-dollar-root' ),
