@@ -23,6 +23,7 @@ module.exports = {
 		'allow-declare-module-only-in-augmentation-file': require( './rules/allow-declare-module-only-in-augmentation-file' ),
 		'allow-imports-only-from-main-package-entry-point': require( './rules/allow-imports-only-from-main-package-entry-point.js' ),
 		'allow-svg-imports-only-in-icons-package': require( './rules/allow-svg-imports-only-in-icons-package.js' ),
+		'allow-css-imports-only-in-main-package-entry-point': require( './rules/allow-css-imports-only-in-main-package-entry-point.js' ),
 		'ck-content-variable-name': require( './rules/ck-content-variable-name' ),
 		'css-indent': require( './rules/css-indent' ),
 		'no-disallowed-color-formats': require( './rules/no-disallowed-color-formats' ),
