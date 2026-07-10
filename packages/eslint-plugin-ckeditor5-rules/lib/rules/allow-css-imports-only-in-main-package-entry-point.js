@@ -5,7 +5,10 @@
 
 'use strict';
 
+const { URL } = require( 'node:url' );
 const { extname, toUnix } = require( 'upath' );
+
+const MAIN_PACKAGE_ENTRY_POINT_PATTERN = /\/packages\/[^/]+\/src\/index\.ts$/;
 
 module.exports = {
 	meta: {
@@ -18,16 +21,19 @@ module.exports = {
 		}
 	},
 	create( { filename, report } ) {
-		if ( toUnix( filename ).endsWith( '/src/index.ts' ) ) {
+		if ( MAIN_PACKAGE_ENTRY_POINT_PATTERN.test( toUnix( filename ) ) ) {
 			return {};
 		}
 
 		function validatePath( node ) {
-			if ( !node.source ) {
+			if ( !node.source || typeof node.source.value != 'string' ) {
 				return;
 			}
 
-			if ( extname( node.source.value ) !== '.css' ) {
+			// Resource queries and fragments (`./theme.css?raw`) are not part of the file path.
+			const { pathname } = new URL( node.source.value, 'file:///' );
+
+			if ( extname( pathname ) !== '.css' ) {
 				return;
 			}
 
@@ -39,6 +45,7 @@ module.exports = {
 
 		return {
 			ImportDeclaration: validatePath,
+			ImportExpression: validatePath,
 			ExportAllDeclaration: validatePath,
 			ExportNamedDeclaration: validatePath
 		};

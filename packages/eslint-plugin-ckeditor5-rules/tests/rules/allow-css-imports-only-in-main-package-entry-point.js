@@ -34,7 +34,19 @@ ruleTester.run(
 				filename: 'C:\\packages\\ckeditor5-example\\src\\index.ts'
 			},
 			{
+				code: 'import styles from \'./example.css?raw\';',
+				filename: '/packages/ckeditor5-example/src/index.ts'
+			},
+			{
+				code: 'async function load() { await import( \'../theme/index.css\' ); }',
+				filename: '/packages/ckeditor5-example/src/index.ts'
+			},
+			{
 				code: 'import { Example } from \'./example.js\';',
+				filename: '/packages/ckeditor5-example/src/example.ts'
+			},
+			{
+				code: 'async function load( path ) { await import( path ); }',
 				filename: '/packages/ckeditor5-example/src/example.ts'
 			}
 		],
@@ -57,6 +69,26 @@ ruleTester.run(
 			{
 				code: 'import \'../../theme/index.css\';',
 				filename: '/packages/ckeditor5-example/src/utils/index.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'import \'../../../theme/index.css\';',
+				filename: '/packages/ckeditor5-example/src/feature/src/index.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'async function load() { await import( \'../theme/example.css\' ); }',
+				filename: '/packages/ckeditor5-example/src/example.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'import styles from \'./example.css?raw\';',
+				filename: '/packages/ckeditor5-example/src/example.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'import styles from \'./example.css?inline\';',
+				filename: '/packages/ckeditor5-example/src/example.ts',
 				errors: [ { message } ]
 			}
 		]
