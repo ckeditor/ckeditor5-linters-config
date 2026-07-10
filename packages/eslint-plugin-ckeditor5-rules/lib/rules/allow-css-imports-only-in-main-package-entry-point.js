@@ -5,7 +5,7 @@
 
 'use strict';
 
-const { extname } = require( 'upath' );
+const { extname, toUnix } = require( 'upath' );
 
 module.exports = {
 	meta: {
@@ -18,7 +18,7 @@ module.exports = {
 		}
 	},
 	create( { filename, report } ) {
-		if ( filename.replaceAll( '\\', '/' ).endsWith( '/src/index.ts' ) ) {
+		if ( toUnix( filename ).endsWith( '/src/index.ts' ) ) {
 			return {};
 		}
 
