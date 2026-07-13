@@ -26,14 +26,17 @@ module.exports = {
 		}
 
 		function validatePath( node ) {
-			if ( !node.source || typeof node.source.value != 'string' ) {
+			if ( !node.source ) {
 				return;
 			}
 
-			// Resource queries and fragments (`./theme.css?raw`) are not part of the file path.
-			const { pathname } = new URL( node.source.value, 'file:///' );
+			const importPath = getStaticImportPath( node.source );
 
-			if ( extname( pathname ) !== '.css' ) {
+			if ( importPath === null ) {
+				return;
+			}
+
+			if ( !isCssImportPath( importPath ) ) {
 				return;
 			}
 
@@ -51,3 +54,37 @@ module.exports = {
 		};
 	}
 };
+
+/**
+ * Returns the import path when it is statically known: a string literal or a template
+ * literal without expressions. Returns `null` for paths built at runtime.
+ */
+function getStaticImportPath( source ) {
+	if ( typeof source.value == 'string' ) {
+		return source.value;
+	}
+
+	if ( source.type == 'TemplateLiteral' && source.expressions.length == 0 ) {
+		return source.quasis[ 0 ].value.cooked ?? null;
+	}
+
+	return null;
+}
+
+/**
+ * Checks whether an import path points to a CSS file, ignoring the resource query and
+ * fragment (`./theme.css?raw`), which are not part of the file path.
+ */
+function isCssImportPath( importPath ) {
+	let pathname;
+
+	try {
+		pathname = new URL( importPath, 'file:///' ).pathname;
+	} catch {
+		// Malformed paths that cannot be parsed as a URL are checked as-is.
+		// The rule must not crash on a typo in an import path.
+		pathname = importPath;
+	}
+
+	return extname( pathname ) === '.css';
+}

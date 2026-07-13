@@ -48,6 +48,14 @@ ruleTester.run(
 			{
 				code: 'async function load( path ) { await import( path ); }',
 				filename: '/packages/ckeditor5-example/src/example.ts'
+			},
+			{
+				code: 'async function load( name ) { await import( `./theme/${ name }` ); }',
+				filename: '/packages/ckeditor5-example/src/example.ts'
+			},
+			{
+				code: 'import \'https://cdn.example.com/theme.js\';',
+				filename: '/packages/ckeditor5-example/src/example.ts'
 			}
 		],
 		invalid: [
@@ -88,6 +96,16 @@ ruleTester.run(
 			},
 			{
 				code: 'import styles from \'./example.css?inline\';',
+				filename: '/packages/ckeditor5-example/src/example.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'async function load() { await import( `../theme/example.css` ); }',
+				filename: '/packages/ckeditor5-example/src/example.ts',
+				errors: [ { message } ]
+			},
+			{
+				code: 'import \'https://[invalid/theme.css\';',
 				filename: '/packages/ckeditor5-example/src/example.ts',
 				errors: [ { message } ]
 			}
