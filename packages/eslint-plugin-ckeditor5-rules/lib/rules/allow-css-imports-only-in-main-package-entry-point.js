@@ -8,7 +8,7 @@
 const { URL } = require( 'node:url' );
 const { extname, toUnix } = require( 'upath' );
 
-const MAIN_PACKAGE_ENTRY_POINT_PATTERN = /\/packages\/[^/]+\/src\/index\.ts$/;
+const MAIN_PACKAGE_ENTRY_POINT_PATTERN = /(^|\/)packages\/[^/]+\/src\/index\.ts$/;
 
 module.exports = {
 	meta: {

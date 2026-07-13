@@ -34,6 +34,10 @@ ruleTester.run(
 				filename: 'C:\\packages\\ckeditor5-example\\src\\index.ts'
 			},
 			{
+				code: 'import \'../theme/index.css\';',
+				filename: 'packages/ckeditor5-example/src/index.ts'
+			},
+			{
 				code: 'import styles from \'./example.css?raw\';',
 				filename: '/packages/ckeditor5-example/src/index.ts'
 			},
@@ -51,6 +55,10 @@ ruleTester.run(
 			},
 			{
 				code: 'async function load( name ) { await import( `./theme/${ name }` ); }',
+				filename: '/packages/ckeditor5-example/src/example.ts'
+			},
+			{
+				code: 'async function load( name ) { await import( `../theme/${ name }.css` ); }',
 				filename: '/packages/ckeditor5-example/src/example.ts'
 			},
 			{
