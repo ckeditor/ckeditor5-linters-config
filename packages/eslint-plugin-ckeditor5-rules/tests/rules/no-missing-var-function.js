@@ -59,6 +59,10 @@ ruleTester.run( ruleName, rule, {
 			code: 'a { anchor-name: --my-anchor; anchor-scope: --my-anchor; position-anchor: --my-anchor; }'
 		},
 		{
+			name: 'Position try fallbacks and font palettes are named by dashed identifiers',
+			code: 'a { position-try-fallbacks: --fallback; position-try: --fallback; font-palette: --my-palette; }'
+		},
+		{
 			name: 'View transition and scroll-driven animation names are dashed identifiers, not custom property references',
 			code: 'a { view-transition-name: --card; view-timeline-name: --reveal; }'
 		},
