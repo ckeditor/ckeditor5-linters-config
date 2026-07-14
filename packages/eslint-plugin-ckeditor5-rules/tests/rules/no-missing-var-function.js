@@ -56,7 +56,7 @@ ruleTester.run( ruleName, rule, {
 		},
 		{
 			name: 'Anchor positioning names are dashed identifiers, not custom property references',
-			code: 'a { anchor-name: --my-anchor; position-anchor: --my-anchor; }'
+			code: 'a { anchor-name: --my-anchor; anchor-scope: --my-anchor; position-anchor: --my-anchor; }'
 		},
 		{
 			name: 'View transition and scroll-driven animation names are dashed identifiers, not custom property references',
@@ -65,6 +65,14 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'A custom-property value that merely contains a dashed substring is not a lone reference',
 			code: 'a { --x: 1px solid --not-alone; }'
+		},
+		{
+			name: 'A properly nested var() fallback',
+			code: 'a { color: var(--a, var(--b)); }'
+		},
+		{
+			name: 'A non-lone dashed identifier in a custom property var() fallback is treated as data',
+			code: 'a { --x: var(--a, 1px --b); }'
 		}
 	],
 
@@ -92,6 +100,21 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'A bare reference used as a var() fallback would be substituted as a literal token',
 			code: 'a { color: var(--a, --b); }',
+			errors: [ missingVarError( '--b' ) ]
+		},
+		{
+			name: 'A bare reference in a nested var() fallback',
+			code: 'a { color: var(--a, var(--b, --c)); }',
+			errors: [ missingVarError( '--c' ) ]
+		},
+		{
+			name: 'A bare reference among other tokens in a native property var() fallback',
+			code: 'a { margin: var(--a, 1px --b); }',
+			errors: [ missingVarError( '--b' ) ]
+		},
+		{
+			name: 'A lone bare reference used as a var() fallback inside a custom property value',
+			code: 'a { --x: var(--a, --b); }',
 			errors: [ missingVarError( '--b' ) ]
 		},
 		{

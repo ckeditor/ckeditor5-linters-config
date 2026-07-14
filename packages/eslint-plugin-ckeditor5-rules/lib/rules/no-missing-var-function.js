@@ -19,6 +19,7 @@ const PROPERTIES_WITH_DASHED_IDENTS = new Set( [
 	'transition-property',
 	'will-change',
 	'anchor-name',
+	'anchor-scope',
 	'position-anchor',
 	'scroll-timeline',
 	'scroll-timeline-name',
@@ -63,64 +64,73 @@ module.exports = {
 					return;
 				}
 
-				// Custom-property values are exposed as an opaque Raw token. Flag the clear-cut
-				// mistake only: a value that is exactly one bare custom-property name (`--a: --b`).
-				if ( node.value.type === 'Raw' ) {
-					const text = String( node.value.value ).trim();
+				const isCustomProperty = node.property.startsWith( '--' );
 
-					if ( node.property.startsWith( '--' ) && LONE_CUSTOM_PROPERTY_PATTERN.test( text ) ) {
-						context.report( {
-							node: node.value,
-							messageId: 'missingVarFunction',
-							data: { name: text }
-						} );
-					}
+				// Custom-property values are exposed as an opaque Raw token.
+				if ( node.value.type === 'Raw' ) {
+					checkRawText( context, node.value, isCustomProperty );
 
 					return;
 				}
 
-				cssTree.walk( node.value, function( child ) {
-					// `var()` fallbacks are exposed as a Raw token (`var(--a, --b)`), so bare
-					// references inside them must be recovered by re-parsing the raw text.
-					if ( child.type === 'Raw' ) {
-						checkRawFallback( context, child );
-
-						return;
-					}
-
-					if ( child.type !== 'Identifier' || !String( child.name ).startsWith( '--' ) ) {
-						return;
-					}
-
-					// The first argument of `var()` is the reference itself.
-					if ( this.function && String( this.function.name ).toLowerCase() === 'var' ) {
-						return;
-					}
-
-					context.report( {
-						node: child,
-						messageId: 'missingVarFunction',
-						data: { name: child.name }
-					} );
-				} );
+				walkValue( context, node.value, isCustomProperty, null );
 			}
 		};
 	}
 };
 
 /**
- * Flags a `var()` fallback that consists of a lone bare custom-property name, for example the
- * `--b` in `var(--a, --b)` - it would be substituted as a literal token instead of the
- * referenced value.
+ * Reports bare custom-property references in a (sub)value. In native properties every bare
+ * reference is a mistake. In custom-property token streams a bare identifier may be
+ * intentional data, so only a value that is exactly one lone reference is flagged - at every
+ * nesting level. `var()` fallbacks are exposed as Raw tokens and are re-parsed recursively.
  */
-function checkRawFallback( context, rawNode ) {
-	const text = String( rawNode.value ).trim();
+function walkValue( context, valueNode, isCustomProperty, anchorNode ) {
+	cssTree.walk( valueNode, function( child ) {
+		if ( child.type === 'Raw' ) {
+			checkRawText( context, anchorNode || child, isCustomProperty, child.value );
 
-	if ( LONE_CUSTOM_PROPERTY_PATTERN.test( text ) ) {
+			return;
+		}
+
+		if ( isCustomProperty || child.type !== 'Identifier' || !String( child.name ).startsWith( '--' ) ) {
+			return;
+		}
+
+		// The first argument of `var()` is the reference itself.
+		if ( this.function && String( this.function.name ).toLowerCase() === 'var' ) {
+			return;
+		}
+
+		context.report( {
+			// Nodes of a re-parsed fragment have no location - report on the enclosing token.
+			node: anchorNode || child,
+			messageId: 'missingVarFunction',
+			data: { name: child.name }
+		} );
+	} );
+}
+
+function checkRawText( context, rawNode, isCustomProperty, text = rawNode.value ) {
+	const trimmed = String( text ).trim();
+
+	if ( LONE_CUSTOM_PROPERTY_PATTERN.test( trimmed ) ) {
 		context.report( {
 			node: rawNode,
 			messageId: 'missingVarFunction',
-			data: { name: text }
+			data: { name: trimmed }
 		} );
+
+		return;
 	}
+
+	let ast;
+
+	try {
+		ast = cssTree.parse( text, { context: 'value' } );
+	} catch {
+		return;
+	}
+
+	walkValue( context, ast, isCustomProperty, rawNode );
 }
