@@ -66,6 +66,10 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: '& inside :is() carries the parent specificity, making this ascending',
 			code: '#p { .b.c x { top: 1px; } :is(&, .a) x { top: 0; } }'
+		},
+		{
+			name: ':nth-child() without an of-selector stays an ordinary pseudo-class',
+			code: '.d a:nth-child(2n) { top: 0; } .e.f a { top: 1px; }'
 		}
 	],
 
@@ -108,6 +112,11 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: '& inside :is() carries the parent specificity, so a later lower-specificity selector descends',
 			code: '#p { :is(&, .a) x { top: 0; } .b.c x { top: 1px; } }',
+			errors: [ descendingError ]
+		},
+		{
+			name: ':nth-child(... of S) counts its most specific argument on top of the pseudo-class',
+			code: 'a:nth-child(2n of .b.c) { top: 0; } .d a { top: 1px; }',
 			errors: [ descendingError ]
 		},
 		{

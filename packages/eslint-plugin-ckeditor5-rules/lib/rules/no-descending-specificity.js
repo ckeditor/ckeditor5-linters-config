@@ -209,36 +209,48 @@ function addPseudoClassSpecificity( { pseudoNode, specificity, parentSpecificity
 	// specific argument instead of counting as a pseudo-class. Only the direct argument list is
 	// considered - selectors inside a nested `:where()` must not become candidates themselves.
 	if ( name === 'not' || name === 'is' || name === 'has' || name === 'matches' ) {
-		let best = null;
-
 		for ( const argument of pseudoNode.children || [] ) {
-			if ( argument.type !== 'SelectorList' ) {
-				continue;
+			if ( argument.type === 'SelectorList' ) {
+				addBestArgumentSpecificity( { selectorList: argument, specificity, parentSpecificity } );
 			}
-
-			for ( const innerSelector of argument.children ) {
-				if ( innerSelector.type !== 'Selector' ) {
-					continue;
-				}
-
-				const inner = computeSpecificity( innerSelector, parentSpecificity );
-
-				if ( best === null || compareSpecificity( inner, best ) > 0 ) {
-					best = inner;
-				}
-			}
-		}
-
-		if ( best !== null ) {
-			specificity[ 0 ] += best[ 0 ];
-			specificity[ 1 ] += best[ 1 ];
-			specificity[ 2 ] += best[ 2 ];
 		}
 
 		return;
 	}
 
 	specificity[ 1 ]++;
+
+	// `:nth-child(An+B of S)` and `:nth-last-child(An+B of S)` additionally contribute the
+	// specificity of their most specific `S` argument.
+	if ( name === 'nth-child' || name === 'nth-last-child' ) {
+		for ( const child of pseudoNode.children || [] ) {
+			if ( child.type === 'Nth' && child.selector ) {
+				addBestArgumentSpecificity( { selectorList: child.selector, specificity, parentSpecificity } );
+			}
+		}
+	}
+}
+
+function addBestArgumentSpecificity( { selectorList, specificity, parentSpecificity } ) {
+	let best = null;
+
+	for ( const innerSelector of selectorList.children ) {
+		if ( innerSelector.type !== 'Selector' ) {
+			continue;
+		}
+
+		const inner = computeSpecificity( innerSelector, parentSpecificity );
+
+		if ( best === null || compareSpecificity( inner, best ) > 0 ) {
+			best = inner;
+		}
+	}
+
+	if ( best !== null ) {
+		specificity[ 0 ] += best[ 0 ];
+		specificity[ 1 ] += best[ 1 ];
+		specificity[ 2 ] += best[ 2 ];
+	}
 }
 
 function compareSpecificity( a, b ) {
