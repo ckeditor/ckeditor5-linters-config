@@ -58,6 +58,10 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'Keyframe selectors are not compared',
 			code: '@keyframes spin { from { top: 0; } 50% { top: 1px; } to { top: 2px; } }'
+		},
+		{
+			name: ':where() nested inside :is() adds no specificity, so this is equal, not descending',
+			code: 'a:is(.b:where(.c.d)) { top: 0; } .e a { top: 1px; }'
 		}
 	],
 
@@ -90,6 +94,11 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: ':not() takes the specificity of its argument',
 			code: 'a:not(.x) { top: 0; } a { top: 1px; }',
+			errors: [ descendingError ]
+		},
+		{
+			name: 'Arguments of :is() still count fully when they contain a nested :where()',
+			code: 'a:is(.b.c:where(.d)) { top: 0; } .e a { top: 1px; }',
 			errors: [ descendingError ]
 		},
 		{

@@ -189,21 +189,28 @@ function addPseudoClassSpecificity( pseudoNode, specificity ) {
 	}
 
 	// `:not()`, `:is()`, `:has()` and `:matches()` contribute the specificity of their most
-	// specific argument instead of counting as a pseudo-class.
+	// specific argument instead of counting as a pseudo-class. Only the direct argument list is
+	// considered - selectors inside a nested `:where()` must not become candidates themselves.
 	if ( name === 'not' || name === 'is' || name === 'has' || name === 'matches' ) {
 		let best = null;
 
-		cssTree.walk( pseudoNode, innerNode => {
-			if ( innerNode.type !== 'Selector' ) {
-				return;
+		for ( const argument of pseudoNode.children || [] ) {
+			if ( argument.type !== 'SelectorList' ) {
+				continue;
 			}
 
-			const inner = computeSpecificity( innerNode );
+			for ( const innerSelector of argument.children ) {
+				if ( innerSelector.type !== 'Selector' ) {
+					continue;
+				}
 
-			if ( best === null || compareSpecificity( inner, best ) > 0 ) {
-				best = inner;
+				const inner = computeSpecificity( innerSelector );
+
+				if ( best === null || compareSpecificity( inner, best ) > 0 ) {
+					best = inner;
+				}
 			}
-		} );
+		}
 
 		if ( best !== null ) {
 			specificity[ 0 ] += best[ 0 ];
