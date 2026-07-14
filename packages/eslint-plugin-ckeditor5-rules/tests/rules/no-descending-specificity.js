@@ -64,12 +64,16 @@ ruleTester.run( ruleName, rule, {
 			code: 'a:is(.b:where(.c.d)) { top: 0; } .e a { top: 1px; }'
 		},
 		{
-			name: '& inside :is() carries the parent specificity, making this ascending',
-			code: '#p { .b.c x { top: 1px; } :is(&, .a) x { top: 0; } }'
+			name: '& inside :is() and an implicit parent prefix both carry the parent specificity, making this ascending',
+			code: '#p { :is(&, .a) x { top: 0; } .b.c x { top: 1px; } }'
 		},
 		{
 			name: ':nth-child() without an of-selector stays an ordinary pseudo-class',
 			code: '.d a:nth-child(2n) { top: 0; } .e.f a { top: 1px; }'
+		},
+		{
+			name: 'A nested selector without & implicitly inherits the parent specificity, equal to the & form',
+			code: '.p.q { & b a { top: 0; } b a { top: 1px; } }'
 		}
 	],
 
@@ -110,13 +114,18 @@ ruleTester.run( ruleName, rule, {
 			errors: [ descendingError ]
 		},
 		{
-			name: '& inside :is() carries the parent specificity, so a later lower-specificity selector descends',
-			code: '#p { :is(&, .a) x { top: 0; } .b.c x { top: 1px; } }',
+			name: '& inside :is() carries only the parent specificity, descending after an implicitly prefixed nested selector',
+			code: '#p { .b.c x { top: 1px; } :is(&, .a) x { top: 0; } }',
 			errors: [ descendingError ]
 		},
 		{
 			name: ':nth-child(... of S) counts its most specific argument on top of the pseudo-class',
 			code: 'a:nth-child(2n of .b.c) { top: 0; } .d a { top: 1px; }',
+			errors: [ descendingError ]
+		},
+		{
+			name: 'A bare nested selector and an & form under one parent compare at their real weights',
+			code: '.p.q { b a { top: 0; } & a { top: 1px; } }',
 			errors: [ descendingError ]
 		},
 		{

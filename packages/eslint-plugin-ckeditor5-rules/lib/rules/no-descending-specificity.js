@@ -55,6 +55,7 @@ module.exports = {
 
 			Rule( node ) {
 				const prelude = node.prelude;
+				const isNested = parentSpecificityStack.length > 0;
 				const parentSpecificity = parentSpecificityStack.at( -1 ) || [ 0, 0, 0 ];
 				let resolvedSpecificity = [ 0, 0, 0 ];
 
@@ -63,6 +64,14 @@ module.exports = {
 
 					for ( const selector of prelude.children ) {
 						const specificity = computeSpecificity( selector, parentSpecificity );
+
+						// A nested selector without `&` is implicitly prefixed with `& `, so it
+						// inherits the parent specificity just like an explicit `&` would.
+						if ( isNested && !containsNestingSelector( selector ) ) {
+							specificity[ 0 ] += parentSpecificity[ 0 ];
+							specificity[ 1 ] += parentSpecificity[ 1 ];
+							specificity[ 2 ] += parentSpecificity[ 2 ];
+						}
 
 						if ( keyframesDepth === 0 ) {
 							checkSelector( { context, selector, specificity, contextKey, seenByContext } );
@@ -259,6 +268,18 @@ function compareSpecificity( a, b ) {
 		( a[ 1 ] - b[ 1 ] ) ||
 		( a[ 2 ] - b[ 2 ] )
 	);
+}
+
+function containsNestingSelector( selector ) {
+	let found = false;
+
+	cssTree.walk( selector, node => {
+		if ( node.type === 'NestingSelector' ) {
+			found = true;
+		}
+	} );
+
+	return found;
 }
 
 function isKeyframes( atruleNode ) {
