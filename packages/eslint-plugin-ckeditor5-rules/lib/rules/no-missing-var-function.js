@@ -68,12 +68,12 @@ module.exports = {
 
 				// Custom-property values are exposed as an opaque Raw token.
 				if ( node.value.type === 'Raw' ) {
-					checkRawText( context, node.value, isCustomProperty );
+					checkRawText( { context, rawNode: node.value, isCustomProperty } );
 
 					return;
 				}
 
-				walkValue( context, node.value, isCustomProperty, null );
+				walkValue( { context, valueNode: node.value, isCustomProperty } );
 			}
 		};
 	}
@@ -85,10 +85,10 @@ module.exports = {
  * intentional data, so only a value that is exactly one lone reference is flagged - at every
  * nesting level. `var()` fallbacks are exposed as Raw tokens and are re-parsed recursively.
  */
-function walkValue( context, valueNode, isCustomProperty, anchorNode ) {
+function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
 	cssTree.walk( valueNode, function( child ) {
 		if ( child.type === 'Raw' ) {
-			checkRawText( context, anchorNode || child, isCustomProperty, child.value );
+			checkRawText( { context, rawNode: anchorNode || child, isCustomProperty, text: child.value } );
 
 			return;
 		}
@@ -111,7 +111,7 @@ function walkValue( context, valueNode, isCustomProperty, anchorNode ) {
 	} );
 }
 
-function checkRawText( context, rawNode, isCustomProperty, text = rawNode.value ) {
+function checkRawText( { context, rawNode, isCustomProperty, text = rawNode.value } ) {
 	const trimmed = String( text ).trim();
 
 	if ( LONE_CUSTOM_PROPERTY_PATTERN.test( trimmed ) ) {
@@ -132,5 +132,5 @@ function checkRawText( context, rawNode, isCustomProperty, text = rawNode.value 
 		return;
 	}
 
-	walkValue( context, ast, isCustomProperty, rawNode );
+	walkValue( { context, valueNode: ast, isCustomProperty, anchorNode: rawNode } );
 }

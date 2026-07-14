@@ -62,6 +62,10 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: ':where() nested inside :is() adds no specificity, so this is equal, not descending',
 			code: 'a:is(.b:where(.c.d)) { top: 0; } .e a { top: 1px; }'
+		},
+		{
+			name: '& inside :is() carries the parent specificity, making this ascending',
+			code: '#p { .b.c x { top: 1px; } :is(&, .a) x { top: 0; } }'
 		}
 	],
 
@@ -99,6 +103,11 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'Arguments of :is() still count fully when they contain a nested :where()',
 			code: 'a:is(.b.c:where(.d)) { top: 0; } .e a { top: 1px; }',
+			errors: [ descendingError ]
+		},
+		{
+			name: '& inside :is() carries the parent specificity, so a later lower-specificity selector descends',
+			code: '#p { :is(&, .a) x { top: 0; } .b.c x { top: 1px; } }',
 			errors: [ descendingError ]
 		},
 		{

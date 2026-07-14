@@ -32,6 +32,7 @@ module.exports = {
 
 	create( context ) {
 		const contextStack = [];
+		const parentSpecificityStack = [];
 		const seenByContext = new Map();
 		let keyframesDepth = 0;
 
@@ -54,26 +55,38 @@ module.exports = {
 
 			Rule( node ) {
 				const prelude = node.prelude;
+				const parentSpecificity = parentSpecificityStack.at( -1 ) || [ 0, 0, 0 ];
+				let resolvedSpecificity = [ 0, 0, 0 ];
 
-				if ( keyframesDepth === 0 && prelude && prelude.type === 'SelectorList' ) {
+				if ( prelude && prelude.type === 'SelectorList' ) {
 					const contextKey = contextStack.join( ' > ' );
 
 					for ( const selector of prelude.children ) {
-						checkSelector( context, selector, contextKey, seenByContext );
+						const specificity = computeSpecificity( selector, parentSpecificity );
+
+						if ( keyframesDepth === 0 ) {
+							checkSelector( { context, selector, specificity, contextKey, seenByContext } );
+						}
+
+						if ( compareSpecificity( specificity, resolvedSpecificity ) > 0 ) {
+							resolvedSpecificity = specificity;
+						}
 					}
 				}
 
 				contextStack.push( prelude ? cssTree.generate( prelude ) : '' );
+				parentSpecificityStack.push( resolvedSpecificity );
 			},
 
 			'Rule:exit'() {
 				contextStack.pop();
+				parentSpecificityStack.pop();
 			}
 		};
 	}
 };
 
-function checkSelector( context, selector, contextKey, seenByContext ) {
+function checkSelector( { context, selector, specificity, contextKey, seenByContext } ) {
 	const keySelector = keySelectorText( selector );
 
 	if ( keySelector === null ) {
@@ -81,7 +94,6 @@ function checkSelector( context, selector, contextKey, seenByContext ) {
 	}
 
 	const mapKey = `${ contextKey } | ${ keySelector }`;
-	const specificity = computeSpecificity( selector );
 	const selectorText = cssTree.generate( selector );
 
 	if ( !seenByContext.has( mapKey ) ) {
@@ -138,19 +150,19 @@ function keySelectorText( selector ) {
 	return parts.join( '' );
 }
 
-function computeSpecificity( selectorNode ) {
+function computeSpecificity( selectorNode, parentSpecificity ) {
 	const specificity = [ 0, 0, 0 ];
 
-	addSpecificity( selectorNode, specificity );
+	addSpecificity( { node: selectorNode, specificity, parentSpecificity } );
 
 	return specificity;
 }
 
 /**
- * `NestingSelector` (&) is deliberately not counted: it contributes the parent selector's
- * specificity, which is identical for all selectors compared within the same context.
+ * `NestingSelector` (&) counts as the parent rule's resolved specificity - per the spec it
+ * behaves like `:is()` of the parent selector list.
  */
-function addSpecificity( node, specificity ) {
+function addSpecificity( { node, specificity, parentSpecificity } ) {
 	if ( !node || !node.children ) {
 		return;
 	}
@@ -165,7 +177,7 @@ function addSpecificity( node, specificity ) {
 				specificity[ 1 ]++;
 				break;
 			case 'PseudoClassSelector':
-				addPseudoClassSpecificity( child, specificity );
+				addPseudoClassSpecificity( { pseudoNode: child, specificity, parentSpecificity } );
 				break;
 			case 'PseudoElementSelector':
 				specificity[ 2 ]++;
@@ -176,11 +188,16 @@ function addSpecificity( node, specificity ) {
 				}
 
 				break;
+			case 'NestingSelector':
+				specificity[ 0 ] += parentSpecificity[ 0 ];
+				specificity[ 1 ] += parentSpecificity[ 1 ];
+				specificity[ 2 ] += parentSpecificity[ 2 ];
+				break;
 		}
 	}
 }
 
-function addPseudoClassSpecificity( pseudoNode, specificity ) {
+function addPseudoClassSpecificity( { pseudoNode, specificity, parentSpecificity } ) {
 	const name = String( pseudoNode.name ).toLowerCase();
 
 	// `:where()` contributes nothing.
@@ -204,7 +221,7 @@ function addPseudoClassSpecificity( pseudoNode, specificity ) {
 					continue;
 				}
 
-				const inner = computeSpecificity( innerSelector );
+				const inner = computeSpecificity( innerSelector, parentSpecificity );
 
 				if ( best === null || compareSpecificity( inner, best ) > 0 ) {
 					best = inner;
