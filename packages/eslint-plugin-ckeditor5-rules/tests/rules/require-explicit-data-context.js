@@ -22,34 +22,48 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', r
 		'editor.data.parse( html, \'$documentFragment\' );',
 		'editor.data.toModel( view, \'$clipboardHolder\' );',
 		'this.data.parse( html, context );',
-		// Destructured `data` reference with explicit context.
-		'const { data } = editor; data.parse( html, \'$root\' );',
-		// No arguments — out of scope (different API misuse, not an omitted-context bug).
-		'editor.data.parse();',
-		// Method not handled by this rule.
-		'editor.data.format( html );',
+		{
+			name: 'Destructured `data` reference with explicit context',
+			code: 'const { data } = editor; data.parse( html, \'$root\' );'
+		},
+		{
+			name: 'No arguments — out of scope (different API misuse, not an omitted-context bug)',
+			code: 'editor.data.parse();'
+		},
+		{
+			name: 'Method not handled by this rule',
+			code: 'editor.data.format( html );'
+		},
 		// Receiver is not `data`.
 		'editor.config.parse( raw );',
 		'JSON.parse( raw );',
 		'someOther.parse( html );',
 		'parser.parse( html );',
-		// Computed property access — not matched.
-		'editor[ \'data\' ].parse( html );',
-		// Three or more arguments to parse — context is provided at index 1.
-		'editor.data.parse( html, \'$documentFragment\', extra );',
+		{
+			name: 'Computed property access — not matched',
+			code: 'editor[ \'data\' ].parse( html );'
+		},
+		{
+			name: 'Three or more arguments to parse — context is provided at index 1',
+			code: 'editor.data.parse( html, \'$documentFragment\', extra );'
+		},
 
 		// Explicit element name provided to createRoot.
 		'editor.model.document.createRoot( \'$inlineRoot\' );',
 		'editor.model.document.createRoot( \'$inlineRoot\', \'main\' );',
 		'this.model.document.createRoot( elementName );',
-		// `createRoot` not on a `document` receiver — out of scope.
-		'someUnrelated.createRoot();',
+		{
+			name: '`createRoot` not on a `document` receiver — out of scope',
+			code: 'someUnrelated.createRoot();'
+		},
 
 		// Explicit element name provided to writer.addRoot.
 		'writer.addRoot( \'main\', \'$inlineRoot\' );',
 		'writer.addRoot( rootName, elementName );',
-		// `addRoot()` with no arguments — out of scope (rootName is required, this is a different bug).
-		'writer.addRoot();',
+		{
+			name: '`addRoot()` with no arguments — out of scope (rootName is required, this is a different bug)',
+			code: 'writer.addRoot();'
+		},
 
 		// `MultiRootEditor#addRoot( rootName, options? )` — different signature; receiver is `editor`/`this`/etc.,
 		// not `writer`. Must NOT be flagged: the method resolves its own default internally.
@@ -60,8 +74,10 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', r
 		// Explicit context provided to upcastDispatcher.convert().
 		'editor.data.upcastDispatcher.convert( viewFragment, writer, [ \'$documentFragment\' ] );',
 		'this.editor.data.upcastDispatcher.convert( viewFragment, writer, root );',
-		// `convert` not on an `upcastDispatcher` receiver — out of scope.
-		'units.convert( value, fromUnit );'
+		{
+			name: '`convert` not on an `upcastDispatcher` receiver — out of scope',
+			code: 'units.convert( value, fromUnit );'
+		}
 	],
 
 	invalid: [
@@ -96,8 +112,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-explicit-data-context', r
 			code: 'this.model.document.createRoot();',
 			errors: [ { messageId: 'missingContext', data: { label: 'document.createRoot()' } } ]
 		},
-		// Bare `document.createRoot()` (covers destructured `const { document } = model` patterns).
 		{
+			name: 'Bare `document.createRoot()` (covers destructured `const { document } = model` patterns)',
 			code: 'document.createRoot();',
 			errors: [ { messageId: 'missingContext', data: { label: 'document.createRoot()' } } ]
 		},

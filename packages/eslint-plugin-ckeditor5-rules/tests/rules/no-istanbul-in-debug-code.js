@@ -25,6 +25,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-istanbul-in-debug-code', requi
 			code: '// @if CK_DEBUG // foo();'
 		},
 		{
+			name: 'Istanbul ignore comment in regular, non-debug code',
 			code: `
 				/* istanbul ignore next -- @preserve */
 				foo();
@@ -36,6 +37,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-istanbul-in-debug-code', requi
 
 	invalid: [
 		{
+			name: 'Istanbul ignore comment in a `@if CK_DEBUG` line',
 			code: `
 				// @if CK_DEBUG //	/* istanbul ignore next -- @preserve */
 				// @if CK_DEBUG //	if ( condition ) {
@@ -45,6 +47,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-istanbul-in-debug-code', requi
 			errors: [ error ]
 		},
 		{
+			name: 'Istanbul ignore comment in a `@if CK_DEBUG_TABLE` line',
 			code: `
 				// @if CK_DEBUG_TABLE //	/* istanbul ignore next -- @preserve */
 				// @if CK_DEBUG_TABLE //	if ( condition ) {
