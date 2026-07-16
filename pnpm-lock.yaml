@@ -36,10 +36,10 @@ importers:
         specifier: ^9.26.0
         version: 9.39.4(jiti@2.6.1)
       eslint-config-ckeditor5:
-        specifier: ^17.1.0
+        specifier: ^17.1.1
         version: link:packages/eslint-config-ckeditor5
       eslint-plugin-ckeditor5-rules:
-        specifier: ^17.1.0
+        specifier: ^17.1.1
         version: link:packages/eslint-plugin-ckeditor5-rules
       globals:
         specifier: ^16.1.0
@@ -78,7 +78,7 @@ importers:
         specifier: ^4.2.0
         version: 4.4.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.5.4)
       eslint-plugin-ckeditor5-rules:
-        specifier: ^17.1.0
+        specifier: ^17.1.1
         version: link:../eslint-plugin-ckeditor5-rules
       eslint-plugin-mocha:
         specifier: ^11.0.0

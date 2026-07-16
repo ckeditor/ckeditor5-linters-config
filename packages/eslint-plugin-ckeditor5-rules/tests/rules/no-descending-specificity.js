@@ -74,6 +74,22 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'A nested selector without & implicitly inherits the parent specificity, equal to the & form',
 			code: '.p.q { & b a { top: 0; } b a { top: 1px; } }'
+		},
+		{
+			name: 'An empty earlier rule is not compared',
+			code: 'b a {} a { top: 1px; }'
+		},
+		{
+			name: 'An empty later rule is not compared',
+			code: 'b a { top: 0; } a {}'
+		},
+		{
+			name: 'A pure nesting container without own declarations is not compared',
+			code: 'b a { top: 0; } a { & i { top: 1px; } }'
+		},
+		{
+			name: 'Anonymous cascade layers are distinct contexts',
+			code: '@layer { b a { top: 0; } } @layer { a { top: 1px; } }'
 		}
 	],
 
@@ -126,6 +142,16 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'A bare nested selector and an & form under one parent compare at their real weights',
 			code: '.p.q { b a { top: 0; } & a { top: 1px; } }',
+			errors: [ descendingError ]
+		},
+		{
+			name: ':host() counts its argument specificity on top of the pseudo-class',
+			code: ':host(.x) a { top: 0; } .y a { top: 1px; }',
+			errors: [ descendingError ]
+		},
+		{
+			name: 'The same named cascade layer is one context',
+			code: '@layer x { b a { top: 0; } } @layer x { a { top: 1px; } }',
 			errors: [ descendingError ]
 		},
 		{

@@ -77,6 +77,18 @@ ruleTester.run( ruleName, rule, {
 		{
 			name: 'A non-lone dashed identifier in a custom property var() fallback is treated as data',
 			code: 'a { --x: var(--a, 1px --b); }'
+		},
+		{
+			name: 'Anchor functions reference anchor names, not custom properties',
+			code: 'a { top: anchor(--target top); width: anchor-size(--target width); }'
+		},
+		{
+			name: 'View transition classes and groups are named by dashed identifiers',
+			code: 'a { view-transition-class: --card; view-transition-group: --parent; }'
+		},
+		{
+			name: 'Descriptors inside descriptor at-rules are names, not custom property references',
+			code: '@view-transition { types: --forward; }'
 		}
 	],
 
@@ -125,6 +137,16 @@ ruleTester.run( ruleName, rule, {
 			name: 'Custom-ident properties outside the exemption list are still checked',
 			code: 'a { animation-name: --foo; }',
 			errors: [ missingVarError( '--foo' ) ]
+		},
+		{
+			name: 'Unicode custom property names are detected',
+			code: 'a { --x: --café; }',
+			errors: [ missingVarError( '--café' ) ]
+		},
+		{
+			name: 'A comment before the bare reference does not hide it',
+			code: 'a { --x: /* note */ --y; }',
+			errors: [ missingVarError( '--y' ) ]
 		}
 	]
 } );

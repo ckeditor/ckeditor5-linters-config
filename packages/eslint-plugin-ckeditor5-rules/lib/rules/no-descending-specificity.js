@@ -35,11 +35,20 @@ module.exports = {
 		const parentSpecificityStack = [];
 		const seenByContext = new Map();
 		let keyframesDepth = 0;
+		let anonymousLayerCount = 0;
 
 		return {
 			Atrule( node ) {
 				if ( isKeyframes( node ) ) {
 					keyframesDepth++;
+				}
+
+				// Every anonymous `@layer` is a distinct cascade layer, so it needs an identity
+				// instead of the (identical) generated text.
+				if ( String( node.name ).toLowerCase() === 'layer' && !node.prelude ) {
+					contextStack.push( `@layer #${ ++anonymousLayerCount }` );
+
+					return;
 				}
 
 				contextStack.push( `@${ node.name } ${ node.prelude ? cssTree.generate( node.prelude ) : '' }` );
@@ -57,6 +66,12 @@ module.exports = {
 				const prelude = node.prelude;
 				const isNested = parentSpecificityStack.length > 0;
 				const parentSpecificity = parentSpecificityStack.at( -1 ) || [ 0, 0, 0 ];
+
+				// Rules without own declarations (empty rules, pure nesting containers) do not
+				// style the compared element and are not compared, like in stylelint.
+				const hasDeclarations = !!node.block &&
+					[ ...node.block.children ].some( child => child.type === 'Declaration' );
+
 				let resolvedSpecificity = [ 0, 0, 0 ];
 
 				if ( prelude && prelude.type === 'SelectorList' ) {
@@ -73,7 +88,7 @@ module.exports = {
 							specificity[ 2 ] += parentSpecificity[ 2 ];
 						}
 
-						if ( keyframesDepth === 0 ) {
+						if ( keyframesDepth === 0 && hasDeclarations ) {
 							checkSelector( { context, selector, specificity, contextKey, seenByContext } );
 						}
 
@@ -190,6 +205,9 @@ function addSpecificity( { node, specificity, parentSpecificity } ) {
 				break;
 			case 'PseudoElementSelector':
 				specificity[ 2 ]++;
+
+				// `::slotted()` additionally contributes its argument's specificity.
+				addBestArgumentSpecificity( { argumentsNode: child, specificity, parentSpecificity } );
 				break;
 			case 'TypeSelector':
 				if ( child.name !== '*' ) {
@@ -220,7 +238,7 @@ function addPseudoClassSpecificity( { pseudoNode, specificity, parentSpecificity
 	if ( name === 'not' || name === 'is' || name === 'has' || name === 'matches' ) {
 		for ( const argument of pseudoNode.children || [] ) {
 			if ( argument.type === 'SelectorList' ) {
-				addBestArgumentSpecificity( { selectorList: argument, specificity, parentSpecificity } );
+				addBestArgumentSpecificity( { argumentsNode: argument, specificity, parentSpecificity } );
 			}
 		}
 
@@ -234,16 +252,25 @@ function addPseudoClassSpecificity( { pseudoNode, specificity, parentSpecificity
 	if ( name === 'nth-child' || name === 'nth-last-child' ) {
 		for ( const child of pseudoNode.children || [] ) {
 			if ( child.type === 'Nth' && child.selector ) {
-				addBestArgumentSpecificity( { selectorList: child.selector, specificity, parentSpecificity } );
+				addBestArgumentSpecificity( { argumentsNode: child.selector, specificity, parentSpecificity } );
 			}
 		}
 	}
+
+	// `:host()` and `:host-context()` additionally contribute their argument's specificity.
+	if ( name === 'host' || name === 'host-context' ) {
+		addBestArgumentSpecificity( { argumentsNode: pseudoNode, specificity, parentSpecificity } );
+	}
 }
 
-function addBestArgumentSpecificity( { selectorList, specificity, parentSpecificity } ) {
+/**
+ * Adds the specificity of the most specific `Selector` child of `argumentsNode` - a
+ * `SelectorList` or a pseudo whose arguments are direct `Selector` children.
+ */
+function addBestArgumentSpecificity( { argumentsNode, specificity, parentSpecificity } ) {
 	let best = null;
 
-	for ( const innerSelector of selectorList.children ) {
+	for ( const innerSelector of argumentsNode.children || [] ) {
 		if ( innerSelector.type !== 'Selector' ) {
 			continue;
 		}

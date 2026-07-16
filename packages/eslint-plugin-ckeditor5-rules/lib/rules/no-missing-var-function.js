@@ -30,10 +30,17 @@ const PROPERTIES_WITH_DASHED_IDENTS = new Set( [
 	'view-timeline-name',
 	'timeline-scope',
 	'animation-timeline',
-	'view-transition-name'
+	'view-transition-name',
+	'view-transition-class',
+	'view-transition-group'
 ] );
 
-const LONE_CUSTOM_PROPERTY_PATTERN = /^--[\w-]+$/;
+// Functions whose dashed-ident arguments are names, not custom property references.
+const FUNCTIONS_WITH_DASHED_IDENTS = new Set( [ 'var', 'anchor', 'anchor-size' ] );
+
+// At-rules whose blocks contain descriptors - `var()` does not work in descriptors, so dashed
+// identifiers there (for example `types: --forward` in `@view-transition`) are names.
+const DESCRIPTOR_AT_RULES = new Set( [ 'font-face', 'font-palette-values', 'counter-style', 'property', 'view-transition' ] );
 
 /**
  * Local implementation of stylelint's `custom-property-no-missing-var-function`:
@@ -57,9 +64,23 @@ module.exports = {
 	},
 
 	create( context ) {
+		let descriptorDepth = 0;
+
 		return {
+			Atrule( node ) {
+				if ( DESCRIPTOR_AT_RULES.has( String( node.name ).toLowerCase() ) ) {
+					descriptorDepth++;
+				}
+			},
+
+			'Atrule:exit'( node ) {
+				if ( DESCRIPTOR_AT_RULES.has( String( node.name ).toLowerCase() ) ) {
+					descriptorDepth--;
+				}
+			},
+
 			Declaration( node ) {
-				if ( typeof node.property !== 'string' || !node.value ) {
+				if ( descriptorDepth > 0 || typeof node.property !== 'string' || !node.value ) {
 					return;
 				}
 
@@ -100,8 +121,9 @@ function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
 			return;
 		}
 
-		// The first argument of `var()` is the reference itself.
-		if ( this.function && String( this.function.name ).toLowerCase() === 'var' ) {
+		// The first argument of `var()` is the reference itself; `anchor()` and `anchor-size()`
+		// take anchor names.
+		if ( this.function && FUNCTIONS_WITH_DASHED_IDENTS.has( String( this.function.name ).toLowerCase() ) ) {
 			return;
 		}
 
@@ -115,23 +137,25 @@ function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
 }
 
 function checkRawText( { context, rawNode, isCustomProperty, text = rawNode.value } ) {
-	const trimmed = String( text ).trim();
-
-	if ( LONE_CUSTOM_PROPERTY_PATTERN.test( trimmed ) ) {
-		context.report( {
-			node: rawNode,
-			messageId: 'missingVarFunction',
-			data: { name: trimmed }
-		} );
-
-		return;
-	}
-
 	let ast;
 
 	try {
-		ast = cssTree.parse( text, { context: 'value' } );
+		ast = cssTree.parse( String( text ), { context: 'value' } );
 	} catch {
+		return;
+	}
+
+	const children = [ ...ast.children ];
+
+	// A value that is exactly one lone bare reference is a mistake in every context, including
+	// custom property token streams (`--x: --y`). Parsing handles comments and Unicode names.
+	if ( children.length === 1 && children[ 0 ].type === 'Identifier' && String( children[ 0 ].name ).startsWith( '--' ) ) {
+		context.report( {
+			node: rawNode,
+			messageId: 'missingVarFunction',
+			data: { name: children[ 0 ].name }
+		} );
+
 		return;
 	}
 
