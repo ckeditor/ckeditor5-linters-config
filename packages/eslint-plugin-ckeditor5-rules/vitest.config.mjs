@@ -7,11 +7,26 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig( {
 	test: {
-		include: [
-			'tests/rules/**/*.@(js|mjs)'
-		],
-		setupFiles: [
-			'./tests/_utils/rule-tester-setup.mjs'
+		projects: [
+			{
+				test: {
+					name: 'rules',
+					include: [
+						'tests/rules/**/*.@(js|mjs)'
+					],
+					setupFiles: [
+						'./tests/_utils/rule-tester-setup.mjs'
+					]
+				}
+			},
+			{
+				test: {
+					name: 'utils',
+					include: [
+						'tests/_utils/**/*.test.mjs'
+					]
+				}
+			}
 		]
 	}
 } );

@@ -5,6 +5,7 @@
 
 import { describe, it } from 'vitest';
 import { RuleTester } from 'eslint';
+import { compactInspectedMessages } from './compact-inspected-messages.mjs';
 
 /**
  * `RuleTester` failures explain themselves in the assertion message. Strip the noise Vitest
@@ -46,27 +47,6 @@ function cleanRuleTesterError( error ) {
 	error.stack = [ `${ error.name }: ${ error.message }`, ...frames ].join( '\n' );
 
 	throw error;
-}
-
-/**
- * Compacts the `util.inspect` dump of lint messages to one "line:column message" line each.
- */
-function compactInspectedMessages( message ) {
-	const openingBracketIndex = message.indexOf( '[' );
-
-	if ( openingBracketIndex === -1 ) {
-		return message;
-	}
-
-	const entryPattern = /\{[^{}]*?message: (['"])([\s\S]*?)\1,\s*line: (\d+),\s*column: (\d+)[^{}]*?\}/g;
-	const entries = [ ...message.matchAll( entryPattern ) ]
-		.map( ( [ , , text, line, column ] ) => `  ${ line }:${ column }  ${ text }` );
-
-	if ( entries.length === 0 ) {
-		return message;
-	}
-
-	return message.slice( 0, openingBracketIndex ).trimEnd() + '\n' + entries.join( '\n' );
 }
 
 /**
