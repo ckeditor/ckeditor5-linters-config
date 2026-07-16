@@ -1,6 +1,26 @@
 Changelog
 =========
 
+## [17.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.1.0...v17.1.1) (July 16, 2026)
+
+### Other changes
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Bumped the `@eslint/css` dependency to `^1.4.0` to pick up updated Baseline data. The `:dir()` selector and the `mask` property are now recognized as Baseline "widely available", so projects relying on `css/use-baseline` no longer need a local exception for them.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/17.1.1): v17.1.0 => v17.1.1
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/17.1.1): v17.1.0 => v17.1.1
+</details>
+
+
 ## [17.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.0.0...v17.1.0) (July 14, 2026)
 
 ### Features
@@ -96,31 +116,6 @@ Major releases (contain major breaking changes):
 
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/16.0.0): v15.1.0 => v16.0.0
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/16.0.0): v15.1.0 => v16.0.0
-</details>
-
-
-## [15.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v15.0.0...v15.1.0) (May 5, 2026)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added two ESLint rules that flag implicit `$root` schema-context usage: `ckeditor5-rules/no-literal-dollar-root` (disallows hardcoded `'$root'` literals outside engine/core) and `ckeditor5-rules/require-explicit-data-context` (requires an explicit context argument on `data.parse()`, `data.toModel()`, `model.document.createRoot()`, `writer.addRoot()`, and `upcastDispatcher.convert()` calls). See [ckeditor/ckeditor5#20026](https://github.com/ckeditor/ckeditor5/issues/20026). Closes [ckeditor/ckeditor5#20096](https://github.com/ckeditor/ckeditor5/issues/20096).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/15.1.0): v15.0.0 => v15.1.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/15.1.0): v15.0.0 => v15.1.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/15.1.0): v15.0.0 => v15.1.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/15.1.0): v15.0.0 => v15.1.0
 </details>
 
 ---
