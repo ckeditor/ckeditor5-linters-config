@@ -152,7 +152,7 @@ module.exports = {
 				if ( !hasFrontmatter ) {
 					// If frontmatter data is missing, display an error at the beginning of the file.
 					context.report( {
-						node: context.getSourceCode().ast,
+						node: context.sourceCode.ast,
 						messageId: 'missingChangeData',
 						loc: {
 							start: {
@@ -170,7 +170,7 @@ module.exports = {
 				if ( !hasText ) {
 					// If text summary is missing, display an error at the end of the file.
 					context.report( {
-						node: context.getSourceCode().ast,
+						node: context.sourceCode.ast,
 						messageId: 'missingChangeSummary',
 						loc: {
 							start: {
