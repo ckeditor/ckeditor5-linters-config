@@ -51,6 +51,8 @@ function cleanRuleTesterError( error ) {
 
 /**
  * Unnamed cases use their code as the title - render their whitespace as escape sequences.
+ * `RuleTester` pre-escapes real tabs in titles into the literal text "\u0009", so that text is
+ * matched deliberately; code that itself contains that literal text is indistinguishable here.
  */
 function escapeTitleWhitespace( title ) {
 	return title
