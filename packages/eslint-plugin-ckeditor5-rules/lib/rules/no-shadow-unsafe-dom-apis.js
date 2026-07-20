@@ -226,7 +226,7 @@ function checkCallCaretFromPoint( { node, context, path } ) {
 	} );
 
 	function hasShadowRootsOption( { args } ) {
-		const lastArg = args[ args.length - 1 ];
+		const lastArg = unwrapExpression( args[ args.length - 1 ] );
 
 		return Boolean(
 			lastArg &&
@@ -289,7 +289,7 @@ function checkCallDocumentListener( { node, context, path } ) {
 		return;
 	}
 
-	const eventArg = node.arguments[ 0 ];
+	const eventArg = unwrapExpression( node.arguments[ 0 ] );
 	const eventName = eventArg && eventArg.type === 'Literal' ? eventArg.value : null;
 
 	if ( ![ 'mouseenter', 'mouseleave', 'scroll' ].includes( eventName ) ) {
@@ -325,7 +325,9 @@ function checkCallBodyAppendChild( { node, context, path } ) {
 
 /**
  * Builds a dotted string representation of a member/call path, collapsing computed and other
- * non-trivial segments to `*` so checks can rely on plain regexes.
+ * non-trivial segments to `*` so checks can rely on plain regexes. TypeScript wrapper nodes and
+ * parenthesized optional chains are unwrapped first, so a cast or a `(x?.y)` grouping doesn't hide
+ * the underlying access path.
  *
  * el.ownerDocument.defaultView.getSelection() -> 'el.ownerDocument.defaultView.getSelection()'
  */
@@ -334,28 +336,24 @@ function getAccessPath( { node } ) {
 		return '';
 	}
 
-	if ( node.type === 'Identifier' ) {
-		return node.name;
+	const unwrapped = unwrapExpression( node );
+
+	if ( unwrapped.type === 'Identifier' ) {
+		return unwrapped.name;
 	}
 
-	if ( node.type === 'ThisExpression' ) {
+	if ( unwrapped.type === 'ThisExpression' ) {
 		return 'this';
 	}
 
-	if ( node.type === 'MemberExpression' ) {
-		const propertyName = node.computed ? '*' : node.property.name;
+	if ( unwrapped.type === 'MemberExpression' ) {
+		const propertyName = unwrapped.computed ? '*' : unwrapped.property.name;
 
-		return `${ getAccessPath( { node: node.object } ) }.${ propertyName }`;
+		return `${ getAccessPath( { node: unwrapped.object } ) }.${ propertyName }`;
 	}
 
-	if ( node.type === 'CallExpression' ) {
-		return `${ getAccessPath( { node: node.callee } ) }()`;
-	}
-
-	// Unwrap TypeScript-only wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`)
-	// so a cast or non-null assertion doesn't hide the underlying access path.
-	if ( isTypeScriptWrapperExpression( node ) ) {
-		return getAccessPath( { node: node.expression } );
+	if ( unwrapped.type === 'CallExpression' ) {
+		return `${ getAccessPath( { node: unwrapped.callee } ) }()`;
 	}
 
 	return '*';
@@ -368,6 +366,23 @@ function getAccessPath( { node } ) {
  */
 function isTypeScriptWrapperExpression( node ) {
 	return [ 'TSAsExpression', 'TSNonNullExpression', 'TSTypeAssertion', 'TSSatisfiesExpression' ].includes( node.type );
+}
+
+/**
+ * Strips TypeScript wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`) and
+ * `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`) down to the expression
+ * underneath, since neither changes what is actually being accessed or called.
+ *
+ * unwrapExpression( node ); // node for `document!` -> node for `document`
+ */
+function unwrapExpression( node ) {
+	let current = node;
+
+	while ( current && ( isTypeScriptWrapperExpression( current ) || current.type === 'ChainExpression' ) ) {
+		current = current.expression;
+	}
+
+	return current;
 }
 
 /**

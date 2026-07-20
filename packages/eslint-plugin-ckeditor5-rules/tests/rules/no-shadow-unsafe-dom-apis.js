@@ -64,6 +64,16 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'caretRangeFromPoint called with a { shadowRoots } option wrapped in an "as" cast',
+			code: 'caretRangeFromPoint( x, y, ( { shadowRoots } as CaretFromPointOptions ) );\n'
+		},
+
+		{
+			name: 'caretRangeFromPoint called with a { shadowRoots } option wrapped in a non-null assertion',
+			code: 'caretRangeFromPoint( x, y, { shadowRoots }! );\n'
+		},
+
+		{
 			name: 'querySelector called on a custom root, not on the top-level document',
 			code: 'editingView.document.getRoot().querySelector( \'.foo\' );\n'
 		},
@@ -414,6 +424,30 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: '( someEl.ownerDocument as Document ).contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Attaching a scroll listener where the event name is wrapped in "as const"',
+			code: 'document.addEventListener( \'scroll\' as const, listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
+			name: 'Calling contains through a parenthesized optional chain',
+			code: '( document?.body ).contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling appendChild through a parenthesized optional chain',
+			code: '( document?.body ).appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
 			]
 		}
 	]
