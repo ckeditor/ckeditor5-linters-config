@@ -83,6 +83,10 @@ ruleTester.run( ruleName, rule, {
 			code: 'a { top: anchor(--target top); width: anchor-size(--target width); }'
 		},
 		{
+			name: 'anchor() with a proper var() fallback',
+			code: 'a { top: anchor(--target top, var(--fallback)); }'
+		},
+		{
 			name: 'View transition classes and groups are named by dashed identifiers',
 			code: 'a { view-transition-class: --card; view-transition-group: --parent; }'
 		},
@@ -147,6 +151,11 @@ ruleTester.run( ruleName, rule, {
 			name: 'A comment before the bare reference does not hide it',
 			code: 'a { --x: /* note */ --y; }',
 			errors: [ missingVarError( '--y' ) ]
+		},
+		{
+			name: 'A bare reference in the anchor() and anchor-size() fallback is a missing var()',
+			code: 'a { top: anchor(--target top, --fallback); width: anchor-size(--target width, --f); }',
+			errors: [ missingVarError( '--fallback' ), missingVarError( '--f' ) ]
 		}
 	]
 } );

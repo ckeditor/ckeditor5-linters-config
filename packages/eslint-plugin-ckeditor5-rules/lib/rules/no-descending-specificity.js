@@ -67,10 +67,9 @@ module.exports = {
 				const isNested = parentSpecificityStack.length > 0;
 				const parentSpecificity = parentSpecificityStack.at( -1 ) || [ 0, 0, 0 ];
 
-				// Rules without own declarations (empty rules, pure nesting containers) do not
-				// style the compared element and are not compared, like in stylelint.
-				const hasDeclarations = !!node.block &&
-					[ ...node.block.children ].some( child => child.type === 'Declaration' );
+				// Rules without own declarations do not style the compared element and are not
+				// compared, like in stylelint.
+				const hasDeclarations = containsOwnDeclarations( node.block );
 
 				let resolvedSpecificity = [ 0, 0, 0 ];
 
@@ -295,6 +294,28 @@ function compareSpecificity( a, b ) {
 		( a[ 1 ] - b[ 1 ] ) ||
 		( a[ 2 ] - b[ 2 ] )
 	);
+}
+
+/**
+ * Declarations inside nested at-rules (`@media`, `@supports`) count as the rule's own,
+ * declarations belonging to nested style rules do not.
+ */
+function containsOwnDeclarations( block ) {
+	if ( !block || !block.children ) {
+		return false;
+	}
+
+	for ( const child of block.children ) {
+		if ( child.type === 'Declaration' ) {
+			return true;
+		}
+
+		if ( child.type === 'Atrule' && containsOwnDeclarations( child.block ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 function containsNestingSelector( selector ) {

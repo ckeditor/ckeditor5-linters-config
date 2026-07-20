@@ -35,8 +35,9 @@ const PROPERTIES_WITH_DASHED_IDENTS = new Set( [
 	'view-transition-group'
 ] );
 
-// Functions whose dashed-ident arguments are names, not custom property references.
-const FUNCTIONS_WITH_DASHED_IDENTS = new Set( [ 'var', 'anchor', 'anchor-size' ] );
+// Functions whose first argument (before the comma) names an anchor - the argument after the
+// comma is a regular fallback value where `var()` is required.
+const ANCHOR_FUNCTIONS = new Set( [ 'anchor', 'anchor-size' ] );
 
 // At-rules whose blocks contain descriptors - `var()` does not work in descriptors, so dashed
 // identifiers there (for example `types: --forward` in `@view-transition`) are names.
@@ -110,7 +111,24 @@ module.exports = {
  * nesting level. `var()` fallbacks are exposed as Raw tokens and are re-parsed recursively.
  */
 function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
+	const anchorNames = new Set();
+
 	cssTree.walk( valueNode, function( child ) {
+		// Collect the identifiers of the anchor-name segment (before the comma) as exempt names.
+		if ( isAnchorFunction( child ) ) {
+			for ( const argument of child.children ) {
+				if ( argument.type === 'Operator' && argument.value === ',' ) {
+					break;
+				}
+
+				if ( argument.type === 'Identifier' ) {
+					anchorNames.add( argument );
+				}
+			}
+
+			return;
+		}
+
 		if ( child.type === 'Raw' ) {
 			checkRawText( { context, rawNode: anchorNode || child, isCustomProperty, text: child.value } );
 
@@ -121,9 +139,12 @@ function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
 			return;
 		}
 
-		// The first argument of `var()` is the reference itself; `anchor()` and `anchor-size()`
-		// take anchor names.
-		if ( this.function && FUNCTIONS_WITH_DASHED_IDENTS.has( String( this.function.name ).toLowerCase() ) ) {
+		if ( anchorNames.has( child ) ) {
+			return;
+		}
+
+		// The first argument of `var()` is the reference itself.
+		if ( this.function && String( this.function.name ).toLowerCase() === 'var' ) {
 			return;
 		}
 
@@ -134,6 +155,20 @@ function walkValue( { context, valueNode, isCustomProperty, anchorNode } ) {
 			data: { name: child.name }
 		} );
 	} );
+}
+
+function isAnchorFunction( node ) {
+	const name = String( node.name ).toLowerCase();
+
+	if ( node.type !== 'Function' ) {
+		return false;
+	}
+
+	if ( !ANCHOR_FUNCTIONS.has( name ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 function checkRawText( { context, rawNode, isCustomProperty, text = rawNode.value } ) {

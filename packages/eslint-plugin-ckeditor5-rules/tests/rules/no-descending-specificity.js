@@ -145,6 +145,11 @@ ruleTester.run( ruleName, rule, {
 			errors: [ descendingError ]
 		},
 		{
+			name: 'Declarations inside a nested at-rule count as the rule\'s own declarations',
+			code: 'b a { @media (width > 0) { top: 0; } } a { @media (width > 0) { top: 1px; } }',
+			errors: [ descendingError ]
+		},
+		{
 			name: ':host() counts its argument specificity on top of the pseudo-class',
 			code: ':host(.x) a { top: 0; } .y a { top: 1px; }',
 			errors: [ descendingError ]
