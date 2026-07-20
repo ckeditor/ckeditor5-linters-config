@@ -1,6 +1,26 @@
 Changelog
 =========
 
+## [18.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.1.1...v18.0.0) (July 17, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Upgraded ESLint to v10. The shared configuration and rules plugin now require `eslint@^10.0.0` and no longer support ESLint 9. Consequently, they require Node.js `^20.19.0 || ^22.13.0 || >=24` (as mandated by ESLint 10) and only support the flat configuration format.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/18.0.0): v17.1.1 => v18.0.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/18.0.0): v17.1.1 => v18.0.0
+</details>
+
+
 ## [17.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.1.0...v17.1.1) (July 16, 2026)
 
 ### Other changes
@@ -85,37 +105,6 @@ Other releases:
 
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/16.1.0): v16.0.0 => v16.1.0
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/16.1.0): v16.0.0 => v16.1.0
-</details>
-
-
-## [16.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v15.1.0...v16.0.0) (June 9, 2026)
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Updated the `@stylistic/no-multiple-empty-lines` rule in default config to enforce a single empty line at the beginning and end of files. Closes [ckeditor/ckeditor5-internal#4485](https://github.com/ckeditor/ckeditor5-internal/issues/4485).
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: The CSS preset now enables `@eslint/css` validation rules for all CSS files: `no-duplicate-imports`, `no-duplicate-keyframe-selectors`, `no-empty-blocks`, `no-invalid-at-rule-placement`, `no-invalid-at-rules`, `no-invalid-named-grid-areas`, `no-unmatchable-selectors`, `selector-complexity`, `prefer-logical-properties`, and `use-baseline` with `{ available: 'widely' }`. It also enables `ckeditor5-rules/css-indent` and `ckeditor5-rules/no-disallowed-color-formats` for all CSS files, and `ckeditor5-rules/ck-content-variable-name` for `**/theme/**/*.css`.
-
-  The preset enables `ckeditor5-rules/ck-content-variable-name` with no options, so it has no built-in exemptions. Consumers that previously relied on the old Stylelint `-suggestion-` and `-comment-` exemptions, for example `var(--ck-suggestion-marker)` inside a `.ck-content` selector, must configure `ignoredVariableSubstrings` or rename the affected variables to use the `--ck-content-*` prefix.
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `ckeditor5-rules/require-as-const-returns-in-methods` rule now checks only the `pluginName` method.
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added a new `ckeditor5-rules/css-indent` rule that enforces tab indentation in CSS files. The rule checks indentation in nested blocks and multi-line parenthesized values, and can automatically fix reported indentation issues.
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added a new `ckeditor5-rules/no-disallowed-color-formats` rule for CSS files. The rule rejects hex colors, `rgb()` and `rgba()` calls, and named CSS colors. Use HSL or CSS custom properties instead.
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added a new `ckeditor5-rules/ck-content-variable-name` rule for CSS files. The rule requires variables used inside `.ck-content` selectors to use the `--ck-content-*` prefix. Exemptions can be configured with the `ignoredVariableSubstrings` option.
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Extended `ckeditor5-rules/license-header` to validate CSS files. Missing, incorrect, or incorrectly positioned CSS license headers are reported and can be automatically fixed.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Major releases (contain major breaking changes):
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/16.0.0): v15.1.0 => v16.0.0
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/16.0.0): v15.1.0 => v16.0.0
 </details>
 
 ---
