@@ -6,11 +6,13 @@
 'use strict';
 
 const { RuleTester } = require( 'eslint' );
+const tsParser = require( '@typescript-eslint/parser' );
 
 const ruleTester = new RuleTester( {
 	languageOptions: {
 		sourceType: 'module',
-		ecmaVersion: 2020
+		ecmaVersion: 2020,
+		parser: tsParser
 	}
 } );
 
@@ -79,6 +81,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'appendChild called on a custom body-collection root',
 			code: 'bodyCollectionRoot.appendChild( el );\n'
+		},
+
+		{
+			name: 'Casting a custom object, not a document access path',
+			code: 'const el = ( someCustomObject as Foo ).activeElement;\n'
 		}
 	],
 	invalid: [
@@ -375,6 +382,38 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'document?.querySelector( \'.foo\' );\n',
 			errors: [
 				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a TSAsExpression cast on ownerDocument',
+			code: 'const el = ( element.ownerDocument as Document ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a TSNonNullExpression on document',
+			code: 'const el = document!.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector through a TSNonNullExpression on document',
+			code: 'document!.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
+			name: 'Calling contains through a TSAsExpression cast on ownerDocument',
+			code: '( someEl.ownerDocument as Document ).contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
 			]
 		}
 	]

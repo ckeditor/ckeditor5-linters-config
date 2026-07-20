@@ -352,7 +352,22 @@ function getAccessPath( { node } ) {
 		return `${ getAccessPath( { node: node.callee } ) }()`;
 	}
 
+	// Unwrap TypeScript-only wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`)
+	// so a cast or non-null assertion doesn't hide the underlying access path.
+	if ( isTypeScriptWrapperExpression( node ) ) {
+		return getAccessPath( { node: node.expression } );
+	}
+
 	return '*';
+}
+
+/**
+ * Checks whether a node is a TypeScript-only wrapper expression around another expression.
+ *
+ * isTypeScriptWrapperExpression( node ); // node for `document!` -> true
+ */
+function isTypeScriptWrapperExpression( node ) {
+	return [ 'TSAsExpression', 'TSNonNullExpression', 'TSTypeAssertion', 'TSSatisfiesExpression' ].includes( node.type );
 }
 
 /**
