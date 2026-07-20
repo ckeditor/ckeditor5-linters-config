@@ -19,13 +19,21 @@ export function compactInspectedMessages( message ) {
 	const entries = [];
 
 	for ( const chunk of extractTopLevelObjects( message.slice( openingBracketIndex ) ) ) {
-		// The first occurrences are the lint message fields - nested `fix` and `suggestions`
-		// data comes later in the inspected object.
-		const text = chunk.match( /message: (['"])((?:\\.|(?!\1).)*?)\1,/ );
-		const line = chunk.match( /\n\s*line: (\d+),/ );
-		const column = chunk.match( /\n\s*column: (\d+),/ );
+		// Match the message first and search for the positions only in the remainder: the
+		// message text itself may contain field-like fragments ("', line: 9"), and the
+		// positions always follow the message in the inspected object. Boundary-insensitive
+		// position patterns also handle single-line rendering and a missing trailing comma.
+		const text = chunk.match( /message: (['"])((?:\\.|(?!\1).)*?)\1/ );
 
-		if ( !text || !line || !column ) {
+		if ( !text ) {
+			return message;
+		}
+
+		const rest = chunk.slice( text.index + text[ 0 ].length );
+		const line = rest.match( /(?<![a-zA-Z])line: (\d+)/ );
+		const column = rest.match( /(?<![a-zA-Z])column: (\d+)/ );
+
+		if ( !line || !column ) {
 			return message;
 		}
 

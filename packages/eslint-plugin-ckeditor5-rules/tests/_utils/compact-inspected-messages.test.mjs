@@ -77,6 +77,30 @@ describe( 'compactInspectedMessages', () => {
 		);
 	} );
 
+	it( 'compacts a minimal object rendered on a single line', () => {
+		const original = `Should have no errors but had 1: ${ inspect( [ { message: 'x', line: 3, column: 7 } ] ) }`;
+
+		// Guards the premise: `util.inspect` renders an object this small on one line.
+		expect( original ).not.toContain( '\n' );
+
+		expect( compactInspectedMessages( original ) ).toBe( 'Should have no errors but had 1:\n  3:7  x' );
+	} );
+
+	it( 'compacts a multi-line object whose last property is `column`', () => {
+		const result = compactInspectedMessages( buildMessage( [ {
+			ruleId: 'rule-to-test/example',
+			severity: 1,
+			message: 'A long enough report message to force util.inspect into multi-line mode for this object.',
+			line: 2,
+			column: 4
+		} ] ) );
+
+		expect( result ).toBe(
+			'Should have no errors but had 1:\n' +
+			'  2:4  A long enough report message to force util.inspect into multi-line mode for this object.'
+		);
+	} );
+
 	it( 'returns a message without a dump untouched', () => {
 		expect( compactInspectedMessages( 'Should have errors but reported none.' ) )
 			.toBe( 'Should have errors but reported none.' );
