@@ -26,206 +26,204 @@ const namedColorError = { messageId: 'disallowedNamedColor' };
 ruleTester.run( ruleName, rule, {
 	valid: [
 		{
-			// An empty file.
+			name: 'An empty file',
 			code: ''
 		},
 		{
-			// HSL is allowed.
+			name: 'HSL is allowed',
 			code: '.foo { color: hsl(0, 0%, 0%); }'
 		},
 		{
-			// HSLA is allowed.
+			name: 'HSLA is allowed',
 			code: '.foo { color: hsla(0, 0%, 0%, 0.5); }'
 		},
 		{
-			// CSS custom property reference is allowed.
+			name: 'CSS custom property reference is allowed',
 			code: '.foo { color: var(--ck-color-text); }'
 		},
 		{
-			// Custom property whose name includes a color-like token is allowed.
+			name: 'Custom property whose name includes a color-like token is allowed',
 			code: '.foo { color: var(--ck-color-red-shade); }'
 		},
 		{
-			// Custom property whose name contains "rgb" - no longer a false positive
-			// (was incorrectly flagged by the prior substring-based check).
+			name: 'Custom property whose name contains "rgb" - no longer a false positive ' +
+				'(was incorrectly flagged by the prior substring-based check)',
 			code: '.foo { color: var(--ck-color-srgb); }'
 		},
 		{
-			// `transparent` is intentionally allowed.
+			name: '`transparent` is intentionally allowed',
 			code: '.foo { background: transparent; }'
 		},
 		{
-			// `currentcolor` is intentionally allowed.
+			name: '`currentcolor` is intentionally allowed',
 			code: '.foo { color: currentcolor; }'
 		},
 		{
-			// Numeric values without color tokens.
+			name: 'Numeric values without color tokens',
 			code: '.foo { opacity: 0.5; margin: 10px; }'
 		},
 		{
-			// Linear gradient using HSL stops.
+			name: 'Linear gradient using HSL stops',
 			code: '.foo { background: linear-gradient(hsl(0, 0%, 0%), hsl(0, 0%, 100%)); }'
 		},
 		{
-			// `color-mix(in srgb, ...)` - the `srgb` color space identifier must not
-			// be mistaken for `rgb()`.
+			name: '`color-mix(in srgb, ...)` - the `srgb` color space identifier must not be mistaken for `rgb()`',
 			code: '.foo { background: color-mix(in srgb, hsl(0, 0%, 0%), hsl(0, 0%, 100%)); }'
 		},
 		{
-			// `url(#fragment)` references an SVG fragment, not a hex color.
+			name: '`url(#fragment)` references an SVG fragment, not a hex color',
 			code: '.foo { background: url(#gradient); }'
 		},
 		{
-			// Named colors appearing inside a string value must not be flagged.
+			name: 'Named colors appearing inside a string value must not be flagged',
 			code: '.foo { grid-template-areas: "red red"; }'
 		},
 		{
-			// `font-family` values are identifiers but never colors.
+			name: '`font-family` values are identifiers but never colors',
 			code: '.foo { font-family: Red Hat Text; }'
 		},
 		{
-			// `content` strings can hold any text including named-color words.
+			name: '`content` strings can hold any text including named-color words',
 			code: '.foo { content: "blue"; }'
 		},
 		{
-			// `animation-name` is an identifier, not a color.
+			name: '`animation-name` is an identifier, not a color',
 			code: '.foo { animation-name: red; }'
 		},
 		{
-			// `tan()` is a math function; the identifier `tan` is not present.
+			name: '`tan()` is a math function; the identifier `tan` is not present',
 			code: '.foo { width: calc(100px * tan(45deg)); }'
 		},
 		{
-			// Custom property with a non-color value must not false-positive.
+			name: 'Custom property with a non-color value must not false-positive',
 			code: ':root { --ck-spacing: 10px; }'
 		},
 		{
-			// HSL inside a custom property is allowed.
+			name: 'HSL inside a custom property is allowed',
 			code: ':root { --ck-color-bg: hsl(0, 0%, 100%); }'
 		},
 		{
-			// `var(--...)` reference inside a custom property is allowed.
+			name: '`var(--...)` reference inside a custom property is allowed',
 			code: ':root { --ck-color-aliased: var(--ck-color-base); }'
 		},
 		{
-			// HSL inside a `var()` fallback (a Raw token) is allowed.
+			name: 'HSL inside a `var()` fallback (a Raw token) is allowed',
 			code: '.foo { color: var(--ck-color-text, hsl(0, 0%, 0%)); }'
 		},
 		{
-			// A custom-property reference inside a `var()` fallback is allowed.
+			name: 'A custom-property reference inside a `var()` fallback is allowed',
 			code: '.foo { color: var(--ck-color-text, var(--ck-color-base)); }'
 		}
 	],
 
 	invalid: [
 		{
-			// Hex short form.
+			name: 'Hex short form',
 			code: '.foo { color: #fff; }',
 			errors: [ hexError ]
 		},
 		{
-			// Hex long form.
+			name: 'Hex long form',
 			code: '.foo { color: #abcdef; }',
 			errors: [ hexError ]
 		},
 		{
-			// Hex with alpha channel.
+			name: 'Hex with alpha channel',
 			code: '.foo { color: #abcdef80; }',
 			errors: [ hexError ]
 		},
 		{
-			// Two hex colors inside a gradient - reported per occurrence.
+			name: 'Two hex colors inside a gradient - reported per occurrence',
 			code: '.foo { background: linear-gradient(#000, #fff); }',
 			errors: [ hexError, hexError ]
 		},
 		{
-			// rgb() call.
+			name: 'rgb() call',
 			code: '.foo { color: rgb(0, 0, 0); }',
 			errors: [ rgbError ]
 		},
 		{
-			// rgba() call.
+			name: 'rgba() call',
 			code: '.foo { color: rgba(0, 0, 0, 0.5); }',
 			errors: [ rgbError ]
 		},
 		{
-			// Uppercase RGB() - the prior substring `.includes('rgb')` missed this.
+			name: 'Uppercase RGB() - the prior substring `.includes(\'rgb\')` missed this',
 			code: '.foo { color: RGB(0, 0, 0); }',
 			errors: [ rgbError ]
 		},
 		{
-			// Two rgb() calls inside a gradient - reported per occurrence.
+			name: 'Two rgb() calls inside a gradient - reported per occurrence',
 			code: '.foo { background: linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255)); }',
 			errors: [ rgbError, rgbError ]
 		},
 		{
-			// Named color `red`.
+			name: 'Named color `red`',
 			code: '.foo { color: red; }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Named color `blue`, uppercase.
+			name: 'Named color `blue`, uppercase',
 			code: '.foo { color: BLUE; }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Named colors inside a gradient - reported per occurrence.
+			name: 'Named colors inside a gradient - reported per occurrence',
 			code: '.foo { background: linear-gradient(red, blue); }',
 			errors: [ namedColorError, namedColorError ]
 		},
 		{
-			// Compound named color.
+			name: 'Compound named color',
 			code: '.foo { color: darkslateblue; }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Named color `tan` as an identifier value.
+			name: 'Named color `tan` as an identifier value',
 			code: '.foo { color: tan; }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Mixed hex and rgb() - each reported once on its own node.
+			name: 'Mixed hex and rgb() - each reported once on its own node',
 			code: '.foo { background: linear-gradient(#fff, rgb(0, 0, 0)); }',
 			errors: [ hexError, rgbError ]
 		},
 		{
-			// Hex inside a custom-property value (Raw token).
+			name: 'Hex inside a custom-property value (Raw token)',
 			code: ':root { --ck-color-bg: #fff; }',
 			errors: [ hexError ]
 		},
 		{
-			// rgb() inside a custom-property value.
+			name: 'rgb() inside a custom-property value',
 			code: ':root { --ck-color-bg: rgb(0, 0, 0); }',
 			errors: [ rgbError ]
 		},
 		{
-			// Named color inside a custom-property value.
+			name: 'Named color inside a custom-property value',
 			code: ':root { --ck-color-bg: red; }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Custom-property value with several violations - each reported per occurrence.
+			name: 'Custom-property value with several violations - each reported per occurrence',
 			code: ':root { --ck-gradient: linear-gradient(#fff, rgb(0, 0, 0), red); }',
 			errors: [ hexError, rgbError, namedColorError ]
 		},
 		{
-			// Hex inside a `var()` fallback (a Raw token).
+			name: 'Hex inside a `var()` fallback (a Raw token)',
 			code: '.foo { color: var(--ck-color-text, #fff); }',
 			errors: [ hexError ]
 		},
 		{
-			// rgb() inside a `var()` fallback.
+			name: 'rgb() inside a `var()` fallback',
 			code: '.foo { background: var(--ck-color-bg, rgb(0, 0, 0)); }',
 			errors: [ rgbError ]
 		},
 		{
-			// Named color inside a `var()` fallback.
+			name: 'Named color inside a `var()` fallback',
 			code: '.foo { border-color: var(--ck-color-border, red); }',
 			errors: [ namedColorError ]
 		},
 		{
-			// Disallowed color nested in a `var()` fallback's own fallback -
-			// requires recursing into nested Raw tokens.
+			name: 'Disallowed color nested in a `var()` fallback\'s own fallback - requires recursing into nested Raw tokens',
 			code: '.foo { color: var(--ck-color-text, var(--ck-color-alt, #fff)); }',
 			errors: [ hexError ]
 		}

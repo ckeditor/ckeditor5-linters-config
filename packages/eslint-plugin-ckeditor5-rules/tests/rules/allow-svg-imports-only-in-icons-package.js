@@ -15,7 +15,7 @@ const ruleTester = new RuleTester( {
 } );
 
 ruleTester.run(
-	'allow-declare-module-only-in-augmentation-file',
+	'allow-svg-imports-only-in-icons-package',
 	require( '../../lib/rules/allow-svg-imports-only-in-icons-package' ),
 	{
 		valid: [

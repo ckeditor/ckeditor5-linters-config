@@ -22,6 +22,7 @@ ruleTester.run(
 	{
 		invalid: [
 			{
+				name: 'Adds @internal to the JSDoc of an underscore-prefixed function',
 				code: `
 				/**
 				 * This is a test private property that is missing an internal tag.
@@ -37,6 +38,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to the JSDoc of an exported underscore-prefixed function',
 				code: `
 				/**
 				 * This is a test private property that is missing an internal tag.
@@ -52,6 +54,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to a public class property with an underscore-prefixed name',
 				code: `
 				class TestClass {
 					/**
@@ -71,6 +74,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to a private class property',
 				code: `
 				class TestClass {
 					/**
@@ -90,6 +94,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal before the @param tag in the JSDoc of a private property',
 				code: `
 				class TestClass {
 					/**
@@ -112,6 +117,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to a protected class property',
 				code: `
 				class TestClass {
 					/**
@@ -131,6 +137,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to a private static class property',
 				code: `
 				class TestClass {
 					/**
@@ -150,6 +157,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Adds @internal to a declared private static readonly class property',
 				code: `
 				class TestClass {
 					/**
@@ -169,6 +177,7 @@ ruleTester.run(
 				errors: [ markPrivateAsInternal ]
 			},
 			{
+				name: 'Creates a JSDoc block with @internal for an undocumented underscore-prefixed function',
 				code: `
 				function _testFunc() {}`,
 				output: `
@@ -181,6 +190,7 @@ ruleTester.run(
 		],
 		valid: [
 			{
+				name: 'Underscore-prefixed function already marked as @internal',
 				code: `
 				/**
 				 * This is a test private property that is missing an internal tag.
@@ -190,6 +200,7 @@ ruleTester.run(
 				function _testFunc() {}`
 			},
 			{
+				name: 'Private underscore-prefixed property marked as @internal',
 				code: `
 				class TestClass {
 					/**
@@ -201,6 +212,7 @@ ruleTester.run(
 				}`
 			},
 			{
+				name: 'Public underscore-prefixed property marked as @internal',
 				code: `
 				class TestClass {
 					/**
@@ -212,6 +224,7 @@ ruleTester.run(
 				}`
 			},
 			{
+				name: 'Private property marked as @internal',
 				code: `
 				class TestClass {
 					/**
@@ -223,6 +236,7 @@ ruleTester.run(
 				}`
 			},
 			{
+				name: 'Private property with @internal followed by a @param tag',
 				code: `
 				class TestClass {
 					/**
@@ -235,6 +249,7 @@ ruleTester.run(
 				}`
 			},
 			{
+				name: 'Declared private static readonly property marked as @internal',
 				code: `
 				class TestClass {
 					/**

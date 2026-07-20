@@ -36,10 +36,10 @@ importers:
         specifier: ^10.0.0
         version: 10.7.0
       eslint-config-ckeditor5:
-        specifier: ^17.1.1
+        specifier: ^18.0.0
         version: link:packages/eslint-config-ckeditor5
       eslint-plugin-ckeditor5-rules:
-        specifier: ^17.1.1
+        specifier: ^18.0.0
         version: link:packages/eslint-plugin-ckeditor5-rules
       globals:
         specifier: ^16.1.0
@@ -78,7 +78,7 @@ importers:
         specifier: ^4.2.0
         version: 4.4.1(eslint@10.7.0)(typescript@5.5.4)
       eslint-plugin-ckeditor5-rules:
-        specifier: ^17.1.1
+        specifier: ^18.0.0
         version: link:../eslint-plugin-ckeditor5-rules
       eslint-plugin-mocha:
         specifier: ^11.0.0
@@ -142,6 +142,9 @@ importers:
       typescript-eslint:
         specifier: ^8.57.0
         version: 8.63.0(eslint@10.7.0)(typescript@5.5.4)
+      vitest:
+        specifier: ^4.0.15
+        version: 4.1.10(@types/node@26.1.1)(@vitest/coverage-v8@4.1.10)(vite@8.1.4(@types/node@26.1.1)(esbuild@0.28.1)(terser@5.49.0)(yaml@2.9.0))
 
 packages:
 
