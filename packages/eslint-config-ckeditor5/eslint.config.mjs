@@ -520,10 +520,13 @@ const rulesCss = [
 
 		rules: {
 			'ckeditor5-rules/css-indent': 'error',
+			'ckeditor5-rules/no-descending-specificity': 'error',
 			'ckeditor5-rules/no-disallowed-color-formats': 'error',
+			'ckeditor5-rules/no-missing-var-function': 'error',
 			'css/no-duplicate-imports': 'error',
 			'css/no-duplicate-keyframe-selectors': 'error',
 			'css/no-empty-blocks': 'error',
+			'css/no-important': 'error',
 			'css/no-invalid-at-rule-placement': 'error',
 			'css/no-invalid-at-rules': 'error',
 			'css/no-invalid-named-grid-areas': 'error',
