@@ -20,10 +20,12 @@ ruleTester.run(
 	{
 		valid: [
 			{
+				name: 'Module augmentation in "src/augmentation.ts" (POSIX path)',
 				code: 'declare module "@ckeditor/ckeditor5-core" {}',
 				filename: '/some/path/src/augmentation.ts'
 			},
 			{
+				name: 'Module augmentation in "src/augmentation.ts" (Windows path)',
 				code: 'declare module "@ckeditor/ckeditor5-core" {}',
 				filename: 'C:\\some\\path\\src\\augmentation.ts'
 			}

@@ -86,30 +86,30 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			code: 'const packageJson = await import(\'../package.json\', { with: { type: \'json\' } })'
 		},
 
-		// Non-literal require() (cannot be safely analyzed).
 		{
+			name: 'Non-literal require() (cannot be safely analyzed)',
 			code: 'const name = \'fs\'; const fs = require(name);'
 		},
 
-		// Non-literal dynamic import() (cannot be safely analyzed).
 		{
+			name: 'Non-literal dynamic import() (cannot be safely analyzed)',
 			code: 'const name = \'fs\'; const fs = await import(name);'
 		},
 
-		// Re-export
 		{
+			name: 'Re-export',
 			code: 'export { readFile } from \'node:fs/promises\';'
 		},
 
-		// Should not fail when there is no "from" in export.
 		{
+			name: 'Should not fail when there is no "from" in export',
 			code: 'const test = 123; export { test };'
 		}
 	],
 
 	invalid: [
-		// ESM: default import.
 		{
+			name: 'ESM: default import',
 			code: 'import fs from \'fs\';',
 			output: 'import fs from \'node:fs\';',
 			errors: [
@@ -117,8 +117,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// ESM: namespace import.
 		{
+			name: 'ESM: namespace import',
 			code: 'import * as fs from \'fs\';',
 			output: 'import * as fs from \'node:fs\';',
 			errors: [
@@ -126,8 +126,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// ESM: named import.
 		{
+			name: 'ESM: named import',
 			code: 'import { readFile } from \'fs\';',
 			output: 'import { readFile } from \'node:fs\';',
 			errors: [
@@ -135,8 +135,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// ESM: side-effect import.
 		{
+			name: 'ESM: side-effect import',
 			code: 'import \'fs\';',
 			output: 'import \'node:fs\';',
 			errors: [
@@ -144,8 +144,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// CommonJS require.
 		{
+			name: 'CommonJS require',
 			code: 'const fs = require(\'fs\');',
 			output: 'const fs = require(\'node:fs\');',
 			errors: [
@@ -153,8 +153,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// Dynamic ESM import.
 		{
+			name: 'Dynamic ESM import',
 			code: 'const fs = await import(\'fs\')',
 			output: 'const fs = await import(\'node:fs\')',
 			errors: [
@@ -162,8 +162,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// ESM: Re-export
 		{
+			name: 'ESM: Re-export',
 			code: 'export { readFile } from \'fs\';',
 			output: 'export { readFile } from \'node:fs\';',
 			errors: [
@@ -171,8 +171,8 @@ ruleTester.run( 'enforce-node-protocol', require( '../../lib/rules/enforce-node-
 			]
 		},
 
-		// CJS: Re-export
 		{
+			name: 'CJS: Re-export',
 			code: 'module.exports = require(\'fs\');',
 			output: 'module.exports = require(\'node:fs\');',
 			errors: [

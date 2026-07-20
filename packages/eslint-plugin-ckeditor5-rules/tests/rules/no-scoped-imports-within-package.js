@@ -49,26 +49,32 @@ const rule = require( '../../lib/rules/no-scoped-imports-within-package' );
 ruleTester.run( ruleName, rule, {
 	valid: [
 		{
+			name: 'Allows every import and export form from unscoped and relative sources',
 			code: fixtures.valid.packages.ckeditor5_feature.no_scoped_imports.content,
 			filename: fixtures.valid.packages.ckeditor5_feature.no_scoped_imports.path
 		},
 		{
+			name: 'Allows every import and export form from other packages, including names similar to the own package name',
 			code: fixtures.valid.packages.ckeditor5_feature.scoped_imports_not_to_self.content,
 			filename: fixtures.valid.packages.ckeditor5_feature.scoped_imports_not_to_self.path
 		},
 		{
+			name: 'Allows unscoped and relative imports in a file nested deeply inside the package',
 			code: fixtures.valid.packages.ckeditor5_feature_nested.src.a.b.c.no_scoped_imports.content,
 			filename: fixtures.valid.packages.ckeditor5_feature_nested.src.a.b.c.no_scoped_imports.path
 		},
 		{
+			name: 'Allows imports of other, similarly named packages in a file nested deeply inside the package',
 			code: fixtures.valid.packages.ckeditor5_feature_nested.src.a.b.c.scoped_imports_not_to_self.content,
 			filename: fixtures.valid.packages.ckeditor5_feature_nested.src.a.b.c.scoped_imports_not_to_self.path
 		},
 		{
+			name: 'Ignores scoped self-imports when the package.json is invalid',
 			code: fixtures.valid.packages.ckeditor5_invalid_pkg.scoped_imports.content,
 			filename: fixtures.valid.packages.ckeditor5_invalid_pkg.scoped_imports.path
 		},
 		{
+			name: 'Ignores scoped self-imports when the package has no package.json',
 			code: fixtures.valid.packages.ckeditor5_missing_pkg.scoped_imports.content,
 			filename: fixtures.valid.packages.ckeditor5_missing_pkg.scoped_imports.path
 		}
@@ -76,16 +82,19 @@ ruleTester.run( ruleName, rule, {
 
 	invalid: [
 		{
+			name: 'Reports every import and export form referring to the own scoped package',
 			code: fixtures.invalid.packages.ckeditor5_feature.scoped_imports.content,
 			filename: fixtures.invalid.packages.ckeditor5_feature.scoped_imports.path,
 			errors
 		},
 		{
+			name: 'Reports self-imports in a file nested deeply inside the package',
 			code: fixtures.invalid.packages.ckeditor5_feature_nested.src.a.b.c.scoped_imports.content,
 			filename: fixtures.invalid.packages.ckeditor5_feature_nested.src.a.b.c.scoped_imports.path,
 			errors
 		},
 		{
+			name: 'Reports self-imports using the unscoped own package name',
 			code: fixtures.invalid.packages.ckeditor5_feature_short.scoped_imports.content,
 			filename: fixtures.invalid.packages.ckeditor5_feature_short.scoped_imports.path,
 			errors

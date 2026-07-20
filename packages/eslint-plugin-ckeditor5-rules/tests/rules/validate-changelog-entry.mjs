@@ -22,8 +22,8 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, {
 	valid: [
-		// Single repository with only the "type" field.
 		{
+			name: 'Single repository with only the "type" field',
 			code: dedent`
 			---
 			type: feature
@@ -34,8 +34,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'single' } ]
 		},
 
-		// Mono repository with only the "type" field.
 		{
+			name: 'Mono repository with only the "type" field',
 			code: dedent`
 			---
 			type: feature
@@ -48,6 +48,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses "type: fix".
 		{
+			name: 'Uses "type: fix" in single repository',
 			code: dedent`
 			---
 			type: fix
@@ -58,6 +59,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'single' } ]
 		},
 		{
+			name: 'Uses "type: fix" in mono repository',
 			code: dedent`
 			---
 			type: fix
@@ -70,6 +72,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses "type: other".
 		{
+			name: 'Uses "type: other" in single repository',
 			code: dedent`
 			---
 			type: other
@@ -80,6 +83,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'single' } ]
 		},
 		{
+			name: 'Uses "type: other" in mono repository',
 			code: dedent`
 			---
 			type: other
@@ -90,8 +94,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 
-		// Uses "type: breaking change" in single repository.
 		{
+			name: 'Uses "type: breaking change" in single repository',
 			code: dedent`
 			---
 			type: breaking change
@@ -102,8 +106,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'single' } ]
 		},
 
-		// Uses "type: major breaking change" in mono repository.
 		{
+			name: 'Uses "type: major breaking change" in mono repository',
 			code: dedent`
 			---
 			type: major breaking change
@@ -114,8 +118,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 
-		// Uses "type: minor breaking change" in mono repository.
 		{
+			name: 'Uses "type: minor breaking change" in mono repository',
 			code: dedent`
 			---
 			type: minor breaking change
@@ -128,6 +132,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses allowed "scope" field.
 		{
+			name: 'Empty "scope" field',
 			code: dedent`
 			---
 			type: feature
@@ -139,6 +144,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono', allowedScopes: [ 'test' ] } ]
 		},
 		{
+			name: '"scope" list with an empty item',
 			code: dedent`
 			---
 			type: feature
@@ -151,6 +157,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono', allowedScopes: [ 'test' ] } ]
 		},
 		{
+			name: '"scope" with a single allowed value',
 			code: dedent`
 			---
 			type: feature
@@ -162,6 +169,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono', allowedScopes: [ 'test' ] } ]
 		},
 		{
+			name: '"scope" with a list of allowed values',
 			code: dedent`
 			---
 			type: feature
@@ -177,6 +185,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses valid "closes" field.
 		{
+			name: 'Empty "closes" field',
 			code: dedent`
 			---
 			type: feature
@@ -188,6 +197,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"closes" list with an empty item',
 			code: dedent`
 			---
 			type: feature
@@ -200,6 +210,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"closes" with a single issue number',
 			code: dedent`
 			---
 			type: feature
@@ -211,6 +222,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"closes" with a list of issue references',
 			code: dedent`
 			---
 			type: feature
@@ -227,6 +239,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses valid "see" field.
 		{
+			name: 'Empty "see" field',
 			code: dedent`
 			---
 			type: feature
@@ -238,6 +251,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"see" list with an empty item',
 			code: dedent`
 			---
 			type: feature
@@ -250,6 +264,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"see" with a single issue number',
 			code: dedent`
 			---
 			type: feature
@@ -261,6 +276,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"see" with a list of issue references',
 			code: dedent`
 			---
 			type: feature
@@ -277,6 +293,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 
 		// Uses valid "communityCredits" field.
 		{
+			name: 'Empty "communityCredits" field',
 			code: dedent`
 			---
 			type: feature
@@ -288,6 +305,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"communityCredits" list with an empty item',
 			code: dedent`
 			---
 			type: feature
@@ -300,6 +318,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"communityCredits" with a single user',
 			code: dedent`
 			---
 			type: feature
@@ -311,6 +330,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			options: [ { repositoryType: 'mono' } ]
 		},
 		{
+			name: '"communityCredits" with a list of users',
 			code: dedent`
 			---
 			type: feature
@@ -327,8 +347,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 	],
 
 	invalid: [
-		// Empty file.
 		{
+			name: 'Empty file',
 			code: dedent``,
 			options: [ { repositoryType: 'mono' } ],
 			errors: [
@@ -337,8 +357,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Missing frontmatter.
 		{
+			name: 'Missing frontmatter',
 			code: dedent`Changelog summary`,
 			options: [ { repositoryType: 'mono' } ],
 			errors: [
@@ -346,8 +366,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Empty frontmatter.
 		{
+			name: 'Empty frontmatter',
 			code: dedent`
 			---
 			---
@@ -359,8 +379,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Missing text summary.
 		{
+			name: 'Missing text summary',
 			code: dedent`
 			---
 			type: feature
@@ -372,8 +392,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Default text summary.
 		{
+			name: 'Default text summary',
 			code: dedent`
 			---
 			type: feature
@@ -391,8 +411,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid "type" field.
 		{
+			name: 'Invalid "type" field',
 			code: dedent`
 			---
 			type: test
@@ -405,8 +425,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Uses "type: breaking change" in mono repository.
 		{
+			name: 'Uses "type: breaking change" in mono repository',
 			code: dedent`
 			---
 			type: breaking change
@@ -420,8 +440,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Uses "type: major breaking change" in single repository.
 		{
+			name: 'Uses "type: major breaking change" in single repository',
 			code: dedent`
 			---
 			type: major breaking change
@@ -435,8 +455,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Uses "type: minor breaking change" in single repository.
 		{
+			name: 'Uses "type: minor breaking change" in single repository',
 			code: dedent`
 			---
 			type: minor breaking change
@@ -450,8 +470,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Scope in single repository.
 		{
+			name: 'Scope in single repository',
 			code: dedent`
 			---
 			type: feature
@@ -465,8 +485,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid "scope" field.
 		{
+			name: 'Invalid "scope" field',
 			code: dedent`
 			---
 			type: feature
@@ -480,8 +500,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid "closes" field.
 		{
+			name: 'Invalid "closes" field',
 			code: dedent`
 			---
 			type: feature
@@ -495,8 +515,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid "see" field.
 		{
+			name: 'Invalid "see" field',
 			code: dedent`
 			---
 			type: feature
@@ -510,8 +530,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid "communityCredits" field.
 		{
+			name: 'Invalid "communityCredits" field',
 			code: dedent`
 			---
 			type: feature
@@ -526,8 +546,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid indent using tabs.
 		{
+			name: 'Invalid indent using tabs',
 			code: dedent`
 			---
 			type: feature
@@ -544,8 +564,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/validate-changelog-entry', rule, 
 			]
 		},
 
-		// Invalid indent.
 		{
+			name: 'Invalid indent',
 			code: dedent`
 			---
 			type: fix

@@ -17,7 +17,8 @@ const rulesGeneral = [
 	{
 		plugins: {
 			js,
-			'@stylistic': stylistic
+			'@stylistic': stylistic,
+			'ckeditor5-rules': ckeditor5Rules
 		},
 
 		extends: [ 'js/recommended' ],

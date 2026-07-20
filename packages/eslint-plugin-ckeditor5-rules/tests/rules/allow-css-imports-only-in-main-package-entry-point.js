@@ -22,6 +22,7 @@ ruleTester.run(
 	{
 		valid: [
 			{
+				name: 'Entry point CSS import (POSIX absolute path)',
 				code: 'import \'../theme/index.css\';',
 				filename: '/packages/ckeditor5-example/src/index.ts'
 			},
@@ -30,10 +31,12 @@ ruleTester.run(
 				filename: '/packages/ckeditor5-example/src/index.ts'
 			},
 			{
+				name: 'Entry point CSS import (Windows path)',
 				code: 'import \'../theme/index.css\';',
 				filename: 'C:\\packages\\ckeditor5-example\\src\\index.ts'
 			},
 			{
+				name: 'Entry point CSS import (relative path)',
 				code: 'import \'../theme/index.css\';',
 				filename: 'packages/ckeditor5-example/src/index.ts'
 			},

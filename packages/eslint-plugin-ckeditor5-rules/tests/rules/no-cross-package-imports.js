@@ -48,23 +48,19 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-cross-package-imports', requir
 		// Cross package imports in allowed package
 		{
 			code: 'import { toArray } from \'ckeditor5/src/utils\';',
-			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import toArray from \'ckeditor5/src/utils\';',
-			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import { toArray } from \'@ckeditor/ckeditor5-utils\';',
-			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import toArray from \'@ckeditor/ckeditor5-utils/src/toarray\';',
-			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.win32.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 
 		/**
@@ -91,23 +87,19 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-cross-package-imports', requir
 		// Cross package imports in allowed package
 		{
 			code: 'import { toArray } from \'ckeditor5/src/utils\';',
-			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import toArray from \'ckeditor5/src/utils\';',
-			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import { toArray } from \'@ckeditor/ckeditor5-utils\';',
-			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		},
 		{
 			code: 'import toArray from \'@ckeditor/ckeditor5-utils/src/toarray\';',
-			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' ),
-			errors: [ importError ]
+			filename: path.posix.join( 'C:', 'Workspace', 'ckeditor', 'ckeditor5', 'packages', 'ckeditor5-core', 'src', 'plugin.js' )
 		}
 	],
 	invalid: [

@@ -39,8 +39,8 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 			code: 'import Something from "@ckeditor/ckeditor5-dev-utils";' // Scoped
 		},
 
-		// Import from external dependency that uses "exports" field
 		{
+			name: 'Import from external dependency that uses "exports" field',
 			code: 'import tokenizer from "postcss/lib/tokenize";'
 		},
 

@@ -16,8 +16,8 @@ const ruleTester = new RuleTester( {
 
 ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plugin-flags' ), {
 	valid: [
-		// Should not raise any error when empty non-plugin class is checked.
 		{
+			name: 'Should not raise any error when empty non-plugin class is checked',
 			code: 'class Abc {}',
 			options: [
 				{
@@ -31,8 +31,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Check if class that does not extend Plugin is not checked.
 		{
+			name: 'Check if class that does not extend Plugin is not checked',
 			code: 'class TestNonPlugin { static get pluginName() { return \'TestNonPlugin\'; } }',
 			options: [
 				{
@@ -46,8 +46,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Check if class that extends Plugin but do not define pluginName is not checked.
 		{
+			name: 'Check if class that extends Plugin but do not define pluginName is not checked',
 			code: 'class TestPlugin extends Plugin {}',
 			options: [
 				{
@@ -61,8 +61,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Check if class containing specified methods is checked.
 		{
+			name: 'Check if class containing specified methods is checked',
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
@@ -87,8 +87,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 		}
 	],
 	invalid: [
-		// Should properly fix non-spaced method definition when there are multiple disallowed flags.
 		{
+			name: 'Should properly fix non-spaced method definition when there are multiple disallowed flags',
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
@@ -108,8 +108,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should raise error if there is disallowed properties in the class.
 		{
+			name: 'Should raise error if there is disallowed properties in the class',
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
@@ -132,8 +132,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should raise error when plugin class does not have required flags.
 		{
+			name: 'Should raise error when plugin class does not have required flags',
 			code: `
 				class TestNonPlugin extends Plugin {
 					static get pluginName() { return 'TestNonPlugin'; }
@@ -159,8 +159,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should properly recognize missing required flags on plugin that extends mixin.
 		{
+			name: 'Should properly recognize missing required flags on plugin that extends mixin',
 			code: `
 				class FormatPainterUI extends /* #__PURE__ -- @preserve */ DomEmitterMixin( Plugin ) {
 					/**
@@ -191,8 +191,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should raise error when plugin class has required flags with wrong return value.
 		{
+			name: 'Should raise error when plugin class has required flags with wrong return value',
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }
@@ -222,8 +222,8 @@ ruleTester.run( 'ckeditor-plugin-flags', require( '../../lib/rules/ckeditor-plug
 			]
 		},
 
-		// Should raise error if method has no public modifier.
 		{
+			name: 'Should raise error if method has no public modifier',
 			code: `
 				class TestPlugin extends Plugin {
 					static get pluginName() { return 'TestPlugin'; }

@@ -68,35 +68,35 @@ ruleTester.run(
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils-tests/helper.js\';'
 		],
 		invalid: [
-			// Do not allow importing from a package without the `exports` field.
 			{
+				name: 'Do not allow importing from a package without the `exports` field',
 				code: 'import NoExportsFeature from "@ckeditor/ckeditor5-no-exports-package/src/feature";',
 				output: 'import { NoExportsFeature } from \'@ckeditor/ckeditor5-no-exports-package\';',
 				filename: path.join( fixtureDirectory, 'input.js' ),
 				errors: [ { message } ]
 			},
-			// Do not allow importing icons from a package without the `exports` field.
 			{
+				name: 'Do not allow importing icons from a package without the `exports` field',
 				code: 'import icon from "@ckeditor/ckeditor5-no-exports-package/theme/icons/icon.svg";',
 				output: 'import { icon } from \'@ckeditor/ckeditor5-no-exports-package\';',
 				filename: path.join( fixtureDirectory, 'input.js' ),
 				errors: [ { message } ]
 			},
-			// Do not allow importing style sheets from a package without the `exports` field.
 			{
+				name: 'Do not allow importing style sheets from a package without the `exports` field',
 				code: 'import styles from "@ckeditor/ckeditor5-no-exports-package/theme/styles.css";',
 				output: 'import { styles } from \'@ckeditor/ckeditor5-no-exports-package\';',
 				filename: path.join( fixtureDirectory, 'input.js' ),
 				errors: [ { message } ]
 			},
-			// Do not fix if there are both default and named imports.
 			{
+				name: 'Do not fix if there are both default and named imports',
 				code: 'import Foo, { Bar } from "@ckeditor/ckeditor5-no-exports-package/src/core";',
 				filename: path.join( fixtureDirectory, 'input.js' ),
 				errors: [ { message } ]
 			},
-			// Do not allow importing from package subpaths not listed in the `exports` field.
 			{
+				name: 'Do not allow importing from package subpaths not listed in the `exports` field',
 				code: 'import ExportedFeature from "@ckeditor/ckeditor5-exported-package/dist/feature.js";',
 				output: 'import { ExportedFeature } from \'@ckeditor/ckeditor5-exported-package\';',
 				filename: path.join( fixtureDirectory, 'input.js' ),
