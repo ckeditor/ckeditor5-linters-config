@@ -44,6 +44,17 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling a locally imported getSelection helper through an "as" cast',
+			code: 'import { getSelection } from \'./shadow-dom-utils.js\';\n' +
+				'const sel = ( getSelection as typeof getSelection )();\n'
+		},
+
+		{
+			name: 'Calling a locally imported getSelection helper through a non-null assertion',
+			code: 'import { getSelection } from \'./shadow-dom-utils.js\';\nconst sel = getSelection!();\n'
+		},
+
+		{
 			name: 'Calling isConnected instead of contains',
 			code: 'const connected = isConnected( el );\n'
 		},
@@ -116,6 +127,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Reading window.document.activeElement',
+			code: 'const el = window.document.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
+			name: 'Reading global.window.document.activeElement',
+			code: 'const el = global.window.document.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
 			name: 'Reading *.ownerDocument.activeElement',
 			code: 'const el = someEl.ownerDocument.activeElement;\n',
 			errors: [
@@ -174,6 +201,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling global.document.getSelection()',
 			code: 'const sel = global.document.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling window.document.getSelection()',
+			code: 'const sel = window.document.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]

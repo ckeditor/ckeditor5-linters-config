@@ -138,14 +138,16 @@ function checkMemberParentTraversal( { node, context } ) {
  * Flags calls to `getSelection()` in any global or cross-root form. A bare `getSelection()` call is
  * only flagged when it resolves to the global one, not to a locally imported or declared helper.
  *
- * global.window.getSelection(); // not allowed
+ * window.document.getSelection(); // not allowed
  */
 function checkCallGetSelection( { node, context, path } ) {
-	const isGlobalCall = /^(global\.)?(window|document)\.getSelection$/.test( path ) || path === 'global.getSelection';
-	const isCrossRootCall = /\.(ownerDocument|defaultView)\.getSelection$/.test( path );
-	const isBareGlobalCall = path === 'getSelection' && !isLocallyDefinedReference( { node: node.callee, context } );
+	const match = path.match( /^(.+)\.getSelection$/ );
+	const isPrefixedCall = Boolean( match ) &&
+		( match[ 1 ] === 'global' || isWindowAccessPath( match[ 1 ] ) || isDocumentAccessPath( match[ 1 ] ) );
+	const isBareGlobalCall = path === 'getSelection' &&
+		!isLocallyDefinedReference( { node: unwrapExpression( node.callee ), context } );
 
-	if ( !isBareGlobalCall && !isGlobalCall && !isCrossRootCall ) {
+	if ( !isBareGlobalCall && !isPrefixedCall ) {
 		return;
 	}
 
@@ -386,13 +388,23 @@ function unwrapExpression( node ) {
 }
 
 /**
- * Checks whether a path refers to the top-level document: `document`, `global.document`, or any
- * `*.ownerDocument` access.
+ * Checks whether a path refers to the top-level document: `document`, `window.document`,
+ * `global.document`, `global.window.document`, or any `*.ownerDocument` access.
  *
- * isDocumentAccessPath( 'global.document' ); // -> true
+ * isDocumentAccessPath( 'window.document' ); // -> true
  */
 function isDocumentAccessPath( path ) {
-	return /^(global\.)?document$/.test( path ) || /\.ownerDocument$/.test( path );
+	return /^(global\.)?(window\.)?document$/.test( path ) || /\.ownerDocument$/.test( path );
+}
+
+/**
+ * Checks whether a path refers to the top-level window: `window`, `global.window`, or any
+ * `*.defaultView` access.
+ *
+ * isWindowAccessPath( 'global.window' ); // -> true
+ */
+function isWindowAccessPath( path ) {
+	return /^(global\.)?window$/.test( path ) || /\.defaultView$/.test( path );
 }
 
 /**
