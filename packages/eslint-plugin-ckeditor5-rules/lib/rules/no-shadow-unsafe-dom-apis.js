@@ -20,7 +20,7 @@ module.exports = {
 			parentTraversal: 'Do not traverse `.{{ property }}` directly, use `getParentOrHostElement()` ' +
 				'to cross Shadow DOM boundaries correctly.',
 			getSelection: 'Do not call `{{ path }}(...)` directly, use `getSelection()` from the Shadow DOM utils.',
-			contains: 'Do not use `{{ path }}(...)`, use `isConnected()` instead — ' +
+			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — ' +
 				'`contains()` does not cross Shadow DOM boundaries.',
 			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root ' +
 				'— `{{ path }}` ignores Shadow DOM.',
@@ -162,7 +162,7 @@ function checkCallGetSelection( { node, context, path } ) {
  * not cross Shadow DOM boundaries. A `.body.contains(...)` call on a non-document object is not
  * restricted here, since `body` is a common, unrelated property name.
  *
- * document.body.contains( el ); // not allowed, use isConnected()
+ * document.body.contains( el ); // not allowed, use isConnected
  */
 function checkCallContains( { node, context, path } ) {
 	const isOwnerDocumentContains = /\.ownerDocument\.contains$/.test( path );
