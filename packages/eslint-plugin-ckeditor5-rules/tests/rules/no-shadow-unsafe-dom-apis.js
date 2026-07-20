@@ -171,6 +171,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling document.contains(...)',
+			code: 'document.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling global.document.contains(...)',
+			code: 'global.document.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
 			name: 'Calling document.body.contains(...)',
 			code: 'document.body.contains( el );\n',
 			errors: [
@@ -291,18 +307,26 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Attaching a global mouseenter listener on document',
+			name: 'Attaching a mouseenter listener on document',
 			code: 'document.addEventListener( \'mouseenter\', listener );\n',
 			errors: [
-				{ messageId: 'globalDocumentListener' }
+				{ messageId: 'documentListener' }
 			]
 		},
 
 		{
-			name: 'Attaching a global scroll listener on global.document',
+			name: 'Attaching a scroll listener on global.document',
 			code: 'global.document.addEventListener( \'scroll\', listener );\n',
 			errors: [
-				{ messageId: 'globalDocumentListener' }
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
+			name: 'Attaching a mouseleave listener on *.ownerDocument',
+			code: 'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
 			]
 		},
 
@@ -327,6 +351,30 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'someEl.ownerDocument.body.appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Traversing .parentNode through optional chaining',
+			code: 'const parent = el?.parentNode;\n',
+			errors: [
+				{ messageId: 'parentTraversal' }
+			]
+		},
+
+		{
+			name: 'Reading document.activeElement through optional chaining',
+			code: 'const el = document?.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
+			name: 'Calling document.querySelector(...) through optional chaining',
+			code: 'document?.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
 			]
 		}
 	]

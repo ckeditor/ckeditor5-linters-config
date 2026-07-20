@@ -20,7 +20,7 @@ module.exports = {
 			parentTraversal: 'Do not traverse `.{{ property }}` directly, use `getParentOrHostElement()` ' +
 				'to cross Shadow DOM boundaries correctly.',
 			getSelection: 'Do not call `{{ path }}(...)` directly, use `getSelection()` from the Shadow DOM utils.',
-			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — ' +
+			contains: 'Do not use `{{ path }}(...)`, use `isConnected()` instead — ' +
 				'`contains()` does not cross Shadow DOM boundaries.',
 			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root ' +
 				'— `{{ path }}` ignores Shadow DOM.',
@@ -29,7 +29,7 @@ module.exports = {
 			documentQuerySelector: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
 				'editor\'s own root instead — it finds nothing inside a shadow root.',
 			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()`.',
-			globalDocumentListener: 'Do not attach a global `{{ event }}` listener on `document`, use a per-root ' +
+			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}`, use a per-root ' +
 				'listener registry — it will not fire for events inside other shadow roots.',
 			bodyAppendChild: 'Do not append directly to `{{ path }}(...)`, use the shadow-aware body-collection root.'
 		}
@@ -48,7 +48,7 @@ module.exports = {
 			checkCallCaretFromPoint,
 			checkCallDocumentQuerySelector,
 			checkCallComposedPath,
-			checkCallGlobalDocumentListener,
+			checkCallDocumentListener,
 			checkCallBodyAppendChild
 		];
 
@@ -157,19 +157,25 @@ function checkCallGetSelection( { node, context, path } ) {
 }
 
 /**
- * Flags `.contains(...)` called on the top-level document body (`document.body`,
- * `global.document.body`, or `*.ownerDocument.body`) or directly on `*.ownerDocument`, which does
- * not cross Shadow DOM boundaries. A `.body.contains(...)` call on a non-document object is not
- * restricted here, since `body` is a common, unrelated property name.
+ * Flags `.contains(...)` called directly on the top-level document (`document`, `global.document`,
+ * or `*.ownerDocument`) or on its body (`document.body`, `global.document.body`, or
+ * `*.ownerDocument.body`), which does not cross Shadow DOM boundaries. A `.body.contains(...)` call
+ * on a non-document object is not restricted here, since `body` is a common, unrelated property name.
  *
- * document.body.contains( el ); // not allowed, use isConnected
+ * document.contains( el ); // not allowed, use isConnected()
  */
 function checkCallContains( { node, context, path } ) {
-	const isOwnerDocumentContains = /\.ownerDocument\.contains$/.test( path );
-	const bodyMatch = path.match( /^(.+)\.body\.contains$/ );
+	const match = path.match( /^(.+)\.contains$/ );
+
+	if ( !match ) {
+		return;
+	}
+
+	const bodyMatch = match[ 1 ].match( /^(.+)\.body$/ );
+	const isDocumentContains = isDocumentAccessPath( match[ 1 ] );
 	const isDocumentBodyContains = Boolean( bodyMatch ) && isDocumentAccessPath( bodyMatch[ 1 ] );
 
-	if ( !isOwnerDocumentContains && !isDocumentBodyContains ) {
+	if ( !isDocumentContains && !isDocumentBodyContains ) {
 		return;
 	}
 
@@ -270,13 +276,16 @@ function checkCallComposedPath( { node, context, path } ) {
 }
 
 /**
- * Flags global `mouseenter` / `mouseleave` / `scroll` listeners attached to `document`, which will
- * not fire for events inside other shadow roots.
+ * Flags `mouseenter` / `mouseleave` / `scroll` listeners attached to the top-level document
+ * (`document`, `global.document`, or `*.ownerDocument`), which will not fire for events inside
+ * other shadow roots.
  *
  * document.addEventListener( 'scroll', listener ); // not allowed
  */
-function checkCallGlobalDocumentListener( { node, context, path } ) {
-	if ( !/^(global\.document|document)\.(addEventListener|removeEventListener)$/.test( path ) ) {
+function checkCallDocumentListener( { node, context, path } ) {
+	const match = path.match( /^(.+)\.(addEventListener|removeEventListener)$/ );
+
+	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
 		return;
 	}
 
@@ -289,8 +298,8 @@ function checkCallGlobalDocumentListener( { node, context, path } ) {
 
 	context.report( {
 		node,
-		messageId: 'globalDocumentListener',
-		data: { event: eventName }
+		messageId: 'documentListener',
+		data: { event: eventName, path }
 	} );
 }
 
