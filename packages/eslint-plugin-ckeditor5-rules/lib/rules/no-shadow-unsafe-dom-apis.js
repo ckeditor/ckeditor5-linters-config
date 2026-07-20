@@ -138,10 +138,10 @@ function checkMemberParentTraversal( { node, context } ) {
  * Flags calls to `getSelection()` in any global or cross-root form. A bare `getSelection()` call is
  * only flagged when it resolves to the global one, not to a locally imported or declared helper.
  *
- * window.getSelection(); // not allowed
+ * global.window.getSelection(); // not allowed
  */
 function checkCallGetSelection( { node, context, path } ) {
-	const isGlobalCall = /^(window|document|global)\.getSelection$/.test( path );
+	const isGlobalCall = /^(global\.)?(window|document)\.getSelection$/.test( path ) || path === 'global.getSelection';
 	const isCrossRootCall = /\.(ownerDocument|defaultView)\.getSelection$/.test( path );
 	const isBareGlobalCall = path === 'getSelection' && !isLocallyDefinedReference( { node: node.callee, context } );
 
@@ -157,13 +157,19 @@ function checkCallGetSelection( { node, context, path } ) {
 }
 
 /**
- * Flags `.contains(...)` called on `document.body` or `*.ownerDocument`, which does not cross
- * Shadow DOM boundaries.
+ * Flags `.contains(...)` called on the top-level document body (`document.body`,
+ * `global.document.body`, or `*.ownerDocument.body`) or directly on `*.ownerDocument`, which does
+ * not cross Shadow DOM boundaries. A `.body.contains(...)` call on a non-document object is not
+ * restricted here, since `body` is a common, unrelated property name.
  *
  * document.body.contains( el ); // not allowed, use isConnected()
  */
 function checkCallContains( { node, context, path } ) {
-	if ( !/\.(body|ownerDocument)\.contains$/.test( path ) ) {
+	const isOwnerDocumentContains = /\.ownerDocument\.contains$/.test( path );
+	const bodyMatch = path.match( /^(.+)\.body\.contains$/ );
+	const isDocumentBodyContains = Boolean( bodyMatch ) && isDocumentAccessPath( bodyMatch[ 1 ] );
+
+	if ( !isOwnerDocumentContains && !isDocumentBodyContains ) {
 		return;
 	}
 

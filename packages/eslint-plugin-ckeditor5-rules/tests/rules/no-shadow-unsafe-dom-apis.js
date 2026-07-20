@@ -47,6 +47,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling .body.contains(...) on a non-document object',
+			code: 'const has = myWidget.body.contains( el );\n'
+		},
+
+		{
 			name: 'Calling elementFromPoint on a custom root, not on document',
 			code: 'const found = someRoot.elementFromPoint( x, y );\n'
 		},
@@ -142,6 +147,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling global.window.getSelection()',
+			code: 'const sel = global.window.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling global.document.getSelection()',
+			code: 'const sel = global.document.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
 			name: 'Calling *.ownerDocument.defaultView.getSelection()',
 			code: 'const sel = someEl.ownerDocument.defaultView.getSelection();\n',
 			errors: [
@@ -158,8 +179,24 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling global.document.body.contains(...)',
+			code: 'global.document.body.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
 			name: 'Calling *.ownerDocument.contains(...)',
 			code: 'someEl.ownerDocument.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling *.ownerDocument.body.contains(...)',
+			code: 'someEl.ownerDocument.body.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
