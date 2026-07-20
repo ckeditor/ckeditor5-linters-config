@@ -32,8 +32,13 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling getSelection from the Shadow DOM utils',
-			code: 'const sel = getSelectionFromShadowUtils( root );\n'
+			name: 'Calling a locally imported helper also named getSelection',
+			code: 'import { getSelection } from \'./shadow-dom-utils.js\';\nconst sel = getSelection();\n'
+		},
+
+		{
+			name: 'Calling a locally declared function also named getSelection',
+			code: 'function getSelection() { return null; }\nconst sel = getSelection();\n'
 		},
 
 		{
@@ -52,7 +57,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'querySelector called on a custom root, not on the global document',
+			name: 'querySelector called on a custom root, not on the top-level document',
 			code: 'editingView.document.getRoot().querySelector( \'.foo\' );\n'
 		},
 
@@ -75,6 +80,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Reading document.activeElement',
 			code: 'const el = document.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement' }
+			]
+		},
+
+		{
+			name: 'Reading global.document.activeElement',
+			code: 'const el = global.document.activeElement;\n',
 			errors: [
 				{ messageId: 'activeElement' }
 			]
@@ -113,7 +126,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling the bare, global getSelection()',
+			name: 'Calling the bare, unresolved global getSelection()',
 			code: 'const sel = getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
@@ -169,6 +182,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling global.document.elementFromPoint(...)',
+			code: 'global.document.elementFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'elementFromPoint' }
+			]
+		},
+
+		{
+			name: 'Calling *.ownerDocument.elementFromPoint(...)',
+			code: 'someEl.ownerDocument.elementFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'elementFromPoint' }
+			]
+		},
+
+		{
 			name: 'Calling document.caretRangeFromPoint(...) without { shadowRoots }',
 			code: 'document.caretRangeFromPoint( x, y );\n',
 			errors: [
@@ -185,18 +214,34 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling document.querySelector(...) against the global document',
+			name: 'Calling document.querySelector(...) against the top-level document',
 			code: 'document.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'globalQuerySelector' }
+				{ messageId: 'documentQuerySelector' }
 			]
 		},
 
 		{
-			name: 'Calling document.getElementById(...) against the global document',
+			name: 'Calling document.getElementById(...) against the top-level document',
 			code: 'document.getElementById( \'foo\' );\n',
 			errors: [
-				{ messageId: 'globalQuerySelector' }
+				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
+			name: 'Calling global.document.querySelector(...)',
+			code: 'global.document.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
+			name: 'Calling *.ownerDocument.querySelector(...)',
+			code: 'someEl.ownerDocument.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
 			]
 		},
 
@@ -227,6 +272,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Appending directly to document.body',
 			code: 'document.body.appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Appending directly to global.document.body',
+			code: 'global.document.body.appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Appending directly to *.ownerDocument.body',
+			code: 'someEl.ownerDocument.body.appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
 			]

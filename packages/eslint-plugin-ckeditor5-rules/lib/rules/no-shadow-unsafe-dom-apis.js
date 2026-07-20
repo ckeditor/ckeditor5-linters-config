@@ -26,12 +26,12 @@ module.exports = {
 				'— `{{ path }}` ignores Shadow DOM.',
 			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, ' +
 				'otherwise it will not resolve carets inside Shadow DOM.',
-			globalQuerySelector: 'Do not query `{{ path }}(...)` against the global `document`, query the editor\'s ' +
-				'own root instead — it finds nothing inside a shadow root.',
+			documentQuerySelector: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
+				'editor\'s own root instead — it finds nothing inside a shadow root.',
 			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()`.',
 			globalDocumentListener: 'Do not attach a global `{{ event }}` listener on `document`, use a per-root ' +
 				'listener registry — it will not fire for events inside other shadow roots.',
-			bodyAppendChild: 'Do not append directly to `document.body`, use the shadow-aware body-collection root.'
+			bodyAppendChild: 'Do not append directly to `{{ path }}(...)`, use the shadow-aware body-collection root.'
 		}
 	},
 	create( context ) {
@@ -46,7 +46,7 @@ module.exports = {
 			checkCallContains,
 			checkCallElementFromPoint,
 			checkCallCaretFromPoint,
-			checkCallGlobalQuerySelector,
+			checkCallDocumentQuerySelector,
 			checkCallComposedPath,
 			checkCallGlobalDocumentListener,
 			checkCallBodyAppendChild
@@ -76,8 +76,8 @@ module.exports = {
 };
 
 /**
- * Flags reading `document.activeElement` or `*.ownerDocument.activeElement`, which is not tracked
- * across Shadow DOM boundaries.
+ * Flags reading `document.activeElement`, `global.document.activeElement`, or
+ * `*.ownerDocument.activeElement`, which is not tracked across Shadow DOM boundaries.
  *
  * document.activeElement; // not allowed, use getActiveElement()
  */
@@ -88,7 +88,7 @@ function checkMemberActiveElement( { node, context } ) {
 
 	const objectPath = getAccessPath( { node: node.object } );
 
-	if ( !/(^document$|\.ownerDocument$)/.test( objectPath ) ) {
+	if ( !isDocumentAccessPath( objectPath ) ) {
 		return;
 	}
 
@@ -135,16 +135,17 @@ function checkMemberParentTraversal( { node, context } ) {
 }
 
 /**
- * Flags calls to `getSelection()` in any global or cross-root form.
+ * Flags calls to `getSelection()` in any global or cross-root form. A bare `getSelection()` call is
+ * only flagged when it resolves to the global one, not to a locally imported or declared helper.
  *
  * window.getSelection(); // not allowed
  */
 function checkCallGetSelection( { node, context, path } ) {
-	const isBareCall = path === 'getSelection';
 	const isGlobalCall = /^(window|document|global)\.getSelection$/.test( path );
 	const isCrossRootCall = /\.(ownerDocument|defaultView)\.getSelection$/.test( path );
+	const isBareGlobalCall = path === 'getSelection' && !isLocallyDefinedReference( { node: node.callee, context } );
 
-	if ( !isBareCall && !isGlobalCall && !isCrossRootCall ) {
+	if ( !isBareGlobalCall && !isGlobalCall && !isCrossRootCall ) {
 		return;
 	}
 
@@ -174,12 +175,15 @@ function checkCallContains( { node, context, path } ) {
 }
 
 /**
- * Flags `document.elementFromPoint(...)` / `document.elementsFromPoint(...)`, which ignore Shadow DOM.
+ * Flags `document.elementFromPoint(...)` / `elementsFromPoint(...)` called on the top-level document
+ * (`document`, `global.document`, or `*.ownerDocument`), which ignores Shadow DOM.
  *
  * document.elementFromPoint( x, y ); // not allowed
  */
 function checkCallElementFromPoint( { node, context, path } ) {
-	if ( !/^document\.(elementFromPoint|elementsFromPoint)$/.test( path ) ) {
+	const match = path.match( /^(.+)\.(elementFromPoint|elementsFromPoint)$/ );
+
+	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
 		return;
 	}
 
@@ -223,19 +227,22 @@ function checkCallCaretFromPoint( { node, context, path } ) {
 }
 
 /**
- * Flags `document.querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` called
- * against the global `document`, which finds nothing inside a shadow root.
+ * Flags `querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` called on the
+ * top-level document (`document`, `global.document`, or `*.ownerDocument`), which finds nothing
+ * inside a shadow root.
  *
  * document.querySelector( '.foo' ); // not allowed
  */
-function checkCallGlobalQuerySelector( { node, context, path } ) {
-	if ( !/^document\.(querySelector|querySelectorAll|getElementById)$/.test( path ) ) {
+function checkCallDocumentQuerySelector( { node, context, path } ) {
+	const match = path.match( /^(.+)\.(querySelector|querySelectorAll|getElementById)$/ );
+
+	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
 		return;
 	}
 
 	context.report( {
 		node,
-		messageId: 'globalQuerySelector',
+		messageId: 'documentQuerySelector',
 		data: { path }
 	} );
 }
@@ -282,18 +289,22 @@ function checkCallGlobalDocumentListener( { node, context, path } ) {
 }
 
 /**
- * Flags appending directly to `document.body`.
+ * Flags appending directly to the top-level document body (`document.body`, `global.document.body`,
+ * or `*.ownerDocument.body`).
  *
  * document.body.appendChild( el ); // not allowed
  */
 function checkCallBodyAppendChild( { node, context, path } ) {
-	if ( path !== 'document.body.appendChild' ) {
+	const match = path.match( /^(.+)\.body\.appendChild$/ );
+
+	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
 		return;
 	}
 
 	context.report( {
 		node,
-		messageId: 'bodyAppendChild'
+		messageId: 'bodyAppendChild',
+		data: { path }
 	} );
 }
 
@@ -327,4 +338,38 @@ function getAccessPath( { node } ) {
 	}
 
 	return '*';
+}
+
+/**
+ * Checks whether a path refers to the top-level document: `document`, `global.document`, or any
+ * `*.ownerDocument` access.
+ *
+ * isDocumentAccessPath( 'global.document' ); // -> true
+ */
+function isDocumentAccessPath( path ) {
+	return /^(global\.)?document$/.test( path ) || /\.ownerDocument$/.test( path );
+}
+
+/**
+ * Checks whether an identifier reference resolves to a variable declared or imported in the source
+ * (as opposed to an unresolved, implicitly global one).
+ *
+ * import { getSelection } from './shadow-dom-utils.js'; // -> resolves locally, not global
+ */
+function isLocallyDefinedReference( { node, context } ) {
+	const sourceCode = context.sourceCode || context.getSourceCode();
+
+	let scope = sourceCode.getScope ? sourceCode.getScope( node ) : context.getScope();
+
+	while ( scope ) {
+		const reference = scope.references.find( ref => ref.identifier === node );
+
+		if ( reference ) {
+			return Boolean( reference.resolved && reference.resolved.defs.length > 0 );
+		}
+
+		scope = scope.upper;
+	}
+
+	return false;
 }
