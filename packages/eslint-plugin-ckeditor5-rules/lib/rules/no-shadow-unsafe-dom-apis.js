@@ -299,7 +299,7 @@ function checkCallDocumentListener( { node, context, path } ) {
 	context.report( {
 		node,
 		messageId: 'documentListener',
-		data: { event: eventName, path }
+		data: { event: eventName, path: match[ 1 ] }
 	} );
 }
 
