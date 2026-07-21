@@ -460,6 +460,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling window.document.querySelector(...)',
+			code: 'window.document.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.querySelector(...)',
+			code: 'global.window.document.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentQuerySelector' }
+			]
+		},
+
+		{
 			name: 'Calling *.ownerDocument.querySelector(...)',
 			code: 'someEl.ownerDocument.querySelector( \'.foo\' );\n',
 			errors: [
