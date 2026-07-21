@@ -276,6 +276,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling window.document.contains(...)',
+			code: 'window.document.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.contains(...)',
+			code: 'global.window.document.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
 			name: 'Calling document.body.contains(...)',
 			code: 'document.body.contains( el );\n',
 			errors: [
@@ -286,6 +302,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling global.document.body.contains(...)',
 			code: 'global.document.body.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling window.document.body.contains(...)',
+			code: 'window.document.body.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.body.contains(...)',
+			code: 'global.window.document.body.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
