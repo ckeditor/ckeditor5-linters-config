@@ -548,6 +548,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Appending directly to window.document.body',
+			code: 'window.document.body.appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Appending directly to global.window.document.body',
+			code: 'global.window.document.body.appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
 			name: 'Appending directly to *.ownerDocument.body',
 			code: 'someEl.ownerDocument.body.appendChild( el );\n',
 			errors: [
