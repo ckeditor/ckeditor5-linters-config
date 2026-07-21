@@ -13,28 +13,28 @@ module.exports = {
 			category: 'CKEditor5'
 		},
 		messages: {
-			activeElement: 'Do not read `{{ path }}.activeElement` directly, use `getActiveElement()` — ' +
+			activeElement: 'Do not read `{{ path }}.activeElement` directly — ' +
 				'it is not tracked across Shadow DOM boundaries.',
-			shadowRootDiscovery: 'Do not use `.shadowRoot` for root discovery at read time. ' +
-				'Keep a held reference or use `getRootNode()`.',
-			parentTraversal: 'Do not traverse `.{{ property }}` directly, use `getParentOrHostElement()` ' +
-				'to cross Shadow DOM boundaries correctly.',
-			getSelection: 'Do not call `{{ path }}(...)` directly, use `getSelection()` from the Shadow DOM utils.',
-			contains: 'Do not use `{{ path }}(...)`, use `isConnected()` instead — ' +
+			shadowRootDiscovery: 'Do not use `.shadowRoot` for root discovery at read time, keep a held reference ' +
+				'or use `getRootNode()` instead.',
+			parentTraversal: 'Do not traverse `.{{ property }}` directly — ' +
+				'it does not cross Shadow DOM boundaries correctly.',
+			getSelection: 'Do not call `{{ path }}(...)` directly — it does not account for Shadow DOM boundaries.',
+			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — ' +
 				'`contains()` does not cross Shadow DOM boundaries.',
 			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root ' +
 				'— `{{ path }}` ignores Shadow DOM.',
 			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, ' +
 				'otherwise it will not resolve carets inside Shadow DOM.',
 			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and ' +
-				'always ignores Shadow DOM, regardless of any argument passed. Use `caretPositionFromPoint()` from ' +
-				'the Shadow DOM utils instead.',
+				'always ignores Shadow DOM, regardless of any argument passed.',
 			documentQuerySelector: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
 				'editor\'s own root instead — it finds nothing inside a shadow root.',
-			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()`.',
-			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}`, use a per-root ' +
-				'listener registry — it will not fire for events inside other shadow roots.',
-			bodyAppendChild: 'Do not append directly to `{{ path }}`, use the shadow-aware body-collection root.'
+			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use ' +
+				'`getRootNode()` instead.',
+			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — ' +
+				'it will not fire for events inside other shadow roots.',
+			bodyAppendChild: 'Do not append directly to `{{ path }}` — it does not account for Shadow DOM boundaries.'
 		}
 	},
 	create( context ) {
@@ -82,7 +82,7 @@ module.exports = {
  * Flags reading `document.activeElement`, `global.document.activeElement`, or
  * `*.ownerDocument.activeElement`, which is not tracked across Shadow DOM boundaries.
  *
- * document.activeElement; // not allowed, use getActiveElement()
+ * document.activeElement; // not allowed
  */
 function checkMemberActiveElement( { node, context } ) {
 	if ( node.property.name !== 'activeElement' ) {
@@ -121,7 +121,7 @@ function checkMemberShadowRootDiscovery( { node, context } ) {
 /**
  * Flags raw `.parentNode` / `.parentElement` traversal, which does not cross Shadow DOM boundaries.
  *
- * el.parentNode; // not allowed, use getParentOrHostElement()
+ * el.parentNode; // not allowed
  */
 function checkMemberParentTraversal( { node, context } ) {
 	const propertyName = node.property.name;
@@ -167,7 +167,7 @@ function checkCallGetSelection( { node, context, path } ) {
  * `*.ownerDocument.body`), which does not cross Shadow DOM boundaries. A `.body.contains(...)` call
  * on a non-document object is not restricted here, since `body` is a common, unrelated property name.
  *
- * document.contains( el ); // not allowed, use isConnected()
+ * document.contains( el ); // not allowed, use isConnected
  */
 function checkCallContains( { node, context, path } ) {
 	const match = path.match( /^(.+)\.contains$/ );
