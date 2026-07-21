@@ -125,6 +125,16 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Checking ancestry via composedPath().includes(...) kept as an array',
+			code: 'const path = event.composedPath();\npath.includes( contextElement );\n'
+		},
+
+		{
+			name: 'Checking ancestry via composedPath().includes(...) chained directly',
+			code: 'event.composedPath().includes( contextElement );\n'
+		},
+
+		{
 			name: 'addEventListener with an event other than mouseenter, mouseleave or scroll',
 			code: 'document.addEventListener( \'click\', listener );\n'
 		},
@@ -590,6 +600,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Using composedPath() for root discovery',
 			code: 'const root = event.composedPath()[ 0 ];\n',
+			errors: [
+				{ messageId: 'composedPath' }
+			]
+		},
+
+		{
+			name: 'Destructuring the first node out of composedPath() via a declaration',
+			code: 'const [ target ] = event.composedPath();\n',
+			errors: [
+				{ messageId: 'composedPath' }
+			]
+		},
+
+		{
+			name: 'Destructuring the first node out of composedPath() via an assignment',
+			code: '[ target ] = event.composedPath();\n',
 			errors: [
 				{ messageId: 'composedPath' }
 			]

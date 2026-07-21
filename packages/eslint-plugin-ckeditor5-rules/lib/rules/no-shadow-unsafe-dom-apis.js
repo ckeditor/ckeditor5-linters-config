@@ -299,12 +299,15 @@ function checkCallDocumentElementLookup( { node, context, path } ) {
 }
 
 /**
- * Flags `composedPath()` used for root discovery.
+ * Flags `composedPath()` only when it's used for root discovery — indexed or destructured right away
+ * to pull out a single node. Keeping the result as an array and checking membership (`.includes(...)`,
+ * `.some(...)`, etc.) is the correct, shadow-DOM-safe way to test ancestry and is not restricted here.
  *
  * event.composedPath()[ 0 ]; // not allowed, use getRootNode()
+ * path.includes( contextElement ); // fine, not a root-discovery read
  */
 function checkCallComposedPath( { node, context, path } ) {
-	if ( !/(^|\.)composedPath$/.test( path ) ) {
+	if ( !/(^|\.)composedPath$/.test( path ) || !isImmediatelyIndexedOrDestructured( node ) ) {
 		return;
 	}
 
@@ -312,6 +315,30 @@ function checkCallComposedPath( { node, context, path } ) {
 		node,
 		messageId: 'composedPath'
 	} );
+}
+
+/**
+ * Checks whether a call expression's result is immediately indexed (`foo()[ 0 ]`) or array-destructured
+ * (`const [ x ] = foo();` / `[ x ] = foo();`), as opposed to kept as a whole array.
+ *
+ * isImmediatelyIndexedOrDestructured( node ); // node for `event.composedPath()[ 0 ]` -> true
+ */
+function isImmediatelyIndexedOrDestructured( node ) {
+	const parent = node.parent;
+
+	if ( parent.type === 'MemberExpression' && parent.object === node && parent.computed ) {
+		return true;
+	}
+
+	if ( parent.type === 'VariableDeclarator' && parent.init === node && parent.id.type === 'ArrayPattern' ) {
+		return true;
+	}
+
+	if ( parent.type === 'AssignmentExpression' && parent.right === node && parent.left.type === 'ArrayPattern' ) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
