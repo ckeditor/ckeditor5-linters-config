@@ -27,6 +27,7 @@ module.exports = {
 		'no-missing-var-function': require( './rules/no-missing-var-function' ),
 		'no-relative-imports': require( './rules/no-relative-imports' ),
 		'no-scoped-imports-within-package': require( './rules/no-scoped-imports-within-package' ),
+		'no-shadow-unsafe-dom-apis': require( './rules/no-shadow-unsafe-dom-apis' ),
 		'non-public-members-as-internal': require( './rules/non-public-members-as-internal' ),
 		'prevent-license-key-leak': require( './rules/prevent-license-key-leak' ),
 		'require-as-const-returns-in-methods': require( './rules/require-as-const-returns-in-methods' ),
