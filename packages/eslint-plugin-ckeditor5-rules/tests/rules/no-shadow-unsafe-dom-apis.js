@@ -364,6 +364,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling window.document.elementFromPoint(...)',
+			code: 'window.document.elementFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'elementFromPoint' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.elementFromPoint(...)',
+			code: 'global.window.document.elementFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'elementFromPoint' }
+			]
+		},
+
+		{
 			name: 'Calling *.ownerDocument.elementFromPoint(...)',
 			code: 'someEl.ownerDocument.elementFromPoint( x, y );\n',
 			errors: [
