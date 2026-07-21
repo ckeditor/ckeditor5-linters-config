@@ -188,6 +188,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling global.getSelection()',
+			code: 'const sel = global.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
 			name: 'Calling document.getSelection()',
 			code: 'const sel = document.getSelection();\n',
 			errors: [
@@ -222,6 +230,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling window.document.getSelection()',
 			code: 'const sel = window.document.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.getSelection()',
+			code: 'const sel = global.window.document.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling *.ownerDocument.getSelection()',
+			code: 'const sel = someEl.ownerDocument.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
