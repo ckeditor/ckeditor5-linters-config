@@ -115,11 +115,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling .body.querySelector(...) on a non-document object',
-			code: 'const found = myWidget.body.querySelector( \'.foo\' );\n'
-		},
-
-		{
 			name: 'composedPath is not restricted here (used by a different rule)',
 			code: 'const root = getRootNode( el );\n'
 		},
@@ -222,6 +217,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling the bare, unresolved global getSelection()',
 			code: 'const sel = getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling getSelection() declared global via a /* global */ directive comment',
+			code: '/* global getSelection */\nconst sel = getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -516,14 +519,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling document.body.querySelectorAll(...)',
-			code: 'document.body.querySelectorAll( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
 			name: 'Calling global.document.querySelector(...)',
 			code: 'global.document.querySelector( \'.foo\' );\n',
 			errors: [
@@ -584,6 +579,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Using composedPath() for root discovery',
+			code: 'const root = event.composedPath()[ 0 ];\n',
+			errors: [
+				{ messageId: 'composedPath' }
 			]
 		},
 

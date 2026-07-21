@@ -30,6 +30,8 @@ module.exports = {
 				'always ignores Shadow DOM, regardless of any argument passed.',
 			documentElementLookup: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
 				'editor\'s own root instead — it finds nothing inside a shadow root.',
+			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use ' +
+				'`getRootNode()` instead.',
 			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — ' +
 				'it will not fire for events inside other shadow roots.',
 			bodyAppendChild: 'Do not append directly to `{{ path }}` — it does not account for Shadow DOM boundaries.',
@@ -50,6 +52,7 @@ module.exports = {
 			checkCallElementFromPoint,
 			checkCallCaretFromPoint,
 			checkCallDocumentElementLookup,
+			checkCallComposedPath,
 			checkCallDocumentListener,
 			checkCallBodyAppendChild,
 			checkCallDocumentTreeWalker
@@ -296,6 +299,22 @@ function checkCallDocumentElementLookup( { node, context, path } ) {
 }
 
 /**
+ * Flags `composedPath()` used for root discovery.
+ *
+ * event.composedPath()[ 0 ]; // not allowed, use getRootNode()
+ */
+function checkCallComposedPath( { node, context, path } ) {
+	if ( !/(^|\.)composedPath$/.test( path ) ) {
+		return;
+	}
+
+	context.report( {
+		node,
+		messageId: 'composedPath'
+	} );
+}
+
+/**
  * Flags `createTreeWalker(...)` / `createNodeIterator(...)` rooted at the top-level document or its
  * body (`document`, `global.document`, `document.body`, `global.document.body`, or
  * `*.ownerDocument[.body]`), since neither traverses into descendant shadow roots.
@@ -465,8 +484,9 @@ function isWindowAccessPath( path ) {
 }
 
 /**
- * Checks whether an identifier reference resolves to a variable declared or imported in the source
- * (as opposed to an unresolved, implicitly global one).
+ * Checks whether an identifier reference resolves to a variable declared or imported in the source,
+ * as opposed to an unresolved global, a `global` directive comment-declared global, or a sloppy-mode
+ * implicit global created by an undeclared assignment.
  *
  * import { getSelection } from './shadow-dom-utils.js'; // -> resolves locally, not global
  */
@@ -479,7 +499,13 @@ function isLocallyDefinedReference( { node, context } ) {
 		const reference = scope.references.find( ref => ref.identifier === node );
 
 		if ( reference ) {
-			return Boolean( reference.resolved && reference.resolved.defs.length > 0 );
+			const variable = reference.resolved;
+
+			if ( !variable || variable.eslintExplicitGlobal ) {
+				return false;
+			}
+
+			return variable.defs.some( def => def.type !== 'ImplicitGlobalVariable' );
 		}
 
 		scope = scope.upper;
