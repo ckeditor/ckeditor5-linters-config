@@ -26,12 +26,15 @@ module.exports = {
 				'— `{{ path }}` ignores Shadow DOM.',
 			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, ' +
 				'otherwise it will not resolve carets inside Shadow DOM.',
+			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and ' +
+				'always ignores Shadow DOM, regardless of any argument passed. Use `caretPositionFromPoint()` from ' +
+				'the Shadow DOM utils instead.',
 			documentQuerySelector: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
 				'editor\'s own root instead — it finds nothing inside a shadow root.',
 			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()`.',
 			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}`, use a per-root ' +
 				'listener registry — it will not fire for events inside other shadow roots.',
-			bodyAppendChild: 'Do not append directly to `{{ path }}(...)`, use the shadow-aware body-collection root.'
+			bodyAppendChild: 'Do not append directly to `{{ path }}`, use the shadow-aware body-collection root.'
 		}
 	},
 	create( context ) {
@@ -209,15 +212,35 @@ function checkCallElementFromPoint( { node, context, path } ) {
 }
 
 /**
- * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls missing a `{ shadowRoots }`
- * option, without which they will not resolve carets inside Shadow DOM.
+ * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls that cannot resolve carets
+ * inside Shadow DOM. Native `Document.caretRangeFromPoint(...)` only accepts coordinates and silently
+ * ignores any extra argument, so it is unsafe on a document access path no matter what is passed;
+ * `caretPositionFromPoint(...)` and a bare, non-member call are only unsafe when missing a
+ * `{ shadowRoots }` option.
  *
- * document.caretRangeFromPoint( x, y ); // not allowed, missing { shadowRoots }
+ * document.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
  */
 function checkCallCaretFromPoint( { node, context, path } ) {
-	const isTargetCall = /(^|\.)(caretRangeFromPoint|caretPositionFromPoint)$/.test( path );
+	const match = path.match( /^(?:(.+)\.)?(caretRangeFromPoint|caretPositionFromPoint)$/ );
 
-	if ( !isTargetCall || hasShadowRootsOption( { args: node.arguments } ) ) {
+	if ( !match ) {
+		return;
+	}
+
+	const [ , prefix, methodName ] = match;
+	const isUnsupportedNativeCall = methodName === 'caretRangeFromPoint' && Boolean( prefix ) && isDocumentAccessPath( prefix );
+
+	if ( isUnsupportedNativeCall ) {
+		context.report( {
+			node,
+			messageId: 'caretRangeFromPointUnsupported',
+			data: { path }
+		} );
+
+		return;
+	}
+
+	if ( hasShadowRootsOption( { args: node.arguments } ) ) {
 		return;
 	}
 
@@ -321,7 +344,7 @@ function checkCallBodyAppendChild( { node, context, path } ) {
 	context.report( {
 		node,
 		messageId: 'bodyAppendChild',
-		data: { path }
+		data: { path: `${ match[ 1 ] }.body` }
 	} );
 }
 
