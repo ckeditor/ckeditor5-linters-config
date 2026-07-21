@@ -508,6 +508,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Attaching a scroll listener on window.document',
+			code: 'window.document.addEventListener( \'scroll\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
+			name: 'Attaching a mouseenter listener on global.window.document',
+			code: 'global.window.document.addEventListener( \'mouseenter\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
 			name: 'Attaching a mouseleave listener on *.ownerDocument',
 			code: 'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
 			errors: [
