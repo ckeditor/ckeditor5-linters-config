@@ -183,6 +183,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling document.getSelection()',
+			code: 'const sel = document.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
 			name: 'Calling window.getSelection()',
 			code: 'const sel = window.getSelection();\n',
 			errors: [
