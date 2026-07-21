@@ -644,6 +644,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Attaching a pointerenter listener on document',
+			code: 'document.addEventListener( \'pointerenter\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
+			name: 'Attaching a pointerleave listener on global.document',
+			code: 'global.document.addEventListener( \'pointerleave\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener' }
+			]
+		},
+
+		{
 			name: 'Attaching a scroll listener on global.document',
 			code: 'global.document.addEventListener( \'scroll\', listener );\n',
 			errors: [

@@ -340,9 +340,9 @@ function checkCallDocumentTreeWalker( { node, context, path } ) {
 }
 
 /**
- * Flags `mouseenter` / `mouseleave` / `scroll` listeners attached to the top-level document
- * (`document`, `global.document`, or `*.ownerDocument`), which will not fire for events inside
- * other shadow roots.
+ * Flags `mouseenter` / `mouseleave` / `pointerenter` / `pointerleave` / `scroll` listeners attached
+ * to the top-level document (`document`, `global.document`, or `*.ownerDocument`), which will not
+ * fire for events inside other shadow roots.
  *
  * document.addEventListener( 'scroll', listener ); // not allowed
  */
@@ -356,7 +356,7 @@ function checkCallDocumentListener( { node, context, path } ) {
 	const eventArg = unwrapExpression( node.arguments[ 0 ] );
 	const eventName = eventArg && eventArg.type === 'Literal' ? eventArg.value : null;
 
-	if ( ![ 'mouseenter', 'mouseleave', 'scroll' ].includes( eventName ) ) {
+	if ( ![ 'mouseenter', 'mouseleave', 'pointerenter', 'pointerleave', 'scroll' ].includes( eventName ) ) {
 		return;
 	}
 
@@ -435,16 +435,20 @@ function isTypeScriptWrapperExpression( node ) {
 }
 
 /**
- * Strips TypeScript wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`) and
- * `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`) down to the expression
- * underneath, since neither changes what is actually being accessed or called.
+ * Strips TypeScript wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`),
+ * `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`), and
+ * `ParenthesizedExpression` wrappers (grouping parens preserved by some parsers, e.g. `(x)`) down to
+ * the expression underneath, since none of them change what is actually being accessed or called.
  *
  * unwrapExpression( node ); // node for `document!` -> node for `document`
  */
 function unwrapExpression( node ) {
 	let current = node;
 
-	while ( current && ( isTypeScriptWrapperExpression( current ) || current.type === 'ChainExpression' ) ) {
+	while (
+		current &&
+		( isTypeScriptWrapperExpression( current ) || [ 'ChainExpression', 'ParenthesizedExpression' ].includes( current.type ) )
+	) {
 		current = current.expression;
 	}
 
