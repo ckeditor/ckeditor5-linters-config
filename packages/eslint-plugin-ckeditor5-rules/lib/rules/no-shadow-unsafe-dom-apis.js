@@ -5,6 +5,31 @@
 
 'use strict';
 
+const DOCUMENT_ELEMENT_LOOKUP_METHODS = new Set( [
+	'querySelector',
+	'querySelectorAll',
+	'getElementById',
+	'getElementsByTagName',
+	'getElementsByClassName',
+	'getElementsByName'
+] );
+
+const DOCUMENT_LISTENER_EVENTS = new Set( [
+	'mouseenter',
+	'mouseleave',
+	'pointerenter',
+	'pointerleave',
+	'scroll'
+] );
+
+const EXPRESSION_WRAPPERS = new Set( [
+	'ChainExpression',
+	'TSAsExpression',
+	'TSNonNullExpression',
+	'TSSatisfiesExpression',
+	'TSTypeAssertion'
+] );
+
 module.exports = {
 	meta: {
 		type: 'problem',
@@ -13,507 +38,335 @@ module.exports = {
 			category: 'CKEditor5'
 		},
 		messages: {
-			activeElement: 'Do not read `{{ path }}.activeElement` directly — ' +
-				'it is not tracked across Shadow DOM boundaries.',
-			shadowRootDiscovery: 'Do not use `.shadowRoot` for root discovery at read time, keep a held reference ' +
-				'or use `getRootNode()` instead.',
-			parentTraversal: 'Do not traverse `.{{ property }}` directly — ' +
-				'it does not cross Shadow DOM boundaries correctly.',
+			/* eslint-disable @stylistic/max-len */
+			activeElement: 'Do not read `{{ path }}.activeElement` directly — it is not tracked across Shadow DOM boundaries.',
+			shadowRootDiscovery: 'Do not use `.shadowRoot` for root discovery at read time, keep a held reference or use `getRootNode()` instead.',
+			parentTraversal: 'Do not traverse `.{{ property }}` directly — it does not cross Shadow DOM boundaries correctly.',
 			getSelection: 'Do not call `{{ path }}(...)` directly — it does not account for Shadow DOM boundaries.',
-			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — ' +
-				'`contains()` does not cross Shadow DOM boundaries.',
-			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root ' +
-				'— `{{ path }}` ignores Shadow DOM.',
-			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, ' +
-				'otherwise it will not resolve carets inside Shadow DOM.',
-			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and ' +
-				'always ignores Shadow DOM, regardless of any argument passed.',
-			documentElementLookup: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
-				'editor\'s own root instead — it finds nothing inside a shadow root.',
-			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use ' +
-				'`getRootNode()` instead.',
-			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — ' +
-				'it will not fire for events inside other shadow roots.',
+			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — `contains()` does not cross Shadow DOM boundaries.',
+			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root — `{{ path }}` ignores Shadow DOM.',
+			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, otherwise it will not resolve carets inside Shadow DOM.',
+			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and always ignores Shadow DOM, regardless of any argument passed.',
+			documentElementLookup: 'Do not query `{{ path }}(...)` against the top-level document, query the editor\'s own root instead — it finds nothing inside a shadow root.',
+			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()` instead.',
+			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — it will not fire for events inside other shadow roots.',
 			bodyAppendChild: 'Do not append directly to `{{ path }}` — it does not account for Shadow DOM boundaries.',
-			documentTreeWalker: 'Do not call `{{ path }}(...)` rooted at `{{ root }}` — ' +
-				'it will not traverse into descendant shadow roots.'
+			documentTreeWalker: 'Do not call `{{ path }}(...)` rooted at `{{ root }}` — it will not traverse into descendant shadow roots.'
+			/* eslint-enable @stylistic/max-len */
 		}
 	},
-	create( context ) {
-		const memberExpressionChecks = [
-			checkMemberActiveElement,
-			checkMemberShadowRootDiscovery,
-			checkMemberParentTraversal
-		];
 
-		const callExpressionChecks = [
-			checkCallGetSelection,
-			checkCallContains,
-			checkCallElementFromPoint,
-			checkCallCaretFromPoint,
-			checkCallDocumentElementLookup,
-			checkCallComposedPath,
-			checkCallDocumentListener,
-			checkCallBodyAppendChild,
-			checkCallDocumentTreeWalker
-		];
+	create( context ) {
+		const sourceCode = context.sourceCode;
 
 		return {
 			MemberExpression( node ) {
-				if ( node.computed || node.property.type !== 'Identifier' ) {
+				const propertyName = getStaticPropertyName( node );
+
+				if ( propertyName === 'activeElement' && isDocumentExpression( node.object ) ) {
+					report( node, 'activeElement', { path: sourceCode.getText( unwrapExpression( node.object ) ) } );
+				} else if ( propertyName === 'shadowRoot' ) {
+					report( node, 'shadowRootDiscovery' );
+				} else if ( propertyName === 'parentNode' || propertyName === 'parentElement' ) {
+					report( node, 'parentTraversal', { property: propertyName } );
+				}
+			},
+
+			CallExpression( node ) {
+				const callee = unwrapExpression( node.callee );
+				const call = getCallTarget( callee );
+
+				if ( !call ) {
 					return;
 				}
 
-				const args = { node, context };
-
-				for ( const check of memberExpressionChecks ) {
-					check( args );
+				// A bare call resolving to a locally imported or declared helper (e.g. a shadow-aware
+				// `getSelection` wrapper) is fine — only the global functions are unsafe.
+				if ( !call.receiver && isLocallyDefinedReference( callee ) ) {
+					return;
 				}
-			},
-			CallExpression( node ) {
-				const args = { node, context, path: getAccessPath( { node: node.callee } ) };
 
-				for ( const check of callExpressionChecks ) {
-					check( args );
+				const path = sourceCode.getText( callee );
+
+				if ( call.name === 'getSelection' ) {
+					// A bare `getSelection()` call always resolves to the global one here — locally
+					// defined helpers were filtered out above.
+					if ( !call.receiver ||
+						isGlobalObjectExpression( call.receiver ) ||
+						isWindowExpression( call.receiver ) ||
+						isDocumentExpression( call.receiver )
+					) {
+						report( node, 'getSelection', { path } );
+					}
+				} else if ( call.name === 'contains' ) {
+					// A `.body.contains(...)` call on a non-document object is allowed, since `body`
+					// is a common, unrelated property name.
+					if ( isDocumentOrBodyExpression( call.receiver ) ) {
+						report( node, 'contains', { path } );
+					}
+				} else if ( call.name === 'elementFromPoint' || call.name === 'elementsFromPoint' ) {
+					if ( isDocumentExpression( call.receiver ) ) {
+						report( node, 'elementFromPoint', { path } );
+					}
+				} else if ( call.name === 'caretRangeFromPoint' || call.name === 'caretPositionFromPoint' ) {
+					checkCaretFromPoint( node, call, path );
+				} else if ( call.name === 'composedPath' ) {
+					report( node, 'composedPath' );
+				} else if ( DOCUMENT_ELEMENT_LOOKUP_METHODS.has( call.name ) ) {
+					if ( isDocumentOrBodyExpression( call.receiver ) ) {
+						report( node, 'documentElementLookup', { path } );
+					}
+				} else if ( call.name === 'addEventListener' || call.name === 'removeEventListener' ) {
+					checkDocumentListener( node, call );
+				} else if ( call.name === 'appendChild' ) {
+					if ( isDocumentBodyExpression( call.receiver ) ) {
+						report( node, 'bodyAppendChild', { path: sourceCode.getText( unwrapExpression( call.receiver ) ) } );
+					}
+				} else if ( call.name === 'createTreeWalker' || call.name === 'createNodeIterator' ) {
+					checkDocumentTreeWalker( node, path );
 				}
 			}
 		};
+
+		function report( node, messageId, data ) {
+			context.report( { node, messageId, data } );
+		}
+
+		/**
+		 * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls that cannot resolve
+		 * carets inside Shadow DOM. Native `Document.caretRangeFromPoint(...)` only accepts
+		 * coordinates and ignores additional options; other calls are unsafe when missing a
+		 * `{ shadowRoots }` option.
+		 *
+		 * document.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
+		 */
+		function checkCaretFromPoint( node, call, path ) {
+			if ( call.name === 'caretRangeFromPoint' && isDocumentExpression( call.receiver ) ) {
+				report( node, 'caretRangeFromPointUnsupported', { path } );
+			} else if ( !hasShadowRootsOption( node.arguments ) ) {
+				report( node, 'caretFromPoint', { path } );
+			}
+		}
+
+		/**
+		 * Flags `mouseenter` / `mouseleave` / `pointerenter` / `pointerleave` / `scroll` listeners
+		 * attached to the top-level document, which will not fire for events inside other shadow
+		 * roots.
+		 *
+		 * document.addEventListener( 'scroll', listener ); // not allowed
+		 */
+		function checkDocumentListener( node, call ) {
+			if ( !isDocumentExpression( call.receiver ) ) {
+				return;
+			}
+
+			const eventName = unwrapExpression( node.arguments[ 0 ] )?.value;
+
+			if ( DOCUMENT_LISTENER_EVENTS.has( eventName ) ) {
+				report( node, 'documentListener', {
+					event: eventName,
+					path: sourceCode.getText( unwrapExpression( call.receiver ) )
+				} );
+			}
+		}
+
+		/**
+		 * Flags `createTreeWalker(...)` / `createNodeIterator(...)` rooted at the top-level document
+		 * or its body, since neither traverses into descendant shadow roots. Only the root argument
+		 * matters here — the receiver the factory is called on does not affect the traversal.
+		 *
+		 * document.createTreeWalker( document.body, NodeFilter.SHOW_ELEMENT ); // not allowed
+		 */
+		function checkDocumentTreeWalker( node, path ) {
+			const root = node.arguments[ 0 ];
+
+			if ( isDocumentOrBodyExpression( root ) ) {
+				report( node, 'documentTreeWalker', { path, root: sourceCode.getText( root ) } );
+			}
+		}
+
+		/**
+		 * Checks whether an expression refers to the top-level document or its body.
+		 */
+		function isDocumentOrBodyExpression( node ) {
+			return isDocumentExpression( node ) || isDocumentBodyExpression( node );
+		}
+
+		/**
+		 * Checks whether an expression refers to the top-level document: `document`,
+		 * `window.document`, `global.document`, `global.window.document`, their `globalThis` / `self`
+		 * equivalents, or any `*.ownerDocument` access.
+		 *
+		 * isDocumentExpression( node ); // node for `window.document` -> true
+		 */
+		function isDocumentExpression( node ) {
+			const expression = unwrapExpression( node );
+
+			if ( isGlobalIdentifier( expression, 'document' ) ) {
+				return true;
+			}
+
+			if ( expression?.type !== 'MemberExpression' ) {
+				return false;
+			}
+
+			const propertyName = getStaticPropertyName( expression );
+
+			if ( propertyName === 'ownerDocument' ) {
+				return true;
+			}
+
+			return propertyName === 'document' && (
+				isGlobalObjectExpression( expression.object ) ||
+				isWindowExpression( expression.object )
+			);
+		}
+
+		/**
+		 * Checks whether an expression refers to the body of the top-level document.
+		 *
+		 * isDocumentBodyExpression( node ); // node for `global.document.body` -> true
+		 */
+		function isDocumentBodyExpression( node ) {
+			const expression = unwrapExpression( node );
+
+			return expression?.type === 'MemberExpression' &&
+				getStaticPropertyName( expression ) === 'body' &&
+				isDocumentExpression( expression.object );
+		}
+
+		/**
+		 * Checks whether an expression refers to the top-level window: `window`, `self`,
+		 * `global.window`, `globalThis.window`, or any `*.defaultView` access.
+		 *
+		 * isWindowExpression( node ); // node for `global.window` -> true
+		 */
+		function isWindowExpression( node ) {
+			const expression = unwrapExpression( node );
+
+			if ( isGlobalIdentifier( expression, 'window' ) || isGlobalIdentifier( expression, 'self' ) ) {
+				return true;
+			}
+
+			if ( expression?.type !== 'MemberExpression' ) {
+				return false;
+			}
+
+			const propertyName = getStaticPropertyName( expression );
+
+			return propertyName === 'defaultView' ||
+				( propertyName === 'window' && isGlobalObjectExpression( expression.object ) );
+		}
+
+		/**
+		 * Checks whether an expression refers to the `global` or `globalThis` object.
+		 */
+		function isGlobalObjectExpression( node ) {
+			const expression = unwrapExpression( node );
+
+			return isGlobalIdentifier( expression, 'global' ) ||
+				isGlobalIdentifier( expression, 'globalThis' );
+		}
+
+		/**
+		 * Checks that an identifier has the expected global name and is not shadowed by a local
+		 * binding.
+		 */
+		function isGlobalIdentifier( node, name ) {
+			return node?.type === 'Identifier' &&
+				node.name === name &&
+				!isLocallyDefinedReference( node );
+		}
+
+		/**
+		 * Checks whether an identifier reference resolves to a variable declared or imported in the
+		 * source, as opposed to an unresolved global, a `global` directive comment-declared global,
+		 * or a sloppy-mode implicit global created by an undeclared assignment.
+		 *
+		 * import { getSelection } from './shadow-dom-utils.js'; // resolves locally
+		 */
+		function isLocallyDefinedReference( node ) {
+			const reference = sourceCode.getScope( node ).references.find( ref => ref.identifier === node );
+
+			return reference?.resolved?.defs.some( definition => definition.type !== 'ImplicitGlobalVariable' ) ?? false;
+		}
 	}
 };
 
 /**
- * Flags reading `document.activeElement`, `global.document.activeElement`, or
- * `*.ownerDocument.activeElement`, which is not tracked across Shadow DOM boundaries.
- *
- * document.activeElement; // not allowed
+ * Extracts the static method name and receiver from a call target. For a bare identifier call the
+ * receiver is `null`.
  */
-function checkMemberActiveElement( { node, context } ) {
-	if ( node.property.name !== 'activeElement' ) {
-		return;
+function getCallTarget( callee ) {
+	if ( callee.type === 'Identifier' ) {
+		return { name: callee.name, receiver: null };
 	}
 
-	const objectPath = getAccessPath( { node: node.object } );
-
-	if ( !isDocumentAccessPath( objectPath ) ) {
-		return;
+	if ( callee.type !== 'MemberExpression' ) {
+		return null;
 	}
 
-	context.report( {
-		node,
-		messageId: 'activeElement',
-		data: { path: objectPath }
-	} );
+	const name = getStaticPropertyName( callee );
+
+	return name ? { name, receiver: callee.object } : null;
 }
 
 /**
- * Flags reading `.shadowRoot` for root discovery at read time.
+ * Returns the statically known name of a member property. In addition to dot notation, this covers
+ * string and no-substitution template literal properties.
  *
- * el.shadowRoot; // not allowed, use getRootNode()
+ * getStaticPropertyName( node ); // node for `document[ 'body' ]` -> 'body'
  */
-function checkMemberShadowRootDiscovery( { node, context } ) {
-	if ( node.property.name !== 'shadowRoot' ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'shadowRootDiscovery'
-	} );
+function getStaticPropertyName( node ) {
+	return getStaticKeyName( node.property, node.computed );
 }
 
 /**
- * Flags raw `.parentNode` / `.parentElement` traversal, which does not cross Shadow DOM boundaries.
- *
- * el.parentNode; // not allowed
+ * Returns the statically known name of a member property or object literal key: a plain identifier,
+ * a string literal, or a no-substitution template literal. Other literal keys are ignored — they can
+ * never spell any of the names this rule matches.
  */
-function checkMemberParentTraversal( { node, context } ) {
-	const propertyName = node.property.name;
-
-	if ( propertyName !== 'parentNode' && propertyName !== 'parentElement' ) {
-		return;
+function getStaticKeyName( key, computed ) {
+	if ( !computed && key.type === 'Identifier' ) {
+		return key.name;
 	}
 
-	context.report( {
-		node,
-		messageId: 'parentTraversal',
-		data: { property: propertyName }
-	} );
+	if ( key.type === 'Literal' && typeof key.value === 'string' ) {
+		return key.value;
+	}
+
+	if ( computed && key.type === 'TemplateLiteral' && key.expressions.length === 0 ) {
+		return key.quasis[ 0 ].value.cooked;
+	}
+
+	return null;
 }
 
 /**
- * Flags calls to `getSelection()` in any global or cross-root form. A bare `getSelection()` call is
- * only flagged when it resolves to the global one, not to a locally imported or declared helper.
- *
- * window.document.getSelection(); // not allowed
+ * Checks whether the options argument is an object literal containing a `shadowRoots` property.
+ * TypeScript and chain wrappers around the options object are ignored.
  */
-function checkCallGetSelection( { node, context, path } ) {
-	const match = path.match( /^(.+)\.getSelection$/ );
-	const isPrefixedCall = Boolean( match ) &&
-		( match[ 1 ] === 'global' || isWindowAccessPath( match[ 1 ] ) || isDocumentAccessPath( match[ 1 ] ) );
-	const isBareGlobalCall = path === 'getSelection' &&
-		!isLocallyDefinedReference( { node: unwrapExpression( node.callee ), context } );
+function hasShadowRootsOption( args ) {
+	const options = unwrapExpression( args[ 2 ] );
 
-	if ( !isBareGlobalCall && !isPrefixedCall ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'getSelection',
-		data: { path }
-	} );
-}
-
-/**
- * Flags `.contains(...)` called directly on the top-level document (`document`, `global.document`,
- * or `*.ownerDocument`) or on its body (`document.body`, `global.document.body`, or
- * `*.ownerDocument.body`), which does not cross Shadow DOM boundaries. A `.body.contains(...)` call
- * on a non-document object is not restricted here, since `body` is a common, unrelated property name.
- *
- * document.contains( el ); // not allowed, use isConnected
- */
-function checkCallContains( { node, context, path } ) {
-	const match = path.match( /^(.+)\.contains$/ );
-
-	if ( !match || ( !isDocumentAccessPath( match[ 1 ] ) && !isDocumentBodyAccessPath( match[ 1 ] ) ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'contains',
-		data: { path }
-	} );
-}
-
-/**
- * Flags `document.elementFromPoint(...)` / `elementsFromPoint(...)` called on the top-level document
- * (`document`, `global.document`, or `*.ownerDocument`), which ignores Shadow DOM.
- *
- * document.elementFromPoint( x, y ); // not allowed
- */
-function checkCallElementFromPoint( { node, context, path } ) {
-	const match = path.match( /^(.+)\.(elementFromPoint|elementsFromPoint)$/ );
-
-	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'elementFromPoint',
-		data: { path }
-	} );
-}
-
-/**
- * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls that cannot resolve carets
- * inside Shadow DOM. Native `Document.caretRangeFromPoint(...)` only accepts coordinates and silently
- * ignores any extra argument, so it is unsafe on a document access path no matter what is passed;
- * `caretPositionFromPoint(...)` and a bare, non-member call are only unsafe when missing a
- * `{ shadowRoots }` option.
- *
- * document.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
- */
-function checkCallCaretFromPoint( { node, context, path } ) {
-	const match = path.match( /^(?:(.+)\.)?(caretRangeFromPoint|caretPositionFromPoint)$/ );
-
-	if ( !match ) {
-		return;
-	}
-
-	const [ , prefix, methodName ] = match;
-	const isUnsupportedNativeCall = methodName === 'caretRangeFromPoint' && Boolean( prefix ) && isDocumentAccessPath( prefix );
-
-	if ( isUnsupportedNativeCall ) {
-		context.report( {
-			node,
-			messageId: 'caretRangeFromPointUnsupported',
-			data: { path }
-		} );
-
-		return;
-	}
-
-	if ( hasShadowRootsOption( { args: node.arguments } ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'caretFromPoint',
-		data: { path }
-	} );
-
-	function hasShadowRootsOption( { args } ) {
-		const lastArg = unwrapExpression( args[ args.length - 1 ] );
-
-		return Boolean(
-			lastArg &&
-			lastArg.type === 'ObjectExpression' &&
-			lastArg.properties.some( property =>
-				property.key && ( property.key.name === 'shadowRoots' || property.key.value === 'shadowRoots' )
-			)
-		);
-	}
-}
-
-/**
- * Flags `querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` /
- * `getElementsByTagName(...)` / `getElementsByClassName(...)` / `getElementsByName(...)` called on
- * the top-level document (`document`, `global.document`, or `*.ownerDocument`) or on its body
- * (`document.body`, `global.document.body`, or `*.ownerDocument.body`), which finds nothing
- * inside a shadow root.
- *
- * document.body.querySelector( '.foo' ); // not allowed
- */
-function checkCallDocumentElementLookup( { node, context, path } ) {
-	const methods = [
-		'querySelector',
-		'querySelectorAll',
-		'getElementById',
-		'getElementsByTagName',
-		'getElementsByClassName',
-		'getElementsByName'
-	];
-
-	const match = path.match( new RegExp( `^(.+)\\.(${ methods.join( '|' ) })$` ) );
-
-	if ( !match ) {
-		return;
-	}
-
-	const bodyMatch = match[ 1 ].match( /^(.+)\.body$/ );
-	const isDocumentQuery = isDocumentAccessPath( match[ 1 ] );
-	const isDocumentBodyQuery = Boolean( bodyMatch ) && isDocumentAccessPath( bodyMatch[ 1 ] );
-
-	if ( !isDocumentQuery && !isDocumentBodyQuery ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'documentElementLookup',
-		data: { path }
-	} );
-}
-
-/**
- * Flags `composedPath()` used for root discovery.
- *
- * event.composedPath()[ 0 ]; // not allowed, use getRootNode()
- */
-function checkCallComposedPath( { node, context, path } ) {
-	if ( !/(^|\.)composedPath$/.test( path ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'composedPath'
-	} );
-}
-
-/**
- * Flags `createTreeWalker(...)` / `createNodeIterator(...)` rooted at the top-level document or its
- * body (`document`, `global.document`, `document.body`, `global.document.body`, or
- * `*.ownerDocument[.body]`), since neither traverses into descendant shadow roots.
- *
- * document.createTreeWalker( document.body, NodeFilter.SHOW_ELEMENT ); // not allowed
- */
-function checkCallDocumentTreeWalker( { node, context, path } ) {
-	if ( !/(^|\.)(createTreeWalker|createNodeIterator)$/.test( path ) ) {
-		return;
-	}
-
-	const rootPath = getAccessPath( { node: node.arguments[ 0 ] } );
-
-	if ( !isDocumentAccessPath( rootPath ) && !isDocumentBodyAccessPath( rootPath ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'documentTreeWalker',
-		data: { path, root: rootPath }
-	} );
-}
-
-/**
- * Flags `mouseenter` / `mouseleave` / `pointerenter` / `pointerleave` / `scroll` listeners attached
- * to the top-level document (`document`, `global.document`, or `*.ownerDocument`), which will not
- * fire for events inside other shadow roots.
- *
- * document.addEventListener( 'scroll', listener ); // not allowed
- */
-function checkCallDocumentListener( { node, context, path } ) {
-	const match = path.match( /^(.+)\.(addEventListener|removeEventListener)$/ );
-
-	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
-		return;
-	}
-
-	const eventArg = unwrapExpression( node.arguments[ 0 ] );
-	const eventName = eventArg && eventArg.type === 'Literal' ? eventArg.value : null;
-
-	if ( ![ 'mouseenter', 'mouseleave', 'pointerenter', 'pointerleave', 'scroll' ].includes( eventName ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'documentListener',
-		data: { event: eventName, path: match[ 1 ] }
-	} );
-}
-
-/**
- * Flags appending directly to the top-level document body (`document.body`, `global.document.body`,
- * or `*.ownerDocument.body`).
- *
- * document.body.appendChild( el ); // not allowed
- */
-function checkCallBodyAppendChild( { node, context, path } ) {
-	const match = path.match( /^(.+)\.appendChild$/ );
-
-	if ( !match || !isDocumentBodyAccessPath( match[ 1 ] ) ) {
-		return;
-	}
-
-	context.report( {
-		node,
-		messageId: 'bodyAppendChild',
-		data: { path: match[ 1 ] }
-	} );
-}
-
-/**
- * Builds a dotted string representation of a member/call path, collapsing computed and other
- * non-trivial segments to `*` so checks can rely on plain regexes. TypeScript wrapper nodes and
- * parenthesized optional chains are unwrapped first, so a cast or a `(x?.y)` grouping doesn't hide
- * the underlying access path.
- *
- * el.ownerDocument.defaultView.getSelection() -> 'el.ownerDocument.defaultView.getSelection()'
- */
-function getAccessPath( { node } ) {
-	if ( !node ) {
-		return '';
-	}
-
-	const unwrapped = unwrapExpression( node );
-
-	if ( unwrapped.type === 'Identifier' ) {
-		return unwrapped.name;
-	}
-
-	if ( unwrapped.type === 'ThisExpression' ) {
-		return 'this';
-	}
-
-	if ( unwrapped.type === 'MemberExpression' ) {
-		const propertyName = !unwrapped.computed && unwrapped.property.type === 'Identifier' ?
-			unwrapped.property.name :
-			'*';
-
-		return `${ getAccessPath( { node: unwrapped.object } ) }.${ propertyName }`;
-	}
-
-	if ( unwrapped.type === 'CallExpression' ) {
-		return `${ getAccessPath( { node: unwrapped.callee } ) }()`;
-	}
-
-	return '*';
-}
-
-/**
- * Checks whether a node is a TypeScript-only wrapper expression around another expression.
- *
- * isTypeScriptWrapperExpression( node ); // node for `document!` -> true
- */
-function isTypeScriptWrapperExpression( node ) {
-	return [ 'TSAsExpression', 'TSNonNullExpression', 'TSTypeAssertion', 'TSSatisfiesExpression' ].includes( node.type );
+	return options?.type === 'ObjectExpression' && options.properties.some( property =>
+		property.type === 'Property' && getStaticKeyName( property.key, property.computed ) === 'shadowRoots'
+	);
 }
 
 /**
  * Strips TypeScript wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`),
- * `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`), and
- * `ParenthesizedExpression` wrappers (grouping parens preserved by some parsers, e.g. `(x)`) down to
- * the expression underneath, since none of them change what is actually being accessed or called.
+ * and `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`) down to the
+ * expression underneath, since none changes what is actually being accessed or called.
  *
  * unwrapExpression( node ); // node for `document!` -> node for `document`
  */
 function unwrapExpression( node ) {
-	let current = node;
+	let expression = node;
 
-	while (
-		current &&
-		( isTypeScriptWrapperExpression( current ) || [ 'ChainExpression', 'ParenthesizedExpression' ].includes( current.type ) )
-	) {
-		current = current.expression;
+	while ( EXPRESSION_WRAPPERS.has( expression?.type ) ) {
+		expression = expression.expression;
 	}
 
-	return current;
-}
-
-/**
- * Checks whether a path refers to the top-level document: `document`, `window.document`,
- * `global.document`, `global.window.document`, or any `*.ownerDocument` access.
- *
- * isDocumentAccessPath( 'window.document' ); // -> true
- */
-function isDocumentAccessPath( path ) {
-	return /^(global\.)?(window\.)?document$/.test( path ) || /\.ownerDocument$/.test( path );
-}
-
-/**
- * Checks whether a path refers to the body of the top-level document: `document.body`,
- * `global.document.body`, `global.window.document.body`, or any `*.ownerDocument.body` access.
- *
- * isDocumentBodyAccessPath( 'global.document.body' ); // -> true
- */
-function isDocumentBodyAccessPath( path ) {
-	const match = path.match( /^(.+)\.body$/ );
-
-	return Boolean( match ) && isDocumentAccessPath( match[ 1 ] );
-}
-
-/**
- * Checks whether a path refers to the top-level window: `window`, `global.window`, or any
- * `*.defaultView` access.
- *
- * isWindowAccessPath( 'global.window' ); // -> true
- */
-function isWindowAccessPath( path ) {
-	return /^(global\.)?window$/.test( path ) || /\.defaultView$/.test( path );
-}
-
-/**
- * Checks whether an identifier reference resolves to a variable declared or imported in the source,
- * as opposed to an unresolved global, a `global` directive comment-declared global, or a sloppy-mode
- * implicit global created by an undeclared assignment.
- *
- * import { getSelection } from './shadow-dom-utils.js'; // -> resolves locally, not global
- */
-function isLocallyDefinedReference( { node, context } ) {
-	const sourceCode = context.sourceCode || context.getSourceCode();
-
-	let scope = sourceCode.getScope ? sourceCode.getScope( node ) : context.getScope();
-
-	while ( scope ) {
-		const reference = scope.references.find( ref => ref.identifier === node );
-
-		if ( reference ) {
-			const variable = reference.resolved;
-
-			if ( !variable || variable.eslintExplicitGlobal ) {
-				return false;
-			}
-
-			return variable.defs.some( def => def.type !== 'ImplicitGlobalVariable' );
-		}
-
-		scope = scope.upper;
-	}
-
-	return false;
+	return expression;
 }
