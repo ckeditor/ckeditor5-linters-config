@@ -57,7 +57,7 @@ module.exports = {
 
 		return {
 			MemberExpression( node ) {
-				if ( node.computed ) {
+				if ( node.computed || node.property.type !== 'Identifier' ) {
 					return;
 				}
 
@@ -372,7 +372,9 @@ function getAccessPath( { node } ) {
 	}
 
 	if ( unwrapped.type === 'MemberExpression' ) {
-		const propertyName = unwrapped.computed ? '*' : unwrapped.property.name;
+		const propertyName = !unwrapped.computed && unwrapped.property.type === 'Identifier' ?
+			unwrapped.property.name :
+			'*';
 
 		return `${ getAccessPath( { node: unwrapped.object } ) }.${ propertyName }`;
 	}

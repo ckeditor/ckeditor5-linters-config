@@ -117,6 +117,21 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Casting a custom object, not a document access path',
 			code: 'const el = ( someCustomObject as Foo ).activeElement;\n'
+		},
+
+		{
+			name: 'Reading a private #shadowRoot field, not the DOM shadowRoot property',
+			code: 'class Foo { #shadowRoot; bar() { return this.#shadowRoot; } }\n'
+		},
+
+		{
+			name: 'Reading a private #parentNode field, not the DOM parentNode property',
+			code: 'class Foo { #parentNode; bar() { return this.#parentNode; } }\n'
+		},
+
+		{
+			name: 'Reading activeElement off a private #ownerDocument field, not the real ownerDocument',
+			code: 'class Foo { #ownerDocument; bar() { return this.#ownerDocument.activeElement; } }\n'
 		}
 	],
 	invalid: [
