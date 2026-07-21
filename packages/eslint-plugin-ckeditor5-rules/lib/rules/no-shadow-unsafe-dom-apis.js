@@ -261,10 +261,11 @@ function checkCallCaretFromPoint( { node, context, path } ) {
 /**
  * Flags `querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` /
  * `getElementsByTagName(...)` / `getElementsByClassName(...)` / `getElementsByName(...)` called on
- * the top-level document (`document`, `global.document`, or `*.ownerDocument`), which finds nothing
+ * the top-level document (`document`, `global.document`, or `*.ownerDocument`) or on its body
+ * (`document.body`, `global.document.body`, or `*.ownerDocument.body`), which finds nothing
  * inside a shadow root.
  *
- * document.querySelector( '.foo' ); // not allowed
+ * document.body.querySelector( '.foo' ); // not allowed
  */
 function checkCallDocumentElementLookup( { node, context, path } ) {
 	const methods = [
@@ -278,7 +279,15 @@ function checkCallDocumentElementLookup( { node, context, path } ) {
 
 	const match = path.match( new RegExp( `^(.+)\\.(${ methods.join( '|' ) })$` ) );
 
-	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
+	if ( !match ) {
+		return;
+	}
+
+	const bodyMatch = match[ 1 ].match( /^(.+)\.body$/ );
+	const isDocumentQuery = isDocumentAccessPath( match[ 1 ] );
+	const isDocumentBodyQuery = Boolean( bodyMatch ) && isDocumentAccessPath( bodyMatch[ 1 ] );
+
+	if ( !isDocumentQuery && !isDocumentBodyQuery ) {
 		return;
 	}
 

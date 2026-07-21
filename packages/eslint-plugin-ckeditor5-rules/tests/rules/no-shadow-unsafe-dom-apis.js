@@ -115,6 +115,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling .body.querySelector(...) on a non-document object',
+			code: 'const found = myWidget.body.querySelector( \'.foo\' );\n'
+		},
+
+		{
 			name: 'composedPath is not restricted here (used by a different rule)',
 			code: 'const root = getRootNode( el );\n'
 		},
@@ -505,6 +510,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling document.getElementById(...) against the top-level document',
 			code: 'document.getElementById( \'foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling document.body.querySelectorAll(...)',
+			code: 'document.body.querySelectorAll( \'.foo\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
