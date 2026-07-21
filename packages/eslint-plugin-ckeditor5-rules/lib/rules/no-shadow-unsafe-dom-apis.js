@@ -28,13 +28,15 @@ module.exports = {
 				'otherwise it will not resolve carets inside Shadow DOM.',
 			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and ' +
 				'always ignores Shadow DOM, regardless of any argument passed.',
-			documentQuerySelector: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
+			documentElementLookup: 'Do not query `{{ path }}(...)` against the top-level document, query the ' +
 				'editor\'s own root instead — it finds nothing inside a shadow root.',
 			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use ' +
 				'`getRootNode()` instead.',
 			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — ' +
 				'it will not fire for events inside other shadow roots.',
-			bodyAppendChild: 'Do not append directly to `{{ path }}` — it does not account for Shadow DOM boundaries.'
+			bodyAppendChild: 'Do not append directly to `{{ path }}` — it does not account for Shadow DOM boundaries.',
+			documentTreeWalker: 'Do not call `{{ path }}(...)` rooted at `{{ root }}` — ' +
+				'it will not traverse into descendant shadow roots.'
 		}
 	},
 	create( context ) {
@@ -49,10 +51,11 @@ module.exports = {
 			checkCallContains,
 			checkCallElementFromPoint,
 			checkCallCaretFromPoint,
-			checkCallDocumentQuerySelector,
+			checkCallDocumentElementLookup,
 			checkCallComposedPath,
 			checkCallDocumentListener,
-			checkCallBodyAppendChild
+			checkCallBodyAppendChild,
+			checkCallDocumentTreeWalker
 		];
 
 		return {
@@ -172,15 +175,7 @@ function checkCallGetSelection( { node, context, path } ) {
 function checkCallContains( { node, context, path } ) {
 	const match = path.match( /^(.+)\.contains$/ );
 
-	if ( !match ) {
-		return;
-	}
-
-	const bodyMatch = match[ 1 ].match( /^(.+)\.body$/ );
-	const isDocumentContains = isDocumentAccessPath( match[ 1 ] );
-	const isDocumentBodyContains = Boolean( bodyMatch ) && isDocumentAccessPath( bodyMatch[ 1 ] );
-
-	if ( !isDocumentContains && !isDocumentBodyContains ) {
+	if ( !match || ( !isDocumentAccessPath( match[ 1 ] ) && !isDocumentBodyAccessPath( match[ 1 ] ) ) ) {
 		return;
 	}
 
@@ -264,14 +259,24 @@ function checkCallCaretFromPoint( { node, context, path } ) {
 }
 
 /**
- * Flags `querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` called on the
- * top-level document (`document`, `global.document`, or `*.ownerDocument`), which finds nothing
+ * Flags `querySelector(...)` / `querySelectorAll(...)` / `getElementById(...)` /
+ * `getElementsByTagName(...)` / `getElementsByClassName(...)` / `getElementsByName(...)` called on
+ * the top-level document (`document`, `global.document`, or `*.ownerDocument`), which finds nothing
  * inside a shadow root.
  *
  * document.querySelector( '.foo' ); // not allowed
  */
-function checkCallDocumentQuerySelector( { node, context, path } ) {
-	const match = path.match( /^(.+)\.(querySelector|querySelectorAll|getElementById)$/ );
+function checkCallDocumentElementLookup( { node, context, path } ) {
+	const methods = [
+		'querySelector',
+		'querySelectorAll',
+		'getElementById',
+		'getElementsByTagName',
+		'getElementsByClassName',
+		'getElementsByName'
+	];
+
+	const match = path.match( new RegExp( `^(.+)\\.(${ methods.join( '|' ) })$` ) );
 
 	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
 		return;
@@ -279,7 +284,7 @@ function checkCallDocumentQuerySelector( { node, context, path } ) {
 
 	context.report( {
 		node,
-		messageId: 'documentQuerySelector',
+		messageId: 'documentElementLookup',
 		data: { path }
 	} );
 }
@@ -297,6 +302,31 @@ function checkCallComposedPath( { node, context, path } ) {
 	context.report( {
 		node,
 		messageId: 'composedPath'
+	} );
+}
+
+/**
+ * Flags `createTreeWalker(...)` / `createNodeIterator(...)` rooted at the top-level document or its
+ * body (`document`, `global.document`, `document.body`, `global.document.body`, or
+ * `*.ownerDocument[.body]`), since neither traverses into descendant shadow roots.
+ *
+ * document.createTreeWalker( document.body, NodeFilter.SHOW_ELEMENT ); // not allowed
+ */
+function checkCallDocumentTreeWalker( { node, context, path } ) {
+	if ( !/(^|\.)(createTreeWalker|createNodeIterator)$/.test( path ) ) {
+		return;
+	}
+
+	const rootPath = getAccessPath( { node: node.arguments[ 0 ] } );
+
+	if ( !isDocumentAccessPath( rootPath ) && !isDocumentBodyAccessPath( rootPath ) ) {
+		return;
+	}
+
+	context.report( {
+		node,
+		messageId: 'documentTreeWalker',
+		data: { path, root: rootPath }
 	} );
 }
 
@@ -335,16 +365,16 @@ function checkCallDocumentListener( { node, context, path } ) {
  * document.body.appendChild( el ); // not allowed
  */
 function checkCallBodyAppendChild( { node, context, path } ) {
-	const match = path.match( /^(.+)\.body\.appendChild$/ );
+	const match = path.match( /^(.+)\.appendChild$/ );
 
-	if ( !match || !isDocumentAccessPath( match[ 1 ] ) ) {
+	if ( !match || !isDocumentBodyAccessPath( match[ 1 ] ) ) {
 		return;
 	}
 
 	context.report( {
 		node,
 		messageId: 'bodyAppendChild',
-		data: { path: `${ match[ 1 ] }.body` }
+		data: { path: match[ 1 ] }
 	} );
 }
 
@@ -420,6 +450,18 @@ function unwrapExpression( node ) {
  */
 function isDocumentAccessPath( path ) {
 	return /^(global\.)?(window\.)?document$/.test( path ) || /\.ownerDocument$/.test( path );
+}
+
+/**
+ * Checks whether a path refers to the body of the top-level document: `document.body`,
+ * `global.document.body`, `global.window.document.body`, or any `*.ownerDocument.body` access.
+ *
+ * isDocumentBodyAccessPath( 'global.document.body' ); // -> true
+ */
+function isDocumentBodyAccessPath( path ) {
+	const match = path.match( /^(.+)\.body$/ );
+
+	return Boolean( match ) && isDocumentAccessPath( match[ 1 ] );
 }
 
 /**

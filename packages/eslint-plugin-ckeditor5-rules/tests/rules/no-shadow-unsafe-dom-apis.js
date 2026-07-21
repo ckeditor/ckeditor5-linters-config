@@ -70,6 +70,21 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling getElementsByTagName on a custom root, not on document',
+			code: 'const found = someRoot.getElementsByTagName( \'p\' );\n'
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted at a shadow root, not at the top-level document',
+			code: 'document.createTreeWalker( shadowRoot, NodeFilter.SHOW_ELEMENT );\n'
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted at an arbitrary element, not at the top-level document',
+			code: 'document.createTreeWalker( someElement, NodeFilter.SHOW_ELEMENT );\n'
+		},
+
+		{
 			name: 'caretRangeFromPoint called with a { shadowRoots } option',
 			code: 'caretRangeFromPoint( x, y, { shadowRoots } );\n'
 		},
@@ -483,7 +498,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling document.querySelector(...) against the top-level document',
 			code: 'document.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -491,7 +506,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling document.getElementById(...) against the top-level document',
 			code: 'document.getElementById( \'foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -499,7 +514,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling global.document.querySelector(...)',
 			code: 'global.document.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -507,7 +522,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling window.document.querySelector(...)',
 			code: 'window.document.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -515,7 +530,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling global.window.document.querySelector(...)',
 			code: 'global.window.document.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -523,7 +538,39 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling *.ownerDocument.querySelector(...)',
 			code: 'someEl.ownerDocument.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling document.getElementsByTagName(...)',
+			code: 'document.getElementsByTagName( \'p\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling document.getElementsByClassName(...)',
+			code: 'document.getElementsByClassName( \'foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling document.getElementsByName(...)',
+			code: 'document.getElementsByName( \'foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling *.ownerDocument.getElementsByTagName(...)',
+			code: 'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -532,6 +579,38 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'const root = event.composedPath()[ 0 ];\n',
 			errors: [
 				{ messageId: 'composedPath' }
+			]
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted at document.body',
+			code: 'document.createTreeWalker( document.body, NodeFilter.SHOW_ELEMENT );\n',
+			errors: [
+				{ messageId: 'documentTreeWalker' }
+			]
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted directly at document',
+			code: 'document.createTreeWalker( document, NodeFilter.SHOW_ELEMENT );\n',
+			errors: [
+				{ messageId: 'documentTreeWalker' }
+			]
+		},
+
+		{
+			name: 'Creating a NodeIterator rooted at global.document.body',
+			code: 'document.createNodeIterator( global.document.body, NodeFilter.SHOW_ELEMENT );\n',
+			errors: [
+				{ messageId: 'documentTreeWalker' }
+			]
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted at *.ownerDocument',
+			code: 'document.createTreeWalker( someEl.ownerDocument, NodeFilter.SHOW_ELEMENT );\n',
+			errors: [
+				{ messageId: 'documentTreeWalker' }
 			]
 		},
 
@@ -635,7 +714,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling document.querySelector(...) through optional chaining',
 			code: 'document?.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
@@ -659,7 +738,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			name: 'Calling querySelector through a TSNonNullExpression on document',
 			code: 'document!.querySelector( \'.foo\' );\n',
 			errors: [
-				{ messageId: 'documentQuerySelector' }
+				{ messageId: 'documentElementLookup' }
 			]
 		},
 
