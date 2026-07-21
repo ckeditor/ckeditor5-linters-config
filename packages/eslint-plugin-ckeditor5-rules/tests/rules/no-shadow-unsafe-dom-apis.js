@@ -90,6 +90,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'caretRangeFromPoint called on a non-document object with a { shadowRoots } option',
+			code: 'someRoot.caretRangeFromPoint( x, y, { shadowRoots } );\n'
+		},
+
+		{
 			name: 'querySelector called on a custom root, not on the top-level document',
 			code: 'editingView.document.getRoot().querySelector( \'.foo\' );\n'
 		},
@@ -412,10 +417,34 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling window.document.caretRangeFromPoint(...)',
+			code: 'window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
+			errors: [
+				{ messageId: 'caretRangeFromPointUnsupported' }
+			]
+		},
+
+		{
+			name: 'Calling global.window.document.caretRangeFromPoint(...)',
+			code: 'global.window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
+			errors: [
+				{ messageId: 'caretRangeFromPointUnsupported' }
+			]
+		},
+
+		{
 			name: 'Calling *.ownerDocument.caretRangeFromPoint(...)',
 			code: 'someEl.ownerDocument.caretRangeFromPoint( x, y, { shadowRoots } );\n',
 			errors: [
 				{ messageId: 'caretRangeFromPointUnsupported' }
+			]
+		},
+
+		{
+			name: 'Calling caretRangeFromPoint(...) on a non-document object without { shadowRoots }',
+			code: 'someRoot.caretRangeFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'caretFromPoint' }
 			]
 		},
 
