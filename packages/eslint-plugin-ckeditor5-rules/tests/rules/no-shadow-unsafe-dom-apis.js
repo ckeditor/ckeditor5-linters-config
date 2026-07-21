@@ -152,6 +152,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Reading activeElement off a private #ownerDocument field, not the real ownerDocument',
 			code: 'class Foo { #ownerDocument; bar() { return this.#ownerDocument.activeElement; } }\n'
+		},
+
+		{
+			name: 'Calling a locally imported caretPositionFromPoint helper without a { shadowRoots } option',
+			code: 'import { caretPositionFromPoint } from \'./shadow-dom-utils.js\';\ncaretPositionFromPoint( x, y );\n'
 		}
 	],
 	invalid: [
@@ -808,6 +813,46 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: '( document?.body ).appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector on document.body accessed through bracket notation',
+			code: 'document[ \'body\' ].querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector on document through a bracket-notation method name',
+			code: 'document[ \'querySelector\' ]( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling appendChild on document.body accessed through a template literal key',
+			code: 'document[ `body` ].appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector on globalThis.document',
+			code: 'globalThis.document.querySelector( \'.foo\' );\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on self',
+			code: 'const sel = self.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
 			]
 		}
 	]
