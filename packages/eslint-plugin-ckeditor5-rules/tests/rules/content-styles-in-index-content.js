@@ -26,6 +26,7 @@ const contentStyleError = { messageId: 'contentStyleOutsideIndexContent' };
 ruleTester.run( ruleName, rule, {
 	valid: [
 		{
+			name: 'Empty file.',
 			code: '',
 			filename
 		},

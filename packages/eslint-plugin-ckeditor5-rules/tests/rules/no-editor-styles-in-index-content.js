@@ -25,6 +25,7 @@ const editorStyleError = { messageId: 'editorStyleInIndexContent' };
 ruleTester.run( ruleName, rule, {
 	valid: [
 		{
+			name: 'Empty file.',
 			code: '',
 			filename
 		},
