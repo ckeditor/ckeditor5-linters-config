@@ -65,7 +65,22 @@ ruleTester.run(
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/_utils/helper.js\';',
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/manual/_utils/helper.js\';',
 			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils/helper.js\';',
-			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils-tests/helper.js\';'
+			'import { Helper } from \'@ckeditor/ckeditor5-core/tests/feature/_utils-tests/helper.js\';',
+			{
+				name: 'Allow importing from paths matching the `allowedImportPatterns` option',
+				code: 'import { Helper } from \'@ckeditor/ckeditor5-core/manual/_utils/helper.js\';',
+				options: [ { allowedImportPatterns: [ '**/manual/**/_utils*/**' ] } ]
+			},
+			{
+				name: 'Allow importing from nested paths matching the `allowedImportPatterns` option',
+				code: 'import { Helper } from \'@ckeditor/ckeditor5-core/manual/feature/_utils/helper.js\';',
+				options: [ { allowedImportPatterns: [ '**/manual/**/_utils*/**' ] } ]
+			},
+			{
+				name: 'Keep allowing test utils when the `allowedImportPatterns` option includes the default pattern',
+				code: 'import { Helper } from \'@ckeditor/ckeditor5-core/tests/_utils/helper.js\';',
+				options: [ { allowedImportPatterns: [ '**/tests/**/_utils*/**', '**/manual/**/_utils*/**' ] } ]
+			}
 		],
 		invalid: [
 			{
@@ -100,6 +115,21 @@ ruleTester.run(
 				code: 'import ExportedFeature from "@ckeditor/ckeditor5-exported-package/dist/feature.js";',
 				output: 'import { ExportedFeature } from \'@ckeditor/ckeditor5-exported-package\';',
 				filename: path.join( fixtureDirectory, 'input.js' ),
+				errors: [ { message } ]
+			},
+			{
+				name: 'Do not allow importing from paths not matching the default `allowedImportPatterns`',
+				code: 'import Helper from "@ckeditor/ckeditor5-no-exports-package/manual/_utils/helper.js";',
+				output: 'import { Helper } from \'@ckeditor/ckeditor5-no-exports-package\';',
+				filename: path.join( fixtureDirectory, 'input.js' ),
+				errors: [ { message } ]
+			},
+			{
+				name: 'Do not allow importing test utils when the `allowedImportPatterns` option is empty',
+				code: 'import Helper from "@ckeditor/ckeditor5-no-exports-package/tests/_utils/helper.js";',
+				output: 'import { Helper } from \'@ckeditor/ckeditor5-no-exports-package\';',
+				filename: path.join( fixtureDirectory, 'input.js' ),
+				options: [ { allowedImportPatterns: [] } ],
 				errors: [ { message } ]
 			}
 		]

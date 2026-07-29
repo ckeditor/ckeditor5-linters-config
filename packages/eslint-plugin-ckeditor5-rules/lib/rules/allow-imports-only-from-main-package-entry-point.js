@@ -7,11 +7,16 @@
 
 const fs = require( 'node:fs' );
 const { findPackageJSON } = require( 'node:module' );
+const { posix } = require( 'node:path' );
 const { pathToFileURL } = require( 'node:url' );
 const resolveExports = require( 'resolve.exports' ).exports;
 
 const message = 'Importing from "@ckeditor/*" packages is only allowed from the main package entry point.';
 const packageJsonCache = new Map();
+
+const defaultAllowedImportPatterns = [
+	'**/tests/**/_utils*/**'
+];
 
 module.exports = {
 	meta: {
@@ -23,9 +28,24 @@ module.exports = {
 			url: 'https://ckeditor.com/docs/ckeditor5/latest/framework/contributing/code-style.html#importing-from-modules-ckeditor5-rulesallow-imports-only-from-main-package-entry-point'
 		},
 		fixable: 'code',
-		schema: []
+		schema: [
+			{
+				type: 'object',
+				properties: {
+					allowedImportPatterns: {
+						type: 'array',
+						items: {
+							type: 'string'
+						}
+					}
+				},
+				additionalProperties: false
+			}
+		]
 	},
 	create( context ) {
+		const { allowedImportPatterns = defaultAllowedImportPatterns } = context.options[ 0 ] || {};
+
 		return {
 			ImportDeclaration( node ) {
 				if ( node.specifiers.length === 0 ) {
@@ -51,9 +71,8 @@ module.exports = {
 					return;
 				}
 
-				const isTestUtil = path.match( /\/tests\/(.+\/)*_utils/ );
-
-				if ( isTestUtil ) {
+				if ( allowedImportPatterns.some( pattern => posix.matchesGlob( path, pattern ) ) ) {
+					// Ignore imports matching the explicitly allowed glob patterns, e.g. test utils.
 					return;
 				}
 
