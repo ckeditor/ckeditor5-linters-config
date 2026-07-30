@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [19.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v19.0.0...v19.1.0) (July 30, 2026)
+
+### Features
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `allow-imports-only-from-main-package-entry-point` rule now accepts the `allowedImportPatterns` option: an array of glob patterns matched against the import path. Imports matching any of these patterns are allowed. It defaults to `[ '**/tests/**/_utils*/**' ]`, which preserves the previous behavior of allowing test utility imports.
+
+  The shared `eslint-config-ckeditor5` preset now also allows importing utilities from the `manual/` directories of packages.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Releases containing new features:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/19.1.0): v19.0.0 => v19.1.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/19.1.0): v19.0.0 => v19.1.0
+</details>
+
+
 ## [19.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v18.1.0...v19.0.0) (July 22, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -102,29 +124,6 @@ Other releases:
 
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/17.1.1): v17.1.0 => v17.1.1
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/17.1.1): v17.1.0 => v17.1.1
-</details>
-
-
-## [17.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.0.0...v17.1.0) (July 14, 2026)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added the `ckeditor5-rules/allow-css-imports-only-in-main-package-entry-point` rule. It allows importing CSS files only in the main package entry point (`src/index.ts`), where the single `theme/index.css` entry stylesheet is loaded, and reports CSS imports in any other source module. See [ckeditor/ckeditor5#17102](https://github.com/ckeditor/ckeditor5/issues/17102).
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/17.1.0): v17.0.0 => v17.1.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/17.1.0): v17.0.0 => v17.1.0
 </details>
 
 ---
