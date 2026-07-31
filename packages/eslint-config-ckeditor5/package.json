@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-ckeditor5",
-  "version": "19.1.0",
+  "version": "20.0.0",
   "author": "CKSource (http://cksource.com/)",
   "license": "MIT",
   "homepage": "https://ckeditor.com/ckeditor-5",
@@ -32,7 +32,7 @@
     "@eslint/js": "^10.0.0",
     "@eslint/markdown": "^6.6.0",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "eslint-plugin-ckeditor5-rules": "^19.1.0",
+    "eslint-plugin-ckeditor5-rules": "^20.0.0",
     "typescript-eslint": "^8.57.0"
   },
   "devDependencies": {
