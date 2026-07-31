@@ -1,6 +1,29 @@
 Changelog
 =========
 
+## [20.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v19.1.0...v20.0.0) (July 31, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Removed the Mocha-era test linting setup: the `eslint-plugin-mocha` plugin with all `mocha/*` rules, and the Chai, Mocha, and Sinon globals injected into test files. Test files now receive the Vitest globals instead. Projects that still run Mocha-based tests must configure `eslint-plugin-mocha` on their own.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/20.0.0): v19.1.0 => v20.0.0
+
+Other releases:
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/20.0.0): v19.1.0 => v20.0.0
+</details>
+
+
 ## [19.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v19.0.0...v19.1.0) (July 30, 2026)
 
 ### Features
@@ -104,26 +127,6 @@ Major releases (contain major breaking changes):
 
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/18.0.0): v17.1.1 => v18.0.0
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/18.0.0): v17.1.1 => v18.0.0
-</details>
-
-
-## [17.1.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.1.0...v17.1.1) (July 16, 2026)
-
-### Other changes
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: Bumped the `@eslint/css` dependency to `^1.4.0` to pick up updated Baseline data. The `:dir()` selector and the `mask` property are now recognized as Baseline "widely available", so projects relying on `css/use-baseline` no longer need a local exception for them.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/17.1.1): v17.1.0 => v17.1.1
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/17.1.1): v17.1.0 => v17.1.1
 </details>
 
 ---
