@@ -3,13 +3,11 @@
  * For licensing, see LICENSE.md.
  */
 
-import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import markdown from '@eslint/markdown';
 import css from '@eslint/css';
-import mocha from 'eslint-plugin-mocha';
 import stylistic from '@stylistic/eslint-plugin';
 import ckeditor5Rules from 'eslint-plugin-ckeditor5-rules';
 
@@ -445,39 +443,9 @@ const rulesSourceCode = [
 
 const rulesTests = [
 	{
-		plugins: {
-			mocha
-		},
-
 		files: [ '**/tests/**/*.@(js|ts)' ],
 
-		languageOptions: {
-			globals: {
-				...globals.chai,
-				...globals.mocha,
-				sinon: true
-			}
-		},
-
 		rules: {
-			'mocha/handle-done-callback': 'error',
-
-			'mocha/no-async-suite': 'error',
-
-			'mocha/no-exclusive-tests': 'error',
-
-			'mocha/no-global-tests': 'error',
-
-			'mocha/no-identical-title': 'warn',
-
-			'mocha/no-nested-tests': 'error',
-
-			'mocha/no-pending-tests': 'error',
-
-			'mocha/no-sibling-hooks': 'error',
-
-			'mocha/no-top-level-hooks': 'error',
-
 			'ckeditor5-rules/no-scoped-imports-within-package': 'off',
 
 			'no-unused-expressions': 'off',
