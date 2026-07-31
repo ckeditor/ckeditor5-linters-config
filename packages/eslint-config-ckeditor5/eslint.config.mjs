@@ -3,7 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
@@ -445,12 +444,6 @@ const rulesSourceCode = [
 const rulesTests = [
 	{
 		files: [ '**/tests/**/*.@(js|ts)' ],
-
-		languageOptions: {
-			globals: {
-				...globals.vitest
-			}
-		},
 
 		rules: {
 			'ckeditor5-rules/no-scoped-imports-within-package': 'off',

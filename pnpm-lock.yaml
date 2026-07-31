@@ -82,9 +82,6 @@ importers:
       eslint-plugin-ckeditor5-rules:
         specifier: ^19.1.0
         version: link:../eslint-plugin-ckeditor5-rules
-      globals:
-        specifier: ^16.1.0
-        version: 16.5.0
       typescript-eslint:
         specifier: ^8.57.0
         version: 8.63.0(eslint@10.7.0(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.4)
