@@ -455,7 +455,6 @@ const rulesTests = [
 		rules: {
 			'ckeditor5-rules/no-scoped-imports-within-package': 'off',
 
-			// Chai-style assertions (`expect( x ).to.be.true`) are expression statements.
 			'no-unused-expressions': 'off',
 			'@typescript-eslint/no-unused-expressions': 'off'
 		}
