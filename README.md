@@ -21,7 +21,11 @@ This repository is a monorepo. It contains multiple npm packages.
 Some of the packages in this repository were previously separate repositories, and are now archived:
 - [eslint-config-ckeditor5](https://github.com/ckeditor/eslint-config-ckeditor5)
 - [eslint-plugin-ckeditor5-rules](https://github.com/ckeditor/eslint-plugin-ckeditor5-rules)
-- [stylelint-config-ckeditor5](https://github.com/ckeditor/stylelint-config-ckeditor5)
+
+The Stylelint packages this repository used to host are gone: CSS is linted by ESLint since
+[v16.0.0](https://github.com/ckeditor/ckeditor5-linters-config/releases/tag/v16.0.0), so
+`stylelint-config-ckeditor5` and `stylelint-plugin-ckeditor5-rules` are no longer published or maintained.
+Their rules live in `eslint-plugin-ckeditor5-rules` and [`@eslint/css`](https://www.npmjs.com/package/@eslint/css).
 
 ## Cloning
 
