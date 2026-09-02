@@ -22,6 +22,11 @@ const DOCUMENT_LISTENER_EVENTS = new Set( [
 	'scroll'
 ] );
 
+const PARENT_TRAVERSAL_REPLACEMENTS = new Map( [
+	[ 'parentNode', 'getParentNode' ],
+	[ 'parentElement', 'getParentElement' ]
+] );
+
 const EXPRESSION_WRAPPERS = new Set( [
 	'ChainExpression',
 	'TSAsExpression',
@@ -41,9 +46,10 @@ module.exports = {
 			/* eslint-disable @stylistic/max-len */
 			activeElement: 'Do not read `{{ path }}.activeElement` directly — it is not tracked across Shadow DOM boundaries.',
 			shadowRootDiscovery: 'Do not use `.shadowRoot` for root discovery at read time, keep a held reference or use `getRootNode()` instead.',
-			parentTraversal: 'Do not traverse `.{{ property }}` directly — it does not cross Shadow DOM boundaries correctly.',
+			parentTraversal: 'Do not traverse `.{{ property }}` directly, use `{{ replacement }}()` instead — it does not cross Shadow DOM boundaries correctly.',
+			relatedTarget: 'Do not use `relatedTarget` — it is retargeted at Shadow DOM boundaries, so it does not point at the actual node the pointer came from or went to.',
 			getSelection: 'Do not call `{{ path }}(...)` directly — it does not account for Shadow DOM boundaries.',
-			contains: 'Do not use `{{ path }}(...)`, use `isConnected` instead — `contains()` does not cross Shadow DOM boundaries.',
+			contains: 'Do not use `{{ path }}(...)`, use `isConnected` or `containsNode()` instead — `contains()` does not cross Shadow DOM boundaries.',
 			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root — `{{ path }}` ignores Shadow DOM.',
 			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, otherwise it will not resolve carets inside Shadow DOM.',
 			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and always ignores Shadow DOM, regardless of any argument passed.',
@@ -67,8 +73,13 @@ module.exports = {
 					report( node, 'activeElement', { path: sourceCode.getText( unwrapExpression( node.object ) ) } );
 				} else if ( propertyName === 'shadowRoot' ) {
 					report( node, 'shadowRootDiscovery' );
-				} else if ( propertyName === 'parentNode' || propertyName === 'parentElement' ) {
-					report( node, 'parentTraversal', { property: propertyName } );
+				} else if ( PARENT_TRAVERSAL_REPLACEMENTS.has( propertyName ) ) {
+					report( node, 'parentTraversal', {
+						property: propertyName,
+						replacement: PARENT_TRAVERSAL_REPLACEMENTS.get( propertyName )
+					} );
+				} else if ( propertyName === 'relatedTarget' ) {
+					report( node, 'relatedTarget' );
 				}
 			},
 
@@ -134,14 +145,15 @@ module.exports = {
 
 		/**
 		 * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls that cannot resolve
-		 * carets inside Shadow DOM. Native `Document.caretRangeFromPoint(...)` only accepts
-		 * coordinates and ignores additional options; other calls are unsafe when missing a
-		 * `{ shadowRoots }` option.
+		 * carets inside Shadow DOM. `caretRangeFromPoint(...)` only accepts coordinates and ignores
+		 * additional options, so no argument can make it safe — the method name alone is enough to
+		 * tell, no matter how the document the call is made on is spelled. Other calls are unsafe
+		 * when missing a `{ shadowRoots }` option.
 		 *
-		 * document.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
+		 * domDoc.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
 		 */
 		function checkCaretFromPoint( node, call, path ) {
-			if ( call.name === 'caretRangeFromPoint' && isDocumentExpression( call.receiver ) ) {
+			if ( call.name === 'caretRangeFromPoint' ) {
 				report( node, 'caretRangeFromPointUnsupported', { path } );
 			} else if ( !hasShadowRootsOption( node.arguments ) ) {
 				report( node, 'caretFromPoint', { path } );
