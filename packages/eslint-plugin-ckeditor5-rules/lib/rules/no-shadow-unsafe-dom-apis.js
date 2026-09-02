@@ -52,7 +52,6 @@ module.exports = {
 			contains: 'Do not use `{{ path }}(...)`, use `isConnected` or `containsNode()` instead — `contains()` does not cross Shadow DOM boundaries.',
 			elementFromPoint: 'Do not use `{{ path }}(...)` directly, resolve the point via the element\'s own root — `{{ path }}` ignores Shadow DOM.',
 			caretFromPoint: 'Call `{{ path }}(...)` with a `{ shadowRoots }` option, otherwise it will not resolve carets inside Shadow DOM.',
-			caretRangeFromPointUnsupported: 'Native `{{ path }}(...)` does not accept a `{ shadowRoots }` option and always ignores Shadow DOM, regardless of any argument passed.',
 			documentElementLookup: 'Do not query `{{ path }}(...)` against the top-level document, query the editor\'s own root instead — it finds nothing inside a shadow root.',
 			composedPath: 'Do not use `composedPath()` for root discovery, keep a held reference or use `getRootNode()` instead.',
 			documentListener: 'Do not attach a `{{ event }}` listener on `{{ path }}` — it will not fire for events inside other shadow roots.',
@@ -119,8 +118,8 @@ module.exports = {
 					if ( isDocumentExpression( call.receiver ) ) {
 						report( node, 'elementFromPoint', { path } );
 					}
-				} else if ( call.name === 'caretRangeFromPoint' || call.name === 'caretPositionFromPoint' ) {
-					checkCaretFromPoint( node, call, path );
+				} else if ( call.name === 'caretPositionFromPoint' ) {
+					checkCaretPositionFromPoint( node, path );
 				} else if ( call.name === 'composedPath' ) {
 					report( node, 'composedPath' );
 				} else if ( DOCUMENT_ELEMENT_LOOKUP_METHODS.has( call.name ) ) {
@@ -144,18 +143,17 @@ module.exports = {
 		}
 
 		/**
-		 * Flags `caretRangeFromPoint(...)` / `caretPositionFromPoint(...)` calls that cannot resolve
-		 * carets inside Shadow DOM. `caretRangeFromPoint(...)` only accepts coordinates and ignores
-		 * additional options, so no argument can make it safe — the method name alone is enough to
-		 * tell, no matter how the document the call is made on is spelled. Other calls are unsafe
-		 * when missing a `{ shadowRoots }` option.
+		 * Flags `caretPositionFromPoint(...)` calls missing a `{ shadowRoots }` option, without which
+		 * they do not resolve carets inside Shadow DOM.
 		 *
-		 * domDoc.caretRangeFromPoint( x, y, { shadowRoots } ); // not allowed, the option is a no-op here
+		 * Legacy `caretRangeFromPoint(...)` is not reported at all. It accepts coordinates only and
+		 * has no shadow-aware form, so it is used exactly where `caretPositionFromPoint(...)` is
+		 * unavailable — there is nothing to switch to and no option to add.
+		 *
+		 * document.caretPositionFromPoint( x, y ); // not allowed, the option is missing
 		 */
-		function checkCaretFromPoint( node, call, path ) {
-			if ( call.name === 'caretRangeFromPoint' ) {
-				report( node, 'caretRangeFromPointUnsupported', { path } );
-			} else if ( !hasShadowRootsOption( node.arguments ) ) {
+		function checkCaretPositionFromPoint( node, path ) {
+			if ( !hasShadowRootsOption( node.arguments ) ) {
 				report( node, 'caretFromPoint', { path } );
 			}
 		}

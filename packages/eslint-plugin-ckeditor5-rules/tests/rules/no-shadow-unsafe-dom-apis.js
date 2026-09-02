@@ -120,8 +120,20 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling a locally imported helper also named caretRangeFromPoint',
-			code: 'import { caretRangeFromPoint } from \'./shadow-dom-utils.js\';\ncaretRangeFromPoint( x, y );\n'
+			name: 'document.caretRangeFromPoint called with coordinates only — the legacy API has no shadow-aware form',
+			code: 'const range = document.caretRangeFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'caretRangeFromPoint called on a document that is not spelled as a global one',
+			code: 'const range = domDoc.caretRangeFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'Feature-detecting caretRangeFromPoint before falling back to it',
+			code: 'if ( domDoc.caretRangeFromPoint && domDoc.caretRangeFromPoint( x, y ) ) {\n' +
+				'\tdomRange = domDoc.caretRangeFromPoint( x, y );\n' +
+				'}\n'
 		},
 
 		{
@@ -513,78 +525,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'someEl.ownerDocument.elementFromPoint( x, y );\n',
 			errors: [
 				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling document.caretRangeFromPoint(...) without { shadowRoots }',
-			code: 'document.caretRangeFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling document.caretRangeFromPoint(...) with { shadowRoots }, which is a no-op natively',
-			code: 'document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.caretRangeFromPoint(...)',
-			code: 'global.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.caretRangeFromPoint(...)',
-			code: 'window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.caretRangeFromPoint(...)',
-			code: 'global.window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling *.ownerDocument.caretRangeFromPoint(...)',
-			code: 'someEl.ownerDocument.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling caretRangeFromPoint(...) on a document that is not spelled as a global one',
-			code: 'domDoc.caretRangeFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling caretRangeFromPoint(...) on an arbitrary object with a { shadowRoots } no-op',
-			code: 'someRoot.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling the bare, unresolved global caretRangeFromPoint(...) with { shadowRoots }',
-			code: 'caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
 			]
 		},
 
