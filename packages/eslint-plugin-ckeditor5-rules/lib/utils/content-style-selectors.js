@@ -225,12 +225,23 @@ function combineStates( states, alternatives ) {
 	} ) ) );
 }
 
+/**
+ * Checks whether the selector declares the root scope a stylesheet resolves its custom properties in.
+ *
+ * Both `:root` and a bare `:host` count: the theme pairs them (`:root,\n:host { … }`) so that a single
+ * stylesheet resolves its tokens in the light DOM and inside a shadow root alike, where `:root` matches
+ * nothing. A parameterized `:host(…)` targets specific hosts rather than the root scope, so it does not.
+ */
 function isRootResourceSelector( selector ) {
 	const nodes = [ ...selector.children ];
 
-	return nodes.length === 1 &&
-		nodes[ 0 ].type === 'PseudoClassSelector' &&
-		nodes[ 0 ].name.toLowerCase() === 'root';
+	if ( nodes.length !== 1 || nodes[ 0 ].type !== 'PseudoClassSelector' ) {
+		return false;
+	}
+
+	const name = nodes[ 0 ].name.toLowerCase();
+
+	return name === 'root' || ( name === 'host' && !nodes[ 0 ].children );
 }
 
 function hasOnlyResourceDeclarations( rule ) {

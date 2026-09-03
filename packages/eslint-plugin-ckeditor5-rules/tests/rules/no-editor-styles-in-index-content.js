@@ -62,6 +62,16 @@ ruleTester.run( ruleName, rule, {
 			filename
 		},
 		{
+			name: 'Token declaration paired with `:host`.',
+			code: ':root,\n:host { --ck-content-font-family: sans-serif; }',
+			filename
+		},
+		{
+			name: 'Token declaration on `:host` alone.',
+			code: ':host { --ck-content-font-family: sans-serif; }',
+			filename
+		},
+		{
 			code: '@font-face { font-family: Example; src: url(example.woff2); }',
 			filename
 		},
@@ -142,6 +152,19 @@ ruleTester.run( ruleName, rule, {
 		},
 		{
 			code: ':root { color: inherit; }',
+			filename,
+			errors: [ editorStyleError ]
+		},
+		{
+			name: '`:host` styling the host element rather than declaring tokens.',
+			code: ':host { color: inherit; }',
+			filename,
+			errors: [ editorStyleError ]
+		},
+		{
+			// A parameterized `:host(…)` targets specific hosts instead of the root scope.
+			name: 'Token declaration on a parameterized `:host(…)`.',
+			code: ':host(.ck-fullscreen) { --ck-content-font-family: sans-serif; }',
 			filename,
 			errors: [ editorStyleError ]
 		},

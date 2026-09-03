@@ -516,7 +516,8 @@ const rulesCss = [
 		rules: {
 			'ckeditor5-rules/ck-content-variable-name': 'error',
 			'ckeditor5-rules/content-styles-in-index-content': 'error',
-			'ckeditor5-rules/no-editor-styles-in-index-content': 'error'
+			'ckeditor5-rules/no-editor-styles-in-index-content': 'error',
+			'ckeditor5-rules/require-host-with-root-selector': 'error'
 		}
 	}
 ];
