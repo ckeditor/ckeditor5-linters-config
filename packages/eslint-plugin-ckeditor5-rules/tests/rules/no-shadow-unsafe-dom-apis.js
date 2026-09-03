@@ -29,8 +29,13 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Traversing a custom parentNode-like helper, not a raw DOM one',
-			code: 'const parent = getParentOrHostElement( el );\n'
+			name: 'Traversing with the shadow-aware getParentNode() helper, not a raw DOM property',
+			code: 'const parent = getParentNode( el );\n'
+		},
+
+		{
+			name: 'Traversing with the shadow-aware getParentElement() helper, not a raw DOM property',
+			code: 'const parent = getParentElement( el );\n'
 		},
 
 		{
@@ -60,6 +65,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
+			name: 'Calling the shadow-aware containsNode() helper instead of contains',
+			code: 'const has = containsNode( parent, el );\n'
+		},
+
+		{
 			name: 'Calling .body.contains(...) on a non-document object',
 			code: 'const has = myWidget.body.contains( el );\n'
 		},
@@ -85,18 +95,18 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'caretRangeFromPoint called with a { shadowRoots } option',
-			code: 'caretRangeFromPoint( x, y, { shadowRoots } );\n'
+			name: 'caretPositionFromPoint called with a { shadowRoots } option',
+			code: 'caretPositionFromPoint( x, y, { shadowRoots } );\n'
 		},
 
 		{
-			name: 'caretRangeFromPoint called with a { shadowRoots } option wrapped in an "as" cast',
-			code: 'caretRangeFromPoint( x, y, ( { shadowRoots } as CaretFromPointOptions ) );\n'
+			name: 'caretPositionFromPoint called with a { shadowRoots } option wrapped in an "as" cast',
+			code: 'caretPositionFromPoint( x, y, ( { shadowRoots } as CaretFromPointOptions ) );\n'
 		},
 
 		{
-			name: 'caretRangeFromPoint called with a { shadowRoots } option wrapped in a non-null assertion',
-			code: 'caretRangeFromPoint( x, y, { shadowRoots }! );\n'
+			name: 'caretPositionFromPoint called with a { shadowRoots } option wrapped in a non-null assertion',
+			code: 'caretPositionFromPoint( x, y, { shadowRoots }! );\n'
 		},
 
 		{
@@ -105,8 +115,25 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'caretRangeFromPoint called on a non-document object with a { shadowRoots } option',
-			code: 'someRoot.caretRangeFromPoint( x, y, { shadowRoots } );\n'
+			name: 'caretPositionFromPoint called on a non-document object with a { shadowRoots } option',
+			code: 'someRoot.caretPositionFromPoint( x, y, { shadowRoots } );\n'
+		},
+
+		{
+			name: 'document.caretRangeFromPoint called with coordinates only — the legacy API has no shadow-aware form',
+			code: 'const range = document.caretRangeFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'caretRangeFromPoint called on a document that is not spelled as a global one',
+			code: 'const range = domDoc.caretRangeFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'Feature-detecting caretRangeFromPoint before falling back to it',
+			code: 'if ( domDoc.caretRangeFromPoint && domDoc.caretRangeFromPoint( x, y ) ) {\n' +
+				'\tdomRange = domDoc.caretRangeFromPoint( x, y );\n' +
+				'}\n'
 		},
 
 		{
@@ -147,6 +174,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Reading a private #parentNode field, not the DOM parentNode property',
 			code: 'class Foo { #parentNode; bar() { return this.#parentNode; } }\n'
+		},
+
+		{
+			name: 'Reading a private #relatedTarget field, not the DOM relatedTarget property',
+			code: 'class Foo { #relatedTarget; bar() { return this.#relatedTarget; } }\n'
 		},
 
 		{
@@ -209,18 +241,74 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Traversing .parentNode directly',
+			name: 'Traversing .parentNode directly points at getParentNode()',
 			code: 'const parent = el.parentNode;\n',
 			errors: [
-				{ messageId: 'parentTraversal' }
+				{ messageId: 'parentTraversal', data: { property: 'parentNode', replacement: 'getParentNode' } }
 			]
 		},
 
 		{
-			name: 'Traversing .parentElement directly',
+			name: 'Traversing .parentElement directly points at getParentElement()',
 			code: 'const parent = el.parentElement;\n',
 			errors: [
-				{ messageId: 'parentTraversal' }
+				{ messageId: 'parentTraversal', data: { property: 'parentElement', replacement: 'getParentElement' } }
+			]
+		},
+
+		{
+			name: 'Traversing .parentNode accessed through bracket notation',
+			code: 'const parent = el[ \'parentNode\' ];\n',
+			errors: [
+				{ messageId: 'parentTraversal', data: { property: 'parentNode', replacement: 'getParentNode' } }
+			]
+		},
+
+		{
+			name: 'Reading .relatedTarget off an event',
+			code: 'const target = evt.relatedTarget;\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Reading .relatedTarget off a native DOM event',
+			code: 'const target = evt.domEvent.relatedTarget;\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Reading .relatedTarget through optional chaining',
+			code: 'const target = evt?.relatedTarget;\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Reading .relatedTarget accessed through bracket notation',
+			code: 'const target = evt[ \'relatedTarget\' ];\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Reading .relatedTarget off a non-event object — reported anyway, the rule can be disabled',
+			code: 'const target = someCustomObject.relatedTarget;\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Assigning to .relatedTarget',
+			code: 'evt.relatedTarget = el;\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
 			]
 		},
 
@@ -313,10 +401,10 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling document.contains(...)',
+			name: 'Calling document.contains(...) points at isConnected and containsNode()',
 			code: 'document.contains( el );\n',
 			errors: [
-				{ messageId: 'contains' }
+				{ messageId: 'contains', data: { path: 'document.contains' } }
 			]
 		},
 
@@ -441,62 +529,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling document.caretRangeFromPoint(...) without { shadowRoots }',
-			code: 'document.caretRangeFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling document.caretRangeFromPoint(...) with { shadowRoots }, which is a no-op natively',
-			code: 'document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.caretRangeFromPoint(...)',
-			code: 'global.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.caretRangeFromPoint(...)',
-			code: 'window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.caretRangeFromPoint(...)',
-			code: 'global.window.document.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling *.ownerDocument.caretRangeFromPoint(...)',
-			code: 'someEl.ownerDocument.caretRangeFromPoint( x, y, { shadowRoots } );\n',
-			errors: [
-				{ messageId: 'caretRangeFromPointUnsupported' }
-			]
-		},
-
-		{
-			name: 'Calling caretRangeFromPoint(...) on a non-document object without { shadowRoots }',
-			code: 'someRoot.caretRangeFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'caretFromPoint' }
-			]
-		},
-
-		{
 			name: 'Calling document.caretPositionFromPoint(...) without { shadowRoots }',
 			code: 'document.caretPositionFromPoint( x, y );\n',
 			errors: [
@@ -507,6 +539,14 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling caretPositionFromPoint(...) without { shadowRoots }',
 			code: 'caretPositionFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'caretFromPoint' }
+			]
+		},
+
+		{
+			name: 'Calling caretPositionFromPoint(...) on a non-document object without { shadowRoots }',
+			code: 'someRoot.caretPositionFromPoint( x, y );\n',
 			errors: [
 				{ messageId: 'caretFromPoint' }
 			]
