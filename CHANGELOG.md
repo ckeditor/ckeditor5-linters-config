@@ -1,6 +1,38 @@
 Changelog
 =========
 
+## [20.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v20.0.0...v20.1.0) (September 3, 2026)
+
+### MINOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added the `require-host-with-root-selector` rule, which reports a `:root` selector that is not paired with `:host`. A `:root` selector matches nothing inside a shadow root, so declarations anchored on it alone do not apply to an editor mounted in one. The shared preset enables the rule for `**/theme/**/*.css`, so stylesheets that declare custom properties on a bare `:root` now fail linting. The rule is autofixable: it rewrites `:root` to `:root,\n:host`.
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `no-shadow-unsafe-dom-apis` rule now reports reading `relatedTarget`, points at the shadow-aware helper that replaces each reported API (`isConnected` or `containsNode()` for `contains()`, `getParentNode()` and `getParentElement()` for `.parentNode` and `.parentElement`), and no longer reports `caretRangeFromPoint()` calls at all.
+
+  `relatedTarget` is retargeted at Shadow DOM boundaries, so it does not point at the actual node the pointer came from or went to. Since a name like this is rarely used for anything else and an ESLint disable comment can be used to silence the occasional false positive, it is added on every access without verifying which object it belongs to. Destructuring, for example, `const { relatedTarget } = evt`, is not covered.
+
+  Legacy `caretRangeFromPoint()` accepts coordinates only and has no shadow-aware form, so it is used exactly where `caretPositionFromPoint()` is unavailable. There is nothing to switch to and no option to add, so flagging it only produced noise in the fallback branch. Only `caretPositionFromPoint()` is still reported when it is missing a `{ shadowRoots }` option.
+
+### Bug fixes
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `no-editor-styles-in-index-content` rule no longer reports a bare `:host` selector that declares only custom properties. Together with `:root`, it marks the root scope a stylesheet resolves its custom properties in, so `:root, :host { --ck-content-*: … }` is now accepted in `theme/index-content.css`. A parameterized `:host(…)` still counts as an editor selector.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Minor releases (contain minor breaking changes):
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/20.1.0): v20.0.0 => v20.1.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/20.1.0): v20.0.0 => v20.1.0
+</details>
+
+
 ## [20.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v19.1.0...v20.0.0) (July 31, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -107,26 +139,6 @@ Minor releases (contain minor breaking changes):
 Releases containing new features:
 
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/18.1.0): v18.0.0 => v18.1.0
-</details>
-
-
-## [18.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v17.1.1...v18.0.0) (July 17, 2026)
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Upgraded ESLint to v10. The shared configuration and rules plugin now require `eslint@^10.0.0` and no longer support ESLint 9. Consequently, they require Node.js `^20.19.0 || ^22.13.0 || >=24` (as mandated by ESLint 10) and only support the flat configuration format.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Major releases (contain major breaking changes):
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/18.0.0): v17.1.1 => v18.0.0
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/18.0.0): v17.1.1 => v18.0.0
 </details>
 
 ---
