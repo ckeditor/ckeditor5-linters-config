@@ -22,7 +22,7 @@ const rulesGeneral = [
 		extends: [ 'js/recommended' ],
 
 		languageOptions: {
-			ecmaVersion: 2020,
+			ecmaVersion: 2023,
 			sourceType: 'module'
 		},
 
