@@ -26,7 +26,7 @@ Some of the packages in this repository were previously separate repositories, a
 ## Cloning
 
 > [!NOTE]
-> This project requires **pnpm v10** or higher. You can check your version with `pnpm --version` and update if needed with `npm install -g pnpm@latest`.
+> This project requires **pnpm v12** or higher. You can check your version with `pnpm --version` and update if needed with `npm install -g pnpm@latest`.
 
 1. Clone this repository.
 2. Do `pnpm install` inside (this package uses workspaces).
