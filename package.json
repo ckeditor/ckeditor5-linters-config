@@ -37,7 +37,7 @@
     "@ckeditor/ckeditor5-dev-release-tools": "^62.0.0",
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
-    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^10.0.0",
     "eslint-config-ckeditor5": "^21.0.0",
     "eslint-plugin-ckeditor5-rules": "^21.0.0",
@@ -47,7 +47,7 @@
     "listr2": "^8.0.0",
     "minimist": "^1.2.8",
     "upath": "^2.0.1",
-    "vitest": "^4.0.15"
+    "vitest": "^4.1.11"
   },
   "lint-staged": {
     "**/*.{js,mjs}": [
