@@ -14,9 +14,14 @@ overrides:
   'js-yaml@^4': '^4.3.1'
   'brace-expansion@^1': '^1.1.18'
   'brace-expansion@^2': '^2.1.4'
-  'fast-uri@^3': '^3.1.6'
   'nanoid@^3': '^3.3.18'
   'brace-expansion@^5': '^5.0.9'
+  # `webpack` and `@babel/helper-compilation-targets` resolve this package on their own,
+  # which leaves older builds in the tree. Pin the floor so the whole tree shares one build.
+  'browserslist@^4': '^4.28.7'
+  # `stylelint` asks for `^2.9.3`, yet the tree keeps resolving an older build.
+  # Raise the floor so every consumer shares the current one.
+  'colord@^2': '^2.9.4'
 
 minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
