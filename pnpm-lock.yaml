@@ -22,17 +22,17 @@ importers:
   .:
     devDependencies:
       '@ckeditor/ckeditor5-dev-bump-year':
-        specifier: ^54.8.0
-        version: 54.8.0
+        specifier: ^54.9.1
+        version: 54.9.1
       '@ckeditor/ckeditor5-dev-changelog':
-        specifier: ^54.8.0
-        version: 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+        specifier: ^54.9.1
+        version: 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       '@ckeditor/ckeditor5-dev-ci':
-        specifier: ^54.8.0
-        version: 54.8.0
+        specifier: ^54.9.1
+        version: 54.9.1
       '@ckeditor/ckeditor5-dev-release-tools':
-        specifier: ^54.8.0
-        version: 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+        specifier: ^54.9.1
+        version: 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       '@inquirer/prompts':
         specifier: ^7.5.0
         version: 7.10.1(@types/node@24.10.0)
@@ -352,30 +352,30 @@ packages:
   '@cacheable/utils@2.4.1':
     resolution: {integrity: sha512-eiFgzCbIneyMlLOmNG4g9xzF7Hv3Mga4LjxjcSC/ues6VYq2+gUbQI8JqNuw/ZM8tJIeIaBGpswAsqV2V7ApgA==}
 
-  '@ckeditor/ckeditor5-dev-bump-year@54.8.0':
-    resolution: {integrity: sha512-766ioM6WVjtxvEViXSDZmF1Q2J/IuIY82x0lNEYitW/qGyG6I6PTmegAoBmAcoKfJwnwbv9AjVT3RfHYh/i+3A==}
+  '@ckeditor/ckeditor5-dev-bump-year@54.9.1':
+    resolution: {integrity: sha512-7YF9mKVnJX9pBHL+Sp/OesLA2hHCTv8cAft0OZeeQIMdC0LvJhYvoWHiDilz6EX/U/j7JuemVBmFvR8N1O0QpQ==}
     engines: {node: '>=24.11.0', npm: '>=5.7.1'}
 
-  '@ckeditor/ckeditor5-dev-changelog@54.8.0':
-    resolution: {integrity: sha512-4aZ1/wnU29Jhwom9lrCCyWp32ptaTpDRcBcDlFCD93ADQgTILaGeAf4C2EWzNWyIWpZJ8vbLJ1asUyUChNNyNw==}
-    engines: {node: '>=24.11.0', npm: '>=5.7.1'}
-    hasBin: true
-
-  '@ckeditor/ckeditor5-dev-ci@54.8.0':
-    resolution: {integrity: sha512-LpH7ViNDAtML8lWMV91VFnVj6ocyW5eOqTH9UQWRcv9336e7aLcx9L0iimuV9TDk56i/q0Eci6wqfvQaT66Z9w==}
+  '@ckeditor/ckeditor5-dev-changelog@54.9.1':
+    resolution: {integrity: sha512-enCr8ZhZ2Mplm3sSzuoBDJmm/5+6mHYYVXZkL6IU4MllMb0XPl3B+X3uMrxU5DEN9HIr5b3EOxtWn+MIBhCCFg==}
     engines: {node: '>=24.11.0', npm: '>=5.7.1'}
     hasBin: true
 
-  '@ckeditor/ckeditor5-dev-release-tools@54.8.0':
-    resolution: {integrity: sha512-wzP2yfekje2GFWaC0VAw0JqBBRTcHw/O/L21YP9T8EZqTkYtWphdMzUbRhHk/GQlWUUjVq2JEuRpAEwRyUvmKA==}
+  '@ckeditor/ckeditor5-dev-ci@54.9.1':
+    resolution: {integrity: sha512-l50xjv1Qha0YqW7vVWlDqezy21q79QoRg16B70HC77LVPXGWrjD5Mk1SQsu5t7dzpRiSgeCxrMx+JKuecln/IQ==}
+    engines: {node: '>=24.11.0', npm: '>=5.7.1'}
+    hasBin: true
+
+  '@ckeditor/ckeditor5-dev-release-tools@54.9.1':
+    resolution: {integrity: sha512-IRS8sy69nROGyOaORlMVStybRVeVYh1Eircsprz6mAP1vwR++IhxDG4yUa+Mk+hOJ0lA3o672VBnBRn+6oG3+Q==}
     engines: {node: '>=24.11.0', npm: '>=5.7.1'}
 
-  '@ckeditor/ckeditor5-dev-translations@54.8.0':
-    resolution: {integrity: sha512-Pm1hwfBGNaebNZwjrRBg7fSQsTKYDSSG2T62s4b8JxNXkLZG73Pktkjt9LCKNh5OWiNkeHlKlLxIPO8ihdpOkA==}
+  '@ckeditor/ckeditor5-dev-translations@54.9.1':
+    resolution: {integrity: sha512-Zd2uajOxakPl6SnS9oDQ2LHvmsL9FLO60Ys5iyBDqGiF/ASEecydcsmFzl0j4+lfW6vDiMYwBtn7Rh4HuIGRXg==}
     engines: {node: '>=24.11.0', npm: '>=5.7.1'}
 
-  '@ckeditor/ckeditor5-dev-utils@54.8.0':
-    resolution: {integrity: sha512-GD5FSpHuMUVXv/FmxocFCEZEvEwKIg47MzlSIveC/84GkzW8YtV0LVN8V3VhgizEZzoQsAYecD/bq6ohb9UKQg==}
+  '@ckeditor/ckeditor5-dev-utils@54.9.1':
+    resolution: {integrity: sha512-xjOaJMa6STzjgQscnsepAa8dFXkzoAT2UZ9KJTYpCE2yEMEj1Vx19kv5p4ioznvjckQO4Ij/YwI0mvPPj0b23g==}
     engines: {node: '>=24.11.0', npm: '>=5.7.1'}
 
   '@colordx/core@5.4.3':
@@ -4758,14 +4758,14 @@ snapshots:
       hashery: 1.5.1
       keyv: 5.6.0
 
-  '@ckeditor/ckeditor5-dev-bump-year@54.8.0':
+  '@ckeditor/ckeditor5-dev-bump-year@54.9.1':
     dependencies:
       glob: 13.0.6
 
-  '@ckeditor/ckeditor5-dev-changelog@54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
+  '@ckeditor/ckeditor5-dev-changelog@54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
     dependencies:
       '@11ty/gray-matter': 2.1.0
-      '@ckeditor/ckeditor5-dev-utils': 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+      '@ckeditor/ckeditor5-dev-utils': 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       date-fns: 4.1.0
       glob: 13.0.6
       inquirer: 12.11.1(@types/node@24.10.0)
@@ -4782,15 +4782,15 @@ snapshots:
       - uglify-js
       - webpack
 
-  '@ckeditor/ckeditor5-dev-ci@54.8.0':
+  '@ckeditor/ckeditor5-dev-ci@54.9.1':
     dependencies:
       '@octokit/rest': 22.0.1
       slack-notify: 2.0.7
       snyk: 1.1304.0
 
-  '@ckeditor/ckeditor5-dev-release-tools@54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
+  '@ckeditor/ckeditor5-dev-release-tools@54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@24.10.0)(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
     dependencies:
-      '@ckeditor/ckeditor5-dev-utils': 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+      '@ckeditor/ckeditor5-dev-utils': 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       '@octokit/rest': 22.0.1
       cli-columns: 4.0.0
       glob: 13.0.6
@@ -4810,11 +4810,11 @@ snapshots:
       - uglify-js
       - webpack
 
-  '@ckeditor/ckeditor5-dev-translations@54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
+  '@ckeditor/ckeditor5-dev-translations@54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
     dependencies:
       '@babel/parser': 7.29.7
       '@babel/traverse': 7.29.7(supports-color@8.1.1)
-      '@ckeditor/ckeditor5-dev-utils': 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+      '@ckeditor/ckeditor5-dev-utils': 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       glob: 13.0.6
       plural-forms: 0.5.5
       pofile: 1.1.4
@@ -4831,9 +4831,9 @@ snapshots:
       - uglify-js
       - webpack
 
-  '@ckeditor/ckeditor5-dev-utils@54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
+  '@ckeditor/ckeditor5-dev-utils@54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))':
     dependencies:
-      '@ckeditor/ckeditor5-dev-translations': 54.8.0(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
+      '@ckeditor/ckeditor5-dev-translations': 54.9.1(@babel/core@7.29.7(supports-color@8.1.1))(esbuild@0.28.1)(supports-color@8.1.1)(typescript@5.5.4)(webpack@5.106.2(esbuild@0.28.1))
       '@types/postcss-import': 14.0.3
       '@types/through2': 2.0.41
       babel-loader: 10.1.1(@babel/core@7.29.7(supports-color@8.1.1))(webpack@5.106.2(esbuild@0.28.1))
