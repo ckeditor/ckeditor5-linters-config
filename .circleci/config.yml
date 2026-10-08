@@ -45,7 +45,7 @@ commands:
     steps:
       - run:
           name: Install npm with CircleCI OIDC support
-          command: sudo npm i -g npm@^11.21.0
+          command: sudo npm i -g npm@11.21.0
       # npm keeps only 10 debug logs by default. A single publish run executes many npm commands.
       - run:
           name: Keep all npm debug logs
