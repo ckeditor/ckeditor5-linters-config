@@ -13,12 +13,17 @@ parameters:
 
 commands:
   bootstrap_repository_command:
-    description: "Bootstrap the repository"
+    description: "Disable Corepack, install pnpm and project dependencies"
     steps:
       - install_ssh_keys_command
       - run:
+          # The Node.js 24 images ship Corepack, whose shims would shadow the pnpm installed below.
+          # The Node.js 26 images do not have Corepack, so the step is skipped there.
           name: Disable Corepack
-          command: sudo corepack disable
+          command: |
+            if command -v corepack > /dev/null; then
+              sudo corepack disable
+            fi
       - run:
           name: Install pnpm
           command: sudo npm i -g pnpm@^11
@@ -87,8 +92,12 @@ commands:
 
 jobs:
   validate_and_tests:
+    parameters:
+      node_image:
+        type: string
+        default: cimg/node:26.10.0
     docker:
-      - image: cimg/node:24.11.0
+      - image: << parameters.node_image >>
     steps:
       - checkout
       - bootstrap_repository_command
@@ -104,7 +113,7 @@ jobs:
 
   release_prepare:
     docker:
-      - image: cimg/node:24.11.0
+      - image: cimg/node:26.10.0
     steps:
       - checkout
       - bootstrap_repository_command
@@ -114,7 +123,7 @@ jobs:
 
   trigger_release_process:
     docker:
-      - image: cimg/node:24.11.0
+      - image: cimg/node:26.10.0
     steps:
       - checkout
       - bootstrap_repository_command
@@ -143,7 +152,7 @@ jobs:
 
   release_project:
     docker:
-      - image: cimg/node:24.11.0
+      - image: cimg/node:26.10.0
     steps:
       - checkout
       - bootstrap_repository_command
@@ -202,7 +211,7 @@ jobs:
 
   upload_snyk_snapshots:
     docker:
-      - image: cimg/node:24.11.0
+      - image: cimg/node:26.10.0
     resource_class: medium
     steps:
       - checkout
@@ -220,10 +229,14 @@ workflows:
         - equal: [ false, << pipeline.parameters.isRelease >> ]
     jobs:
       - validate_and_tests
+      - validate_and_tests:
+          name: validate_and_tests_node_24
+          node_image: cimg/node:24.11.0
       - release_prepare
       - trigger_release_process:
           requires:
             - validate_and_tests
+            - validate_and_tests_node_24
             - release_prepare
           filters:
             branches:
@@ -254,3 +267,6 @@ workflows:
         - equal: [ false, << pipeline.parameters.isRelease >> ]
     jobs:
       - validate_and_tests
+      - validate_and_tests:
+          name: validate_and_tests_node_24
+          node_image: cimg/node:24.11.0
