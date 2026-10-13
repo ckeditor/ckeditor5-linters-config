@@ -93,11 +93,8 @@ jobs:
           name: Execute ESLint
           command: pnpm run lint
       - run:
-          name: Execute tests for internal scripts
-          command: pnpm run test:scripts
-      - run:
-          name: Run unit tests
-          command: pnpm run test
+          name: Run unit tests with code coverage
+          command: pnpm run coverage
 
   release_prepare:
     docker:
