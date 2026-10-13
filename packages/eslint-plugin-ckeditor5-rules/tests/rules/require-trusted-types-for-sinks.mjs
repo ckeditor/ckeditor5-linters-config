@@ -436,6 +436,19 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-trusted-types-for-sinks',
 			} ]
 		},
 
+		{
+			name: 'Passing a plain string as any argument of write(), which joins every argument it is given',
+			code: DECLARATIONS + 'document.write( trustedHtml( html ), html );\n',
+			errors: [ {
+				messageId: 'method',
+				data: { name: 'write' },
+				suggestions: [ {
+					messageId: 'wrapInHelper',
+					output: IMPORT_HTML_HELPER + DECLARATIONS + 'document.write( trustedHtml( html ), trustedHtml( html ) );\n'
+				} ]
+			} ]
+		},
+
 		...Object.entries( SINK_METHOD_CALLS ).map( ( [ name, call ] ) => ( {
 			name: `Passing a plain string to ${ name }()`,
 			code: SINK_METHOD_DECLARATIONS + call + '\n',

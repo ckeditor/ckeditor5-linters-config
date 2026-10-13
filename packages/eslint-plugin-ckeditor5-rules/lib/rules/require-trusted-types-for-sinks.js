@@ -20,7 +20,8 @@ const HELPERS_MODULE_DIRECTORY = 'ckeditor5-utils';
 const SINK_PROPERTIES = new Set( [ 'innerHTML', 'outerHTML', 'srcdoc' ] );
 
 /**
- * Methods that turn a string into DOM, each with the position of its HTML argument.
+ * Methods that turn a string into DOM, each with the position of its HTML argument, or `null` when every argument is
+ * HTML, as in `document.write()`, which joins them.
  */
 const SINK_METHODS = new Map( [
 	[ 'parseFromString', 0 ],
@@ -28,8 +29,8 @@ const SINK_METHODS = new Map( [
 	[ 'insertAdjacentHTML', 1 ],
 	[ 'setHTMLUnsafe', 0 ],
 	[ 'parseHTMLUnsafe', 0 ],
-	[ 'write', 0 ],
-	[ 'writeln', 0 ]
+	[ 'write', null ],
+	[ 'writeln', null ]
 ] );
 
 /**
@@ -168,12 +169,14 @@ module.exports = {
 		 * element.insertAdjacentHTML( 'beforeend', html ); // not allowed
 		 */
 		function checkSinkMethod( node, callee, method ) {
-			const argument = node.arguments[ SINK_METHODS.get( method ) ];
+			const position = SINK_METHODS.get( method );
+			const htmlArguments = position === null ? node.arguments : node.arguments.slice( position, position + 1 );
+			const plainArguments = htmlArguments.filter( argument =>
+				argument.type !== 'SpreadElement' && !isCallTo( argument, HTML_HELPER )
+			);
 
-			if ( argument && argument.type !== 'SpreadElement' && !isCallTo( argument, HTML_HELPER ) &&
-				isSinkReceiver( callee.object )
-			) {
-				reportHtml( node, 'method', method, argument );
+			if ( plainArguments.length && isSinkReceiver( callee.object ) ) {
+				plainArguments.forEach( argument => reportHtml( node, 'method', method, argument ) );
 			}
 		}
 
