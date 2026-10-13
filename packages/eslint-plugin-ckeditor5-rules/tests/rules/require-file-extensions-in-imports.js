@@ -5,6 +5,7 @@
 
 'use strict';
 
+const { join } = require( 'node:path' );
 const RuleTester = require( 'eslint' ).RuleTester;
 const parser = require( '@typescript-eslint/parser' );
 
@@ -107,6 +108,9 @@ ruleTester.run( 'require-file-extensions-in-imports', require( '../../lib/rules/
 		},
 		{
 			code: 'import Something from ".";',
+
+			// Resolve "." against this package (and its `main` field), not the directory the tests run from.
+			filename: join( __dirname, '..', '..', 'file.js' ),
 			output: 'import Something from "./index.js";',
 			errors: [
 				'Missing file extension in import/export "."'
