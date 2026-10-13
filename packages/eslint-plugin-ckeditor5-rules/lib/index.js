@@ -36,6 +36,7 @@ module.exports = {
 		'require-explicit-data-context': require( './rules/require-explicit-data-context' ),
 		'require-file-extensions-in-imports': require( './rules/require-file-extensions-in-imports' ),
 		'require-host-with-root-selector': require( './rules/require-host-with-root-selector' ),
+		'require-trusted-types-for-sinks': require( './rules/require-trusted-types-for-sinks' ),
 		'validate-changelog-entry': require( './rules/validate-changelog-entry' ),
 		'validate-module-tag': require( './rules/validate-module-tag' )
 	}
