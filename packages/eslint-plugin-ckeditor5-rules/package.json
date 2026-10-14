@@ -15,7 +15,7 @@
     "eslintplugin"
   ],
   "engines": {
-    "node": ">=24.11.0"
+    "node": ">=26.10.0"
   },
   "main": "lib/index.js",
   "files": [
