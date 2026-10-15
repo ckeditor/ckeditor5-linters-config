@@ -121,9 +121,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-trusted-types-for-sinks',
 		},
 
 		{
-			name: 'Calling sink methods with a spread argument, which the rule cannot see into',
-			code: DECLARATIONS + 'declare const args: [ string, string ];\n' +
-				'new DOMParser().parseFromString( ...args );\nelement.setAttribute( ...args );\n'
+			name: 'Setting an attribute with a literal name that never takes a Trusted Type and a spread value',
+			code: DECLARATIONS + 'declare const rest: [ string ];\nelement.setAttribute( \'class\', ...rest );\n'
 		},
 
 		{
@@ -449,6 +448,58 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-trusted-types-for-sinks',
 			} ]
 		},
 
+		{
+			name: 'Passing spread arguments to sinks, which the rule cannot prove to come from the helpers',
+			options: [ { htmlWritingFunctions: { morphdom: 1 } } ],
+			code: 'declare function morphdom( from: Node, to: Node ): void;\n' + DECLARATIONS +
+				'declare const args: [ string, string ];\n' +
+				'document.write( trustedHtml( html ), ...args );\n' +
+				'element.insertAdjacentHTML( ...args );\n' +
+				'element.setAttribute( ...args );\n' +
+				'element.setAttribute( \'onclick\', ...args );\n' +
+				'morphdom( element, ...args );\n',
+			errors: [
+				{ messageId: 'method', data: { name: 'write' }, line: 5, column: 38, suggestions: [] },
+				{ messageId: 'method', data: { name: 'insertAdjacentHTML' }, line: 6, column: 29, suggestions: [] },
+				{ messageId: 'dynamicAttribute', data: { name: 'setAttribute' }, line: 7, column: 23 },
+				{ messageId: 'trustedAttribute', data: { name: 'setAttribute', attribute: 'onclick' }, line: 8, column: 34 },
+				{ messageId: 'htmlWritingFunction', data: { name: 'morphdom' }, line: 9, column: 20 }
+			]
+		},
+
+		{
+			name: 'Reporting each plain argument of write() at the argument itself',
+			code: DECLARATIONS + 'declare const header: string;\ndocument.write( header, html );\n',
+			errors: [ [ 17, 'header' ], [ 25, 'html' ] ].map( ( [ column, argument ] ) => ( {
+				messageId: 'method',
+				data: { name: 'write' },
+				line: 4,
+				column,
+				suggestions: [ {
+					messageId: 'wrapInHelper',
+					output: IMPORT_HTML_HELPER + DECLARATIONS + 'declare const header: string;\n' +
+						'document.write( header, html );\n'.replace( `${ argument } )`, `trustedHtml( ${ argument } ) )` )
+							.replace( `( ${ argument },`, `( trustedHtml( ${ argument } ),` )
+				} ]
+			} ) )
+		},
+
+		{
+			name: 'Passing a plain string to sink methods called through bracket notation with a constant or a template literal',
+			code: DECLARATIONS + 'const method = \'write\';\ndocument[ method ]( html );\nelement[ `setHTMLUnsafe` ]( html );\n',
+			errors: [ [ 'write', 'document[ method ]( html )' ], [ 'setHTMLUnsafe', 'element[ `setHTMLUnsafe` ]( html )' ] ]
+				.map( ( [ name, call ] ) => ( {
+					messageId: 'method',
+					data: { name },
+					suggestions: [ {
+						messageId: 'wrapInHelper',
+						output: IMPORT_HTML_HELPER + DECLARATIONS +
+							'const method = \'write\';\ndocument[ method ]( html );\nelement[ `setHTMLUnsafe` ]( html );\n'
+								.replace( call, call.replace( '( html )', '( trustedHtml( html ) )' ) )
+					} ]
+				} ) )
+		},
+
 		...Object.entries( SINK_METHOD_CALLS ).map( ( [ name, call ] ) => ( {
 			name: `Passing a plain string to ${ name }()`,
 			code: SINK_METHOD_DECLARATIONS + call + '\n',
@@ -473,6 +524,19 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/require-trusted-types-for-sinks',
 					data: { helper: '_trustedAttributeValue' },
 					output: IMPORT_ATTRIBUTE_HELPER + ATTRIBUTE_DECLARATIONS +
 						'element.setAttribute( attributeName, _trustedAttributeValue( element, attributeName, value ) );\n'
+				} ]
+			} ]
+		},
+
+		{
+			name: 'Setting an attribute through bracket notation',
+			code: ATTRIBUTE_DECLARATIONS + 'element[ \'setAttribute\' ]( attributeName, value );\n',
+			errors: [ {
+				messageId: 'dynamicAttribute',
+				suggestions: [ {
+					messageId: 'wrapInHelper',
+					output: IMPORT_ATTRIBUTE_HELPER + ATTRIBUTE_DECLARATIONS +
+						'element[ \'setAttribute\' ]( attributeName, _trustedAttributeValue( element, attributeName, value ) );\n'
 				} ]
 			} ]
 		},

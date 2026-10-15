@@ -5,6 +5,8 @@
 
 'use strict';
 
+const { unwrapExpression } = require( '../utils/unwrap-expression' );
+
 /**
  * The helpers that prepare a value for a sink, the module they are imported from, and the name of the directory of that
  * module, in which a file cannot import from the module's own name.
@@ -58,14 +60,6 @@ const SINK_OWNER_TYPES = new Set( [ 'Element', 'ShadowRoot', 'Document', 'DOMPar
  * The DOM interface that the argument of a function from the `htmlWritingFunctions` option must be.
  */
 const NODE_TYPES = new Set( [ 'Node' ] );
-
-const EXPRESSION_WRAPPERS = new Set( [
-	'ChainExpression',
-	'TSAsExpression',
-	'TSNonNullExpression',
-	'TSSatisfiesExpression',
-	'TSTypeAssertion'
-] );
 
 module.exports = {
 	meta: {
@@ -140,7 +134,7 @@ module.exports = {
 				if ( node.operator === '+=' ) {
 					context.report( { node, messageId: 'compoundAssignment', data: { name } } );
 				} else if ( !isCallTo( node.right, HTML_HELPER ) ) {
-					reportHtml( node, 'property', name, node.right );
+					reportHtml( node.right, 'property', name );
 				}
 			},
 
@@ -155,7 +149,9 @@ module.exports = {
 					return;
 				}
 
-				const method = getPropertyName( callee );
+				const method = callee.computed ?
+					getStringLiterals( callee.property )?.find( name => SINK_METHODS.has( name ) || ATTRIBUTE_METHODS.has( name ) ) :
+					getPropertyName( callee.property );
 
 				if ( SINK_METHODS.has( method ) ) {
 					checkSinkMethod( node, callee, method );
@@ -169,14 +165,11 @@ module.exports = {
 		 * element.insertAdjacentHTML( 'beforeend', html ); // not allowed
 		 */
 		function checkSinkMethod( node, callee, method ) {
-			const position = SINK_METHODS.get( method );
-			const htmlArguments = position === null ? node.arguments : node.arguments.slice( position, position + 1 );
-			const plainArguments = htmlArguments.filter( argument =>
-				argument.type !== 'SpreadElement' && !isCallTo( argument, HTML_HELPER )
-			);
+			const plainArguments = getCheckedArguments( node.arguments, SINK_METHODS.get( method ) )
+				.filter( argument => !isCallTo( argument, HTML_HELPER ) );
 
 			if ( plainArguments.length && isSinkReceiver( callee.object ) ) {
-				plainArguments.forEach( argument => reportHtml( node, 'method', method, argument ) );
+				plainArguments.forEach( argument => reportHtml( argument, 'method', method ) );
 			}
 		}
 
@@ -186,12 +179,17 @@ module.exports = {
 		 */
 		function checkAttributeMethod( node, callee, method ) {
 			const positions = ATTRIBUTE_METHODS.get( method );
-			const nameArgument = node.arguments[ positions.name ];
-			const valueArgument = node.arguments[ positions.value ];
+			const [ nameArgument ] = getCheckedArguments( node.arguments, positions.name );
+			const [ valueArgument ] = getCheckedArguments( node.arguments, positions.value );
 
-			if ( !valueArgument || nameArgument.type === 'SpreadElement' || valueArgument.type === 'SpreadElement' ||
-				!isSinkReceiver( callee.object )
-			) {
+			if ( !valueArgument || !isSinkReceiver( callee.object ) ) {
+				return;
+			}
+
+			// A spread argument can hold any name, so it is reported, but it has no single value to wrap.
+			if ( nameArgument.type === 'SpreadElement' ) {
+				context.report( { node: nameArgument, messageId: 'dynamicAttribute', data: { name: method } } );
+
 				return;
 			}
 
@@ -200,6 +198,14 @@ module.exports = {
 			const attribute = names?.find( name => TRUSTED_ATTRIBUTE_PATTERN.test( name.split( ':' ).pop() ) );
 
 			if ( names && !attribute ) {
+				return;
+			}
+
+			const messageId = attribute ? 'trustedAttribute' : 'dynamicAttribute';
+
+			if ( valueArgument.type === 'SpreadElement' ) {
+				context.report( { node: valueArgument, messageId, data: { name: method, attribute } } );
+
 				return;
 			}
 
@@ -220,8 +226,8 @@ module.exports = {
 			const leadingArguments = [ sourceCode.getText( callee.object ), sourceCode.getText( nameArgument ) ];
 
 			context.report( {
-				node,
-				messageId: attribute ? 'trustedAttribute' : 'dynamicAttribute',
+				node: valueArgument,
+				messageId,
 				data: { name: method, attribute },
 				// The element and the name are repeated in the call, which is safe only when reading them has no side effects.
 				suggest: isSideEffectFree( callee.object ) && isSideEffectFree( nameArgument ) ? [ {
@@ -240,23 +246,31 @@ module.exports = {
 		 * a DOM node keeps the string away from the sink. Every member of the type of the argument must be one.
 		 */
 		function checkHtmlWritingFunction( node, name ) {
-			const argument = node.arguments[ htmlWritingFunctions[ name ] ];
-			const type = argument && checker.getNonNullableType( services.getTypeAtLocation( argument ) );
+			const [ argument ] = getCheckedArguments( node.arguments, htmlWritingFunctions[ name ] );
 
-			if ( type && !getUnionMembers( type ).every( member => isDomType( member, NODE_TYPES ) ) ) {
-				context.report( { node, messageId: 'htmlWritingFunction', data: { name } } );
+			if ( !argument ) {
+				return;
+			}
+
+			const isNode = argument.type !== 'SpreadElement' &&
+				getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( argument ) ) )
+					.every( member => isDomType( member, NODE_TYPES ) );
+
+			if ( !isNode ) {
+				context.report( { node: argument, messageId: 'htmlWritingFunction', data: { name } } );
 			}
 		}
 
 		/**
-		 * Reports an HTML sink, with a suggestion to wrap its value.
+		 * Reports the value given to an HTML sink, with a suggestion to wrap it. A spread argument gets no suggestion, as it
+		 * has no single value to wrap.
 		 */
-		function reportHtml( node, messageId, name, value ) {
+		function reportHtml( value, messageId, name ) {
 			context.report( {
-				node,
+				node: value,
 				messageId,
 				data: { name },
-				suggest: [ {
+				suggest: value.type === 'SpreadElement' ? [] : [ {
 					messageId: 'wrapInHelper',
 					data: { helper: HTML_HELPER },
 					fix: fixer => wrapInHelper( fixer, value, HTML_HELPER, [] )
@@ -271,7 +285,7 @@ module.exports = {
 		 * compile, so it is found only on objects that are typed as something else.
 		 */
 		function getSinkProperty( member ) {
-			const names = member.computed ? getStringLiterals( member.property ) ?? [] : [ getPropertyName( member ) ];
+			const names = member.computed ? getStringLiterals( member.property ) ?? [] : [ getPropertyName( member.property ) ];
 
 			return names.find( name => SINK_PROPERTIES.has( name ) ) ?? null;
 		}
@@ -406,15 +420,24 @@ module.exports = {
 };
 
 /**
- * Returns the name of the property that a member expression reads, when written as a plain name or a string, and
- * `undefined` for anything else, including a private name such as `this.#innerHTML`.
+ * Returns the name of a property written with dot notation, or `undefined` for a private name such as `this.#innerHTML`.
  */
-function getPropertyName( { computed, property } ) {
-	if ( computed ) {
-		return property.value;
+function getPropertyName( property ) {
+	return property.type === 'Identifier' ? property.name : undefined;
+}
+
+/**
+ * Returns the arguments that a sink reads at a position, or all of them when the position is `null`. A spread argument at
+ * or before the position can hold the value, so it is returned in its place: the rule cannot prove what it holds.
+ */
+function getCheckedArguments( args, position ) {
+	if ( position === null ) {
+		return args;
 	}
 
-	return property.type === 'Identifier' ? property.name : undefined;
+	const spread = args.slice( 0, position + 1 ).find( argument => argument.type === 'SpreadElement' );
+
+	return spread ? [ spread ] : args.slice( position, position + 1 );
 }
 
 /**
@@ -445,18 +468,4 @@ function isSideEffectFree( node ) {
 		default:
 			return false;
 	}
-}
-
-/**
- * Strips TypeScript wrapper nodes (`x as Element`, `x!`, `<Element>x`, `x satisfies Element`) and `ChainExpression`
- * wrappers down to the expression underneath, since none changes what is actually being accessed or called.
- */
-function unwrapExpression( node ) {
-	let expression = node;
-
-	while ( EXPRESSION_WRAPPERS.has( expression.type ) ) {
-		expression = expression.expression;
-	}
-
-	return expression;
 }
