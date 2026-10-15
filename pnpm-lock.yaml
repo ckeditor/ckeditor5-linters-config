@@ -87,9 +87,6 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
-      vitest:
-        specifier: ^5.0.0
-        version: 5.0.2(@types/node@26.1.1)(@vitest/coverage-v8@5.0.2)(vite@8.1.4(@types/node@26.1.1)(esbuild@0.28.1)(terser@5.49.0)(yaml@2.9.0))
 
   packages/eslint-plugin-ckeditor5-rules:
     dependencies:
@@ -136,9 +133,6 @@ importers:
       typescript-eslint:
         specifier: ^8.57.0
         version: 8.63.0(eslint@10.7.0(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.8.3)
-      vitest:
-        specifier: ^5.0.0
-        version: 5.0.2(@types/node@26.1.1)(@vitest/coverage-v8@5.0.2)(vite@8.1.4(@types/node@26.1.1)(esbuild@0.28.1)(terser@5.49.0)(yaml@2.9.0))
 
 packages:
 
