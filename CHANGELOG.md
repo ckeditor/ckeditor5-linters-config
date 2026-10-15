@@ -1,6 +1,30 @@
 Changelog
 =========
 
+## [22.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v21.0.0...v22.0.0) (October 15, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Upgraded the required version of Node.js to 26.10.0.
+
+### Features
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added the `require-trusted-types-for-sinks` rule. It reports HTML strings and attribute values that reach a DOM injection sink, such as `innerHTML` or `setAttribute( 'onclick', value )`, without going through the `trustedHtml()` or `_trustedAttributeValue()` helper from `@ckeditor/ckeditor5-utils`. Applications that enforce Trusted Types reject such plain strings. The rule requires type information and is not enabled in `eslint-config-ckeditor5`.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/22.0.0): v21.0.0 => v22.0.0
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/22.0.0): v21.0.0 => v22.0.0
+</details>
+
+
 ## [21.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v20.1.0...v21.0.0) (September 10, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -104,33 +128,6 @@ Releases containing new features:
 
 * [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/19.1.0): v19.0.0 => v19.1.0
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/19.1.0): v19.0.0 => v19.1.0
-</details>
-
-
-## [19.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v18.1.0...v19.0.0) (July 22, 2026)
-
-### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5)**: The CSS preset now enables the `ckeditor5-rules/content-styles-in-index-content` and `ckeditor5-rules/no-editor-styles-in-index-content` rules as errors for `**/theme/**/*.css` files. Packages that keep content styles (selectors rooted at `.ck-content`) outside `theme/index-content.css`, or editor styles inside it, must move those styles to the matching entry point.
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added two CSS rules supporting the split of package themes into editor and content stylesheets: `ckeditor5-rules/content-styles-in-index-content` requires content styles (selectors rooted at `.ck-content`) to live in `theme/index-content.css`, and `ckeditor5-rules/no-editor-styles-in-index-content` disallows editor styles in that file.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Major releases (contain major breaking changes):
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/19.0.0): v18.1.0 => v19.0.0
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/19.0.0): v18.1.0 => v19.0.0
 </details>
 
 ---
