@@ -5,6 +5,8 @@
 
 'use strict';
 
+const { unwrapExpression } = require( '../utils/unwrap-expression' );
+
 const DOCUMENT_ELEMENT_LOOKUP_METHODS = new Set( [
 	'querySelector',
 	'querySelectorAll',
@@ -25,14 +27,6 @@ const DOCUMENT_LISTENER_EVENTS = new Set( [
 const PARENT_TRAVERSAL_REPLACEMENTS = new Map( [
 	[ 'parentNode', 'getParentNode' ],
 	[ 'parentElement', 'getParentElement' ]
-] );
-
-const EXPRESSION_WRAPPERS = new Set( [
-	'ChainExpression',
-	'TSAsExpression',
-	'TSNonNullExpression',
-	'TSSatisfiesExpression',
-	'TSTypeAssertion'
 ] );
 
 module.exports = {
@@ -362,21 +356,4 @@ function hasShadowRootsOption( args ) {
 	return options?.type === 'ObjectExpression' && options.properties.some( property =>
 		property.type === 'Property' && getStaticKeyName( property.key, property.computed ) === 'shadowRoots'
 	);
-}
-
-/**
- * Strips TypeScript wrapper nodes (`x as Document`, `x!`, `<Document>x`, `x satisfies Document`),
- * and `ChainExpression` wrappers (parenthesized optional chains, e.g. `(x?.y)`) down to the
- * expression underneath, since none changes what is actually being accessed or called.
- *
- * unwrapExpression( node ); // node for `document!` -> node for `document`
- */
-function unwrapExpression( node ) {
-	let expression = node;
-
-	while ( EXPRESSION_WRAPPERS.has( expression?.type ) ) {
-		expression = expression.expression;
-	}
-
-	return expression;
 }
