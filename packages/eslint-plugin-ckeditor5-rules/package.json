@@ -22,9 +22,6 @@
     "lib",
     "CHANGELOG.md"
   ],
-  "scripts": {
-    "test": "vitest run --config vitest.config.mjs"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
@@ -46,7 +43,6 @@
     "eslint": "^10.0.0",
     "lodash": "^4.17.21",
     "typescript": "5.8.3",
-    "typescript-eslint": "^8.57.0",
-    "vitest": "^5.0.0"
+    "typescript-eslint": "^8.57.0"
   }
 }

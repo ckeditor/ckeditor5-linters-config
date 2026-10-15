@@ -40,6 +40,12 @@ Tests:
 pnpm run test
 ```
 
+Tests with code coverage:
+
+```bash
+pnpm run coverage
+```
+
 ## License
 
 Licensed under the terms of [MIT license](https://opensource.org/licenses/MIT). For full details about the license, please check the `LICENSE.md` file.

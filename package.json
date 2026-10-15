@@ -18,8 +18,8 @@
     "release:prepare-changelog": "node ./scripts/preparechangelog.mjs",
     "release:prepare-packages": "node ./scripts/preparepackages.mjs",
     "release:publish-packages": "node ./scripts/publishpackages.mjs",
-    "test": "pnpm --recursive --if-present run test",
-    "test:scripts": "vitest --config ./scripts-tests/vitest.config.mjs --run"
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "engines": {
     "node": ">=26.10.0",
