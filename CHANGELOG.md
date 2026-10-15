@@ -1,6 +1,28 @@
 Changelog
 =========
 
+## [13.0.2](https://github.com/ckeditor/ckeditor5-linters-config/compare/v13.0.1...v13.0.2) (October 15, 2026)
+
+### Other changes
+
+* Maintenance release required to setup npm trusted publisher configuration. No user-facing changes.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/13.0.2): v13.0.1 => v13.0.2
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/13.0.2): v13.0.1 => v13.0.2
+* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/13.0.2): v13.0.1 => v13.0.2
+* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/13.0.2): v13.0.1 => v13.0.2
+</details>
+
+
 ## [13.0.1](https://github.com/ckeditor/ckeditor5-linters-config/compare/v13.0.0...v13.0.1) (March 16, 2026)
 
 ### Other changes
@@ -108,35 +130,6 @@ Other releases:
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/12.1.1): v12.1.0 => v12.1.1
 * [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.1.1): v12.1.0 => v12.1.1
 * [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.1.1): v12.1.0 => v12.1.1
-</details>
-
-
-## [12.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v12.0.0...v12.1.0) (July 24, 2025)
-
-### Features
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Added code fixer for `ckeditor5-rules/allow-imports-only-from-main-package-entry-point`. Closes [ckeditor/ckeditor5#18857](https://github.com/ckeditor/ckeditor5/issues/18857).
-
-### Bug fixes
-
-* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: Fixed the `ckeditor5-rules/ckeditor-imports` rule detecting errors for imports that do not start with `ckeditor5`.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/12.1.0): v12.0.0 => v12.1.0
-
-Other releases:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/12.1.0): v12.0.0 => v12.1.0
-* [stylelint-config-ckeditor5](https://www.npmjs.com/package/stylelint-config-ckeditor5/v/12.1.0): v12.0.0 => v12.1.0
-* [stylelint-plugin-ckeditor5-rules](https://www.npmjs.com/package/stylelint-plugin-ckeditor5-rules/v/12.1.0): v12.0.0 => v12.1.0
 </details>
 
 ---
