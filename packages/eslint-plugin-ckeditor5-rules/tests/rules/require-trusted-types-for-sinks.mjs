@@ -4,7 +4,7 @@
  */
 
 import path from 'node:path';
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect } from 'vitest';
 import { Linter, RuleTester } from 'eslint';
 import tsParser from '@typescript-eslint/parser';
 import rule from '../../lib/rules/require-trusted-types-for-sinks.js';
@@ -13,15 +13,22 @@ import rule from '../../lib/rules/require-trusted-types-for-sinks.js';
 const filename = path.join( import.meta.dirname, 'file.ts' );
 const helpersModuleFilename = path.join( import.meta.dirname, 'ckeditor5-utils', 'file.ts' );
 
-const ruleTester = new RuleTester( {
-	languageOptions: {
-		parser: tsParser,
-		parserOptions: {
-			projectService: { allowDefaultProject: [ '*.ts', 'ckeditor5-utils/*.ts' ] },
-			tsconfigRootDir: import.meta.dirname
-		}
+const languageOptions = {
+	parser: tsParser,
+	parserOptions: {
+		projectService: { allowDefaultProject: [ '*.ts', 'ckeditor5-utils/*.ts' ] },
+		tsconfigRootDir: import.meta.dirname
 	}
-} );
+};
+
+const ruleTester = new RuleTester( { languageOptions } );
+
+// The type checker is shared by all cases, and starting it (including loading the DOM types) can take
+// several seconds on CI, especially with coverage enabled. Start it up front, so that this cost is
+// not charged against the timeout of whichever case happens to run first.
+beforeAll( () => {
+	new Linter().verify( '', { files: [ '**/*.ts' ], languageOptions }, filename );
+}, 60_000 );
 
 const DECLARATIONS = 'declare const element: HTMLElement;\ndeclare const html: string;\n';
 const ATTRIBUTE_DECLARATIONS = DECLARATIONS + 'declare const attributeName: string;\ndeclare const value: string;\n';
