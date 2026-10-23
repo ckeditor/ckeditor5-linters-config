@@ -20,6 +20,9 @@
     ".stylelintrc",
     "CHANGELOG.md"
   ],
+  "scripts": {
+    "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git",
@@ -30,7 +33,17 @@
     "stylelint-config-recommended": "^16.0.0",
     "stylelint-plugin-ckeditor5-rules": "^13.0.2"
   },
+  "devDependencies": {
+    "@jest/globals": "^30.0.4",
+    "jest": "^30.0.4",
+    "stylelint": "^16.0.0"
+  },
   "peerDependencies": {
     "stylelint": ">=16.0.0"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/**"
+    ]
   }
 }

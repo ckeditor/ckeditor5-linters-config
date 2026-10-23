@@ -10,6 +10,7 @@ const path = require( 'node:path' );
 
 const PACKAGES_TO_TEST = [
 	'eslint-plugin-ckeditor5-rules',
+	'stylelint-config-ckeditor5',
 	'stylelint-plugin-ckeditor5-rules'
 ];
 
