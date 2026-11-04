@@ -31,13 +31,13 @@
     "url": "https://github.com/ckeditor/ckeditor5-linters-config.git"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-dev-bump-year": "^54.9.1",
-    "@ckeditor/ckeditor5-dev-changelog": "^54.9.1",
-    "@ckeditor/ckeditor5-dev-ci": "^54.9.1",
-    "@ckeditor/ckeditor5-dev-release-tools": "^54.9.1",
+    "@ckeditor/ckeditor5-dev-bump-year": "^54.11.0",
+    "@ckeditor/ckeditor5-dev-changelog": "^54.11.0",
+    "@ckeditor/ckeditor5-dev-ci": "^54.11.0",
+    "@ckeditor/ckeditor5-dev-release-tools": "^54.11.0",
     "@inquirer/prompts": "^7.5.0",
     "@listr2/prompt-adapter-inquirer": "^2.0.16",
-    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^9.26.0",
     "eslint-config-ckeditor5": "^13.0.2",
     "eslint-plugin-ckeditor5-rules": "^13.0.2",
@@ -47,7 +47,7 @@
     "listr2": "^8.0.0",
     "minimist": "^1.2.8",
     "upath": "^2.0.1",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.5"
   },
   "lint-staged": {
     "**/*.{js,mjs}": [
