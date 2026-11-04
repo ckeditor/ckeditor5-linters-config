@@ -1373,6 +1373,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			errors: [
 				{ messageId: 'activeElement', data: { path: '( this as Foo )._doc' } }
 			]
+		},
+
+		{
+			name: 'Appending to the body of this cast to Document',
+			code: 'class Foo { bar() { ( this as Document ).body.appendChild( el ); } }\n',
+			errors: [
+				{ messageId: 'bodyAppendChild', data: { path: '( this as Document ).body' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off the document of this asserted as Window',
+			code: 'class Foo { bar() { return ( <Window>this ).document.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: '( <Window>this ).document' } }
+			]
 		}
 	]
 } );

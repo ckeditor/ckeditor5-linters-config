@@ -303,11 +303,14 @@ module.exports = {
 				return getMemberKind( null, propertyName );
 			}
 
-			if ( unwrapExpression( expression.object ).type === 'ThisExpression' ) {
+			const objectKind = getExpressionKind( expression.object, visited );
+
+			// A `this` not cast to a tracked type (`( this as Document )`) is the class instance.
+			if ( !objectKind && unwrapExpression( expression.object ).type === 'ThisExpression' ) {
 				return getThisMemberKind( expression, visited );
 			}
 
-			return getMemberKind( getExpressionKind( expression.object, visited ), propertyName );
+			return getMemberKind( objectKind, propertyName );
 		}
 
 		/**
