@@ -189,6 +189,101 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling a locally imported caretPositionFromPoint helper without a { shadowRoots } option',
 			code: 'import { caretPositionFromPoint } from \'./shadow-dom-utils.js\';\ncaretPositionFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as a locally imported Document (not the DOM one)',
+			code: 'import { Document } from \'./model/document.js\';\nconst doc: Document = getDoc();\nconst el = doc.activeElement;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as a locally declared Document interface',
+			code: 'interface Document { activeElement: unknown }\nfunction f( doc: Document ) { return doc.activeElement; }\n'
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as a union of Document and ShadowRoot',
+			code: 'function f( root: Document | ShadowRoot ) { return root.activeElement; }\n'
+		},
+
+		{
+			name: 'Reading activeElement off a ShadowRoot-typed variable',
+			code: 'const root: ShadowRoot = el.getRootNode() as ShadowRoot;\nconst el2 = root.activeElement;\n'
+		},
+
+		{
+			name: 'An explicit non-Document annotation wins over a document initializer',
+			code: 'const root: DocumentOrShadowRoot = document;\nconst el = root.activeElement;\n'
+		},
+
+		{
+			name: 'Destructuring activeElement from a ShadowRoot-typed variable',
+			code: 'const root: ShadowRoot = getRoot();\nconst { activeElement } = root;\n'
+		},
+
+		{
+			name: 'Destructuring activeElement from a custom object',
+			code: 'const { activeElement } = someCustomObject;\n'
+		},
+
+		{
+			name: 'Destructuring a shadow-aware getSelection from a custom object',
+			code: 'const { getSelection } = shadowDomUtils;\nconst sel = getSelection();\n'
+		},
+
+		{
+			name: 'Calling contains on an element typed as HTMLElement',
+			code: 'function f( el: HTMLElement, other: Node ) { return el.contains( other ); }\n'
+		},
+
+		{
+			name: 'Reading this.doc.activeElement inside a static method',
+			code: 'class Foo { doc: Document; static bar() { return this.doc.activeElement; } }\n'
+		},
+
+		{
+			name: 'Reading this.doc.activeElement inside a nested plain function',
+			code: 'class Foo { doc: Document; bar() { return function() { return this.doc.activeElement; }; } }\n'
+		},
+
+		{
+			name: 'Reading this.doc.activeElement where the field is typed as something else',
+			code: 'class Foo { doc: ShadowRoot; bar() { return this.doc.activeElement; } }\n'
+		},
+
+		{
+			name: 'Reading activeElement off a private #doc field typed as ShadowRoot',
+			code: 'class Foo { #doc: ShadowRoot; bar() { return this.#doc.activeElement; } }\n'
+		},
+
+		{
+			name: 'Self-referencing class field does not loop forever',
+			code: 'class Foo { doc = this.doc; bar() { return this.doc.activeElement; } }\n'
+		},
+
+		{
+			name: 'Cyclic variable initializers do not loop forever',
+			code: 'let a = b;\nlet b = a;\nconst el = a.activeElement;\n'
+		},
+
+		{
+			name: 'Reading this.doc.activeElement inside a static field initializer',
+			code: 'class Foo { doc: Document; static bar = () => this.doc.activeElement; }\n'
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as an intersection without DOM types',
+			code: 'declare const doc: Foo & Bar;\nconst el = doc.activeElement;\n'
+		},
+
+		{
+			name: 'A rest element in a pattern destructured from document is ignored',
+			code: 'const { ...rest } = document;\n'
+		},
+
+		{
+			name: 'Destructuring activeElement in a parameter, where the object is unknown',
+			code: 'function f( { activeElement } ) {}\n'
 		}
 	],
 	invalid: [
@@ -893,6 +988,374 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			code: 'const sel = self.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement from a variable typed as Document',
+			code: 'var doc: Document = document;\nconst { activeElement } = doc;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as Document',
+			code: 'const doc: Document = getDocument();\nconst el = doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as Document | null',
+			code: 'let doc: Document | null = null;\nconst el = doc!.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as HTMLDocument',
+			code: 'declare const doc: HTMLDocument;\nconst el = doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as typeof document',
+			code: 'declare const doc: typeof document;\nconst el = doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a parameter typed as Document',
+			code: 'function f( doc: Document ) { return doc.activeElement; }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off an arrow function parameter with a Document default value',
+			code: 'const f = ( doc = document ) => doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a const initialized from ownerDocument',
+			code: 'const doc = el.ownerDocument;\nconst active = doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a const aliasing an alias of document',
+			code: 'const a = document;\nconst b = a;\nconst el = b.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'b' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through an "as Document" cast of an arbitrary value',
+			code: 'const el = ( node as Document ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'node' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a <Document> type assertion',
+			code: 'const el = ( <Document>node ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'node' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a double "as unknown as Document" cast',
+			code: 'const el = ( node as unknown as Document ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'node' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a satisfies Document expression',
+			code: 'const el = ( node satisfies Document ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'node' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a class field typed as Document',
+			code: 'class Foo { private _doc: Document; bar() { return this._doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this._doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a class field initialized with document, from an arrow function',
+			code: 'class Foo { doc = document; bar() { return () => this.doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this.doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a private #doc field typed as Document',
+			code: 'class Foo { #doc: Document; bar() { return this.#doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this.#doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a constructor parameter property typed as Document',
+			code: 'class Foo { constructor( private doc: Document ) {} bar() { return this.doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this.doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a getter with a Document return type',
+			code: 'class Foo { get doc(): Document { return x; } bar() { return this.doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this.doc' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement from document directly',
+			code: 'const { activeElement } = document;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement under an alias from window.document',
+			code: 'const { activeElement: active } = window.document;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'window.document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in an assignment expression',
+			code: 'let activeElement;\n( { activeElement } = el.ownerDocument );\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'el.ownerDocument' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in a parameter typed as Document',
+			code: 'function f( { activeElement }: Document ) {}\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'Document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in a parameter defaulting to document',
+			code: 'function f( { activeElement } = document ) {}\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement from a nested document pattern',
+			code: 'const { document: { activeElement } } = window;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'window.document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring shadowRoot from an arbitrary object',
+			code: 'const { shadowRoot } = el;\n',
+			errors: [
+				{ messageId: 'shadowRootDiscovery' }
+			]
+		},
+
+		{
+			name: 'Destructuring parentNode from an arbitrary object',
+			code: 'const { parentNode } = el;\n',
+			errors: [
+				{ messageId: 'parentTraversal', data: { property: 'parentNode', replacement: 'getParentNode' } }
+			]
+		},
+
+		{
+			name: 'Destructuring parentElement from an arbitrary object',
+			code: 'const { parentElement: parent } = el;\n',
+			errors: [
+				{ messageId: 'parentTraversal', data: { property: 'parentElement', replacement: 'getParentElement' } }
+			]
+		},
+
+		{
+			name: 'Destructuring relatedTarget in an event listener parameter',
+			code: 'el.addEventListener( \'focusout\', ( { relatedTarget } ) => {} );\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Destructuring getSelection from window',
+			code: 'const { getSelection } = window;\nconst sel = getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection', data: { path: 'window.getSelection' } }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on a parameter typed as Window',
+			code: 'function f( win: Window ) { return win.getSelection(); }\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on a variable typed as Window & typeof globalThis',
+			code: 'declare const win: Window & typeof globalThis;\nwin.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on a const initialized from defaultView',
+			code: 'const win = doc.defaultView;\nwin.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on a Document-typed variable',
+			code: 'declare const doc: Document;\ndoc.getSelection();\n',
+			errors: [
+				{ messageId: 'getSelection' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector on a Document-typed parameter',
+			code: 'function f( doc: Document ) { return doc.querySelector( \'.foo\' ); }\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling querySelector on the body of a Document-typed parameter',
+			code: 'function f( doc: Document ) { return doc.body.querySelector( \'.foo\' ); }\n',
+			errors: [
+				{ messageId: 'documentElementLookup' }
+			]
+		},
+
+		{
+			name: 'Calling contains on an HTMLBodyElement-typed variable',
+			code: 'declare const body: HTMLBodyElement;\nbody.contains( el );\n',
+			errors: [
+				{ messageId: 'contains' }
+			]
+		},
+
+		{
+			name: 'Calling elementFromPoint on a Document-typed variable',
+			code: 'declare const doc: Document;\ndoc.elementFromPoint( x, y );\n',
+			errors: [
+				{ messageId: 'elementFromPoint' }
+			]
+		},
+
+		{
+			name: 'Appending to the body destructured from document',
+			code: 'const { body } = document;\nbody.appendChild( el );\n',
+			errors: [
+				{ messageId: 'bodyAppendChild', data: { path: 'body' } }
+			]
+		},
+
+		{
+			name: 'Appending to the body of a Document-typed class field',
+			code: 'class Foo { private _doc: Document; bar() { this._doc.body.appendChild( el ); } }\n',
+			errors: [
+				{ messageId: 'bodyAppendChild', data: { path: 'this._doc.body' } }
+			]
+		},
+
+		{
+			name: 'Appending to the body destructured from a Document-typed parameter',
+			code: 'function f( { body }: Document ) { body.appendChild( el ); }\n',
+			errors: [
+				{ messageId: 'bodyAppendChild', data: { path: 'body' } }
+			]
+		},
+
+		{
+			name: 'Attaching a scroll listener on a Document-typed variable',
+			code: 'declare const doc: Document;\ndoc.addEventListener( \'scroll\', listener );\n',
+			errors: [
+				{ messageId: 'documentListener', data: { event: 'scroll', path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Creating a TreeWalker rooted at a Document-typed variable',
+			code: 'declare const doc: Document;\ndoc.createTreeWalker( doc, NodeFilter.SHOW_ELEMENT );\n',
+			errors: [
+				{ messageId: 'documentTreeWalker' }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a document obtained from a Window-typed variable',
+			code: 'declare const win: Window;\nconst el = win.document.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'win.document' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a variable typed as typeof window.document',
+			code: 'declare const doc: typeof window.document;\nconst el = doc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading this.doc.activeElement inside an instance field initializer',
+			code: 'class Foo { doc: Document; bar = () => this.doc.activeElement; }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this.doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a parameter typed as Document | null',
+			code: 'function f( doc: Document | null ) { return doc!.activeElement; }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
 			]
 		}
 	]
