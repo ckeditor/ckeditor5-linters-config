@@ -1357,6 +1357,22 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			errors: [
 				{ messageId: 'activeElement', data: { path: 'doc' } }
 			]
+		},
+
+		{
+			name: 'Reading activeElement off a typed class field through a non-null asserted this',
+			code: 'class Foo { private _doc: Document; bar() { return this!._doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'this!._doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a typed class field through a cast this',
+			code: 'class Foo { private _doc: Document; bar() { return ( this as Foo )._doc.activeElement; } }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: '( this as Foo )._doc' } }
+			]
 		}
 	]
 } );

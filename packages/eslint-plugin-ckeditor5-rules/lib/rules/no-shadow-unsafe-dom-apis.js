@@ -303,7 +303,7 @@ module.exports = {
 				return getMemberKind( null, propertyName );
 			}
 
-			if ( expression.object.type === 'ThisExpression' ) {
+			if ( unwrapExpression( expression.object ).type === 'ThisExpression' ) {
 				return getThisMemberKind( expression, visited );
 			}
 
