@@ -1128,6 +1128,21 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 		{
 			name: 'Destructuring nested in the parameter of a function declaration without a body',
 			code: 'declare function f( { node: { parentNode } }: { node: Node } ): void;\n'
+		},
+
+		{
+			name: 'Calling bare functions that share their names with the checked methods, so there is no receiver',
+			code: 'declare const el: Node;\n' +
+				'addEventListener( \'scroll\', () => {} );\n' +
+				'removeEventListener( \'scroll\', () => {} );\n' +
+				'querySelector( \'.foo\' );\n' +
+				'elementFromPoint( 0, 0 );\n' +
+				'appendChild( el );\n'
+		},
+
+		{
+			name: 'Creating a TreeWalker and a NodeIterator without the root argument',
+			code: 'document.createTreeWalker();\ndocument.createNodeIterator();\n'
 		}
 	].map( withFilename ),
 

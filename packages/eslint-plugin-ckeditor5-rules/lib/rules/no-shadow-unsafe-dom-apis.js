@@ -338,7 +338,8 @@ module.exports = {
 		 * expression is not unwrapped, so that a cast such as `( node as Document )` gives its type.
 		 */
 		function hasDomType( node, names ) {
-			if ( !checker ) {
+			// A bare call has no receiver, and an incomplete call may have no argument to check.
+			if ( !checker || !node ) {
 				return false;
 			}
 
