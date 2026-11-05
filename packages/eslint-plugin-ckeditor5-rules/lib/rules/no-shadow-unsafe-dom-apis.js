@@ -29,38 +29,11 @@ const PARENT_TRAVERSAL_REPLACEMENTS = new Map( [
 	[ 'parentElement', 'getParentElement' ]
 ] );
 
-// The top-level objects whose APIs this rule restricts, as resolved by `getExpressionKind()`.
-const DOCUMENT = 'document';
-const BODY = 'body';
-const WINDOW = 'window';
-const GLOBAL = 'global';
+const DOCUMENT_TYPES = new Set( [ 'Document' ] );
+const WINDOW_TYPES = new Set( [ 'Window' ] );
 
-const GLOBAL_IDENTIFIER_KINDS = new Map( [
-	[ 'document', DOCUMENT ],
-	[ 'window', WINDOW ],
-	[ 'self', WINDOW ],
-	[ 'global', GLOBAL ],
-	[ 'globalThis', GLOBAL ]
-] );
-
-// DOM type names from TypeScript's `lib.dom.d.ts` that denote one of the tracked objects.
-const TYPE_NAME_KINDS = new Map( [
-	[ 'Document', DOCUMENT ],
-	[ 'HTMLDocument', DOCUMENT ],
-	[ 'HTMLBodyElement', BODY ],
-	[ 'Window', WINDOW ]
-] );
-
-const GET_SELECTION_RECEIVER_KINDS = [ DOCUMENT, WINDOW, GLOBAL ];
-
-const NULLISH_TYPES = new Set( [ 'TSNullKeyword', 'TSUndefinedKeyword' ] );
-
-const CLASS_FIELD_TYPES = new Set( [
-	'PropertyDefinition',
-	'AccessorProperty',
-	'TSAbstractPropertyDefinition',
-	'TSAbstractAccessorProperty'
-] );
+// Nodes that a destructuring pattern can be nested in, up to the declaration or the parameter it belongs to.
+const PATTERN_PARENTS = new Set( [ 'Property', 'ObjectPattern', 'ArrayPattern', 'AssignmentPattern', 'RestElement' ] );
 
 module.exports = {
 	meta: {
@@ -90,27 +63,39 @@ module.exports = {
 
 	create( context ) {
 		const sourceCode = context.sourceCode;
+		const services = sourceCode.parserServices;
+
+		// Type information is optional: without it only the global access paths are recognized.
+		const program = services?.program;
+		const checker = program?.getTypeChecker();
 
 		return {
 			MemberExpression( node ) {
-				checkPropertyRead( node, getStaticPropertyName( node ), () => ( {
-					kind: getExpressionKind( node.object ),
-					path: sourceCode.getText( unwrapExpression( node.object ) )
-				} ) );
+				checkPropertyRead( node, getStaticPropertyName( node ), node.object );
 			},
 
 			// The destructuring counterpart of the check above, e.g. `const { activeElement } = doc`.
 			ObjectPattern( node ) {
-				const source = getPatternSource( node );
+				if ( isInFunctionSignature( node ) ) {
+					return;
+				}
+
+				const { parent } = node;
+				const value = parent.type === 'VariableDeclarator' ? parent.init : parent.left === node && parent.right;
+
+				// Without a value, the type of the pattern itself tells what is destructured, e.g. for a typed parameter.
+				const object = value || node;
 
 				for ( const property of node.properties ) {
 					const propertyName = property.type === 'Property' && getStaticKeyName( property.key, property.computed );
 
-					checkPropertyRead( property, propertyName, () => source );
+					checkPropertyRead( property, propertyName, object );
 
-					// A destructured `getSelection` is later called bare, which `CallExpression` allows.
-					if ( propertyName === 'getSelection' && GET_SELECTION_RECEIVER_KINDS.includes( source.kind ) ) {
-						report( property, 'getSelection', { path: `${ source.path }.getSelection` } );
+					// A destructured `getSelection` is called later as a bare function, which is fine in `CallExpression`.
+					if ( propertyName === 'getSelection' && (
+						isGlobalObjectExpression( object ) || isWindowExpression( object ) || isDocumentExpression( object )
+					) ) {
+						report( property, 'getSelection', { path: `${ getObjectText( object ) }.getSelection` } );
 					}
 				}
 			},
@@ -134,17 +119,21 @@ module.exports = {
 				if ( call.name === 'getSelection' ) {
 					// A bare `getSelection()` call always resolves to the global one here — locally
 					// defined helpers were filtered out above.
-					if ( !call.receiver || isKind( call.receiver, ...GET_SELECTION_RECEIVER_KINDS ) ) {
+					if ( !call.receiver ||
+						isGlobalObjectExpression( call.receiver ) ||
+						isWindowExpression( call.receiver ) ||
+						isDocumentExpression( call.receiver )
+					) {
 						report( node, 'getSelection', { path } );
 					}
 				} else if ( call.name === 'contains' ) {
 					// A `.body.contains(...)` call on a non-document object is allowed, since `body`
 					// is a common, unrelated property name.
-					if ( isKind( call.receiver, DOCUMENT, BODY ) ) {
+					if ( isDocumentOrBodyExpression( call.receiver ) ) {
 						report( node, 'contains', { path } );
 					}
 				} else if ( call.name === 'elementFromPoint' || call.name === 'elementsFromPoint' ) {
-					if ( isKind( call.receiver, DOCUMENT ) ) {
+					if ( isDocumentExpression( call.receiver ) ) {
 						report( node, 'elementFromPoint', { path } );
 					}
 				} else if ( call.name === 'caretPositionFromPoint' ) {
@@ -152,13 +141,13 @@ module.exports = {
 				} else if ( call.name === 'composedPath' ) {
 					report( node, 'composedPath' );
 				} else if ( DOCUMENT_ELEMENT_LOOKUP_METHODS.has( call.name ) ) {
-					if ( isKind( call.receiver, DOCUMENT, BODY ) ) {
+					if ( isDocumentOrBodyExpression( call.receiver ) ) {
 						report( node, 'documentElementLookup', { path } );
 					}
 				} else if ( call.name === 'addEventListener' || call.name === 'removeEventListener' ) {
 					checkDocumentListener( node, call );
 				} else if ( call.name === 'appendChild' ) {
-					if ( isKind( call.receiver, BODY ) ) {
+					if ( isDocumentBodyExpression( call.receiver ) ) {
 						report( node, 'bodyAppendChild', { path: sourceCode.getText( unwrapExpression( call.receiver ) ) } );
 					}
 				} else if ( call.name === 'createTreeWalker' || call.name === 'createNodeIterator' ) {
@@ -167,20 +156,18 @@ module.exports = {
 			}
 		};
 
+		function report( node, messageId, data ) {
+			context.report( { node, messageId, data } );
+		}
+
 		/**
-		 * Flags reading a restricted property, through a member access or by destructuring.
-		 * `getSource()` describes the object it is read from as `{ kind, path }` — only
-		 * `activeElement` depends on it, so it is resolved lazily.
+		 * Flags reading a restricted property of an object, through a member access or by destructuring.
 		 *
 		 * const { activeElement } = document; // not allowed
 		 */
-		function checkPropertyRead( node, propertyName, getSource ) {
-			if ( propertyName === 'activeElement' ) {
-				const source = getSource();
-
-				if ( source.kind === DOCUMENT ) {
-					report( node, 'activeElement', { path: source.path } );
-				}
+		function checkPropertyRead( node, propertyName, object ) {
+			if ( propertyName === 'activeElement' && isDocumentExpression( object ) ) {
+				report( node, 'activeElement', { path: getObjectText( object ) } );
 			} else if ( propertyName === 'shadowRoot' ) {
 				report( node, 'shadowRootDiscovery' );
 			} else if ( PARENT_TRAVERSAL_REPLACEMENTS.has( propertyName ) ) {
@@ -193,8 +180,13 @@ module.exports = {
 			}
 		}
 
-		function report( node, messageId, data ) {
-			context.report( { node, messageId, data } );
+		/**
+		 * Returns the text that names an object in messages: its source text, or the type of a destructuring pattern.
+		 */
+		function getObjectText( object ) {
+			return object.type === 'ObjectPattern' ?
+				checker.typeToString( services.getTypeAtLocation( object ) ) :
+				sourceCode.getText( unwrapExpression( object ) );
 		}
 
 		/**
@@ -221,7 +213,7 @@ module.exports = {
 		 * document.addEventListener( 'scroll', listener ); // not allowed
 		 */
 		function checkDocumentListener( node, call ) {
-			if ( !isKind( call.receiver, DOCUMENT ) ) {
+			if ( !isDocumentExpression( call.receiver ) ) {
 				return;
 			}
 
@@ -245,222 +237,135 @@ module.exports = {
 		function checkDocumentTreeWalker( node, path ) {
 			const root = node.arguments[ 0 ];
 
-			if ( isKind( root, DOCUMENT, BODY ) ) {
+			if ( isDocumentOrBodyExpression( root ) ) {
 				report( node, 'documentTreeWalker', { path, root: sourceCode.getText( root ) } );
 			}
 		}
 
 		/**
-		 * Checks whether an expression refers to one of the given tracked objects.
-		 *
-		 * isKind( node, DOCUMENT, BODY ); // node for `doc.body` in `function f( doc: Document ) { doc.body; }` -> true
+		 * Checks whether an expression refers to the top-level document or its body.
 		 */
-		function isKind( node, ...kinds ) {
-			return kinds.includes( getExpressionKind( node ) );
+		function isDocumentOrBodyExpression( node ) {
+			return isDocumentExpression( node ) || isDocumentBodyExpression( node );
 		}
 
 		/**
-		 * Resolves which tracked top-level object an expression refers to: `DOCUMENT`, `BODY`, `WINDOW`,
-		 * `GLOBAL`, or `null` when none (or it cannot be told statically).
+		 * Checks whether an expression refers to the top-level document: `document`,
+		 * `window.document`, `global.document`, `global.window.document`, their `globalThis` / `self`
+		 * equivalents, any `*.ownerDocument` access, or any value of the DOM `Document` type.
 		 *
-		 * Besides the global access paths (`document`, `window.document`, `self`, `*.ownerDocument`,
-		 * `*.defaultView`, `document.body`, ...), the kind is taken from what TypeScript knows from the
-		 * source: casts (`node as Document`), annotations of variables and parameters (`doc: Document`,
-		 * `win: Window | null`, `t: typeof document`), or — without an annotation — the initializer or
-		 * default value (`const doc = el.ownerDocument`), destructured bindings (`const { body } = doc`)
-		 * and class members read through `this` (fields, parameter properties, getters).
-		 *
-		 * A type name that resolves to a local declaration or import (e.g. the editor model's own
-		 * `Document`) is not the DOM type.
+		 * isDocumentExpression( node ); // node for `window.document` -> true
 		 */
-		function getExpressionKind( node, visited = new Set() ) {
-			let expression = node;
+		function isDocumentExpression( node ) {
+			return isDocumentPath( node ) || hasDomType( node, DOCUMENT_TYPES );
+		}
 
-			// Casts (`as`, `satisfies`, `<Type>`) carry a `typeAnnotation`; the outermost tracked one wins.
-			while ( expression && expression !== unwrapExpression( expression ) ) {
-				const kind = getTypeKind( expression.typeAnnotation, visited );
+		/**
+		 * Checks whether an expression is one of the global access paths of the document listed in
+		 * `isDocumentExpression()`.
+		 */
+		function isDocumentPath( node ) {
+			const expression = unwrapExpression( node );
 
-				if ( kind ) {
-					return kind;
-				}
-
-				expression = expression.expression;
-			}
-
-			if ( expression?.type === 'Identifier' ) {
-				const variable = getLocalVariable( expression );
-
-				return variable ? getVariableKind( variable, visited ) : GLOBAL_IDENTIFIER_KINDS.get( expression.name ) ?? null;
+			if ( isGlobalIdentifier( expression, 'document' ) ) {
+				return true;
 			}
 
 			if ( expression?.type !== 'MemberExpression' ) {
-				return null;
+				return false;
 			}
 
 			const propertyName = getStaticPropertyName( expression );
 
-			if ( propertyName === 'ownerDocument' || propertyName === 'defaultView' ) {
-				return getMemberKind( null, propertyName );
+			if ( propertyName === 'ownerDocument' ) {
+				return true;
 			}
 
-			const objectKind = getExpressionKind( expression.object, visited );
-
-			// A `this` not cast to a tracked type (`( this as Document )`) is the class instance.
-			if ( !objectKind && unwrapExpression( expression.object ).type === 'ThisExpression' ) {
-				return getThisMemberKind( expression, visited );
-			}
-
-			return getMemberKind( objectKind, propertyName );
-		}
-
-		/**
-		 * Resolves the kind of a type node. A union is tracked only when all its non-nullish members
-		 * are the same kind (`Document | null` is, `Document | ShadowRoot` is not), an intersection
-		 * takes its first tracked member (`Window & typeof globalThis` is `WINDOW`).
-		 */
-		function getTypeKind( node, visited ) {
-			switch ( node?.type ) {
-				case 'TSTypeAnnotation':
-					return getTypeKind( node.typeAnnotation, visited );
-
-				case 'TSTypeReference':
-					return node.typeName.type === 'Identifier' && !isLocallyDefinedReference( node.typeName ) ?
-						TYPE_NAME_KINDS.get( node.typeName.name ) ?? null :
-						null;
-
-				case 'TSUnionType': {
-					const kinds = new Set( node.types
-						.filter( type => !NULLISH_TYPES.has( type.type ) )
-						.map( type => getTypeKind( type, visited ) ) );
-
-					return kinds.size === 1 ? [ ...kinds ][ 0 ] : null;
-				}
-
-				case 'TSIntersectionType':
-					return node.types.map( type => getTypeKind( type, visited ) ).find( Boolean ) ?? null;
-
-				// `typeof document`, `typeof doc`, `typeof window.document`.
-				case 'TSTypeQuery':
-					return getTypeKind( node.exprName, visited );
-
-				case 'TSQualifiedName':
-					return getMemberKind( getTypeKind( node.left, visited ), node.right.name );
-
-				case 'Identifier':
-					return getExpressionKind( node, visited );
-			}
-
-			return null;
-		}
-
-		/**
-		 * Resolves the kind of a locally declared variable from its declarations.
-		 */
-		function getVariableKind( variable, visited ) {
-			return withCycleGuard( visited, variable, () =>
-				variable.defs.map( definition => getBindingKind( definition.name, visited ) ).find( Boolean ) ?? null
+			return propertyName === 'document' && (
+				isGlobalObjectExpression( expression.object ) ||
+				isWindowExpression( expression.object )
 			);
 		}
 
 		/**
-		 * Resolves the kind of a declared binding: its annotation, otherwise its initializer, default
-		 * value, or the object pattern it is destructured from.
+		 * Checks whether an expression refers to the body of the top-level document.
 		 *
-		 * const doc: Document = x; // DOCUMENT
-		 * const win = doc.defaultView; // WINDOW
-		 * const { body } = document; // BODY
+		 * isDocumentBodyExpression( node ); // node for `global.document.body` -> true
 		 */
-		function getBindingKind( binding, visited ) {
-			if ( binding.typeAnnotation ) {
-				return getTypeKind( binding.typeAnnotation, visited );
-			}
+		function isDocumentBodyExpression( node ) {
+			const expression = unwrapExpression( node );
 
-			const { parent } = binding;
-			const property = getPatternProperty( binding );
-
-			if ( property ) {
-				return getMemberKind(
-					getPatternSource( property.parent, visited ).kind,
-					getStaticKeyName( property.key, property.computed )
-				);
-			}
-
-			if ( parent.type === 'VariableDeclarator' && parent.id === binding ) {
-				return getExpressionKind( parent.init, visited );
-			}
-
-			// A parameter's default value.
-			return parent.type === 'AssignmentPattern' && parent.left === binding ? getExpressionKind( parent.right, visited ) : null;
+			return expression?.type === 'MemberExpression' &&
+				getStaticPropertyName( expression ) === 'body' &&
+				isDocumentExpression( expression.object );
 		}
 
 		/**
-		 * Finds what an object pattern destructures — its own annotation, the initializer, assigned or
-		 * default value, or the matching member of the enclosing pattern's source — as `{ kind, path }`.
+		 * Checks whether an expression refers to the top-level window: `window`, `self`,
+		 * `global.window`, `globalThis.window`, any `*.defaultView` access, or any value of the DOM
+		 * `Window` type.
 		 *
-		 * getPatternSource( node ); // node for `{ activeElement }` in `const { activeElement } = doc` -> { kind: DOCUMENT, path: 'doc' }
+		 * isWindowExpression( node ); // node for `global.window` -> true
 		 */
-		function getPatternSource( pattern, visited = new Set() ) {
-			if ( pattern.typeAnnotation ) {
-				return {
-					kind: getTypeKind( pattern.typeAnnotation, visited ),
-					path: sourceCode.getText( pattern.typeAnnotation.typeAnnotation )
-				};
-			}
-
-			const property = getPatternProperty( pattern );
-
-			if ( property ) {
-				const outer = getPatternSource( property.parent, visited );
-				const key = getStaticKeyName( property.key, property.computed );
-
-				return { kind: getMemberKind( outer.kind, key ), path: `${ outer.path }.${ key }` };
-			}
-
-			const { parent } = pattern;
-			const value = parent.type === 'VariableDeclarator' ? parent.init : parent.left === pattern && parent.right;
-
-			return value ?
-				{ kind: getExpressionKind( value, visited ), path: sourceCode.getText( unwrapExpression( value ) ) } :
-				{ kind: null, path: '' };
+		function isWindowExpression( node ) {
+			return isWindowPath( node ) || hasDomType( node, WINDOW_TYPES );
 		}
 
 		/**
-		 * Resolves the kind of `this.member` from the member's declaration in the enclosing class: a
-		 * field, a getter's return type, or a constructor parameter property.
-		 *
-		 * class Foo { private _doc: Document; bar() { this._doc; } } // DOCUMENT
+		 * Checks whether an expression is one of the global access paths of the window listed in
+		 * `isWindowExpression()`.
 		 */
-		function getThisMemberKind( node, visited ) {
-			const classBody = getThisClassBody( node );
-			const name = getMemberKey( node.property, node.computed );
+		function isWindowPath( node ) {
+			const expression = unwrapExpression( node );
 
-			for ( const member of classBody && name ? classBody.body : [] ) {
-				const key = member.key && !member.static && getMemberKey( member.key, member.computed );
-
-				if ( CLASS_FIELD_TYPES.has( member.type ) && key === name ) {
-					return withCycleGuard( visited, member, () => member.typeAnnotation ?
-						getTypeKind( member.typeAnnotation, visited ) :
-						getExpressionKind( member.value, visited )
-					);
-				}
-
-				if ( member.kind === 'get' && key === name ) {
-					return getTypeKind( member.value.returnType, visited );
-				}
-
-				if ( member.kind === 'constructor' ) {
-					const binding = member.value.params
-						.filter( param => param.type === 'TSParameterProperty' )
-						.map( param => param.parameter.left ?? param.parameter )
-						.find( parameter => parameter.name === name );
-
-					if ( binding ) {
-						return getBindingKind( binding, visited );
-					}
-				}
+			if ( isGlobalIdentifier( expression, 'window' ) || isGlobalIdentifier( expression, 'self' ) ) {
+				return true;
 			}
 
-			return null;
+			if ( expression?.type !== 'MemberExpression' ) {
+				return false;
+			}
+
+			const propertyName = getStaticPropertyName( expression );
+
+			return propertyName === 'defaultView' ||
+				( propertyName === 'window' && isGlobalObjectExpression( expression.object ) );
+		}
+
+		/**
+		 * Checks whether the type checker knows an expression to be one of the given DOM interfaces, in
+		 * every member of its union type. A value of an unknown type, such as `any`, does not count. The
+		 * expression is not unwrapped, so that a cast such as `( node as Document )` gives its type.
+		 */
+		function hasDomType( node, names ) {
+			if ( !checker ) {
+				return false;
+			}
+
+			const type = checker.getNonNullableType( services.getTypeAtLocation( node ) );
+			const resolved = checker.getBaseConstraintOfType( type ) ?? type;
+
+			return ( resolved.isUnion() ? resolved.types : [ resolved ] ).every( member => isDomType( member, names, program ) );
+		}
+
+		/**
+		 * Checks whether an expression refers to the `global` or `globalThis` object.
+		 */
+		function isGlobalObjectExpression( node ) {
+			const expression = unwrapExpression( node );
+
+			return isGlobalIdentifier( expression, 'global' ) ||
+				isGlobalIdentifier( expression, 'globalThis' );
+		}
+
+		/**
+		 * Checks that an identifier has the expected global name and is not shadowed by a local
+		 * binding.
+		 */
+		function isGlobalIdentifier( node, name ) {
+			return node?.type === 'Identifier' &&
+				node.name === name &&
+				!isLocallyDefinedReference( node );
 		}
 
 		/**
@@ -471,105 +376,48 @@ module.exports = {
 		 * import { getSelection } from './shadow-dom-utils.js'; // resolves locally
 		 */
 		function isLocallyDefinedReference( node ) {
-			return getLocalVariable( node ) !== null;
-		}
-
-		/**
-		 * Returns the locally declared or imported variable an identifier reference resolves to, or
-		 * `null` for globals (see `isLocallyDefinedReference()`).
-		 */
-		function getLocalVariable( node ) {
 			const reference = sourceCode.getScope( node ).references.find( ref => ref.identifier === node );
-			const variable = reference?.resolved;
 
-			return variable?.defs.some( definition => definition.type !== 'ImplicitGlobalVariable' ) ? variable : null;
+			return reference?.resolved?.defs.some( definition => definition.type !== 'ImplicitGlobalVariable' ) ?? false;
 		}
 	}
 };
 
 /**
- * Resolves the kind of a member read off an object of a known kind (`objectKind` may be `null`).
+ * Checks whether a type is, or extends, one of the given DOM interfaces. A type counts only when the interface is
+ * declared by the TypeScript DOM library, so that a class of the same name elsewhere, such as the editor model's
+ * `Document`, does not match.
+ */
+function isDomType( type, names, program ) {
+	const symbol = type.getSymbol();
+
+	if ( names.has( symbol?.name ) &&
+		symbol.declarations.some( declaration => program.isSourceFileDefaultLibrary( declaration.getSourceFile() ) )
+	) {
+		return true;
+	}
+
+	const target = type.target ?? type;
+
+	return ( type.isIntersection() && type.types.some( member => isDomType( member, names, program ) ) ) ||
+		( target.isClassOrInterface() &&
+			program.getTypeChecker().getBaseTypes( target ).some( base => isDomType( base, names, program ) ) );
+}
+
+/**
+ * Checks whether a destructuring pattern belongs to the parameters of a function without a body, which only describes
+ * a type, so no property is read at runtime.
  *
- * getMemberKind( WINDOW, 'document' ); // -> DOCUMENT
- * getMemberKind( null, 'ownerDocument' ); // -> DOCUMENT
+ * declare function f( { parentNode }: Node ): void; // -> true
  */
-function getMemberKind( objectKind, propertyName ) {
-	if ( propertyName === 'ownerDocument' ) {
-		return DOCUMENT;
+function isInFunctionSignature( pattern ) {
+	let node = pattern;
+
+	while ( PATTERN_PARENTS.has( node.parent.type ) ) {
+		node = node.parent;
 	}
 
-	if ( propertyName === 'defaultView' ) {
-		return WINDOW;
-	}
-
-	if ( propertyName === 'document' && ( objectKind === WINDOW || objectKind === GLOBAL ) ) {
-		return DOCUMENT;
-	}
-
-	if ( propertyName === 'window' && objectKind === GLOBAL ) {
-		return WINDOW;
-	}
-
-	return propertyName === 'body' && objectKind === DOCUMENT ? BODY : null;
-}
-
-/**
- * Returns the object pattern `Property` whose value is the given node, also through a default
- * value (`{ key: node = fallback }`), or `null`.
- */
-function getPatternProperty( node ) {
-	const target = node.parent.type === 'AssignmentPattern' && node.parent.left === node ? node.parent : node;
-	const property = target.parent;
-
-	return property?.type === 'Property' && property.value === target && property.parent.type === 'ObjectPattern' ? property : null;
-}
-
-/**
- * Runs `callback` unless `key` is already being resolved up the call stack, which breaks cycles
- * like `let a = b, b = a` or `class Foo { doc = this.doc; }`.
- */
-function withCycleGuard( visited, key, callback ) {
-	if ( visited.has( key ) ) {
-		return null;
-	}
-
-	visited.add( key );
-
-	try {
-		return callback();
-	} finally {
-		visited.delete( key );
-	}
-}
-
-/**
- * Finds the body of the class whose instance `this` refers to at the given node, or `null` when
- * `this` is not a class instance there (a plain function, a static member, an object method, ...).
- */
-function getThisClassBody( node ) {
-	for ( let current = node.parent; current; current = current.parent ) {
-		if ( current.type === 'ClassBody' ) {
-			return current;
-		}
-
-		const isInstanceMethod = current.type === 'FunctionExpression' && current.parent.type === 'MethodDefinition';
-		const isTransparent = current.type !== 'FunctionExpression' && current.type !== 'FunctionDeclaration' &&
-			current.type !== 'StaticBlock';
-
-		if ( current.static || !( isInstanceMethod || isTransparent ) ) {
-			return null;
-		}
-	}
-
-	return null;
-}
-
-/**
- * Returns the statically known name of a class member key or member property. Private names are
- * prefixed with `#`, so they never match the public names this rule tracks.
- */
-function getMemberKey( key, computed ) {
-	return key.type === 'PrivateIdentifier' ? `#${ key.name }` : getStaticKeyName( key, computed );
+	return !!node.parent.params?.includes( node ) && !node.parent.body;
 }
 
 /**
