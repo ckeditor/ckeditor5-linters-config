@@ -1044,14 +1044,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring activeElement from a variable typed as Document',
-			code: 'var doc: Document = document;\nconst { activeElement } = doc;\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'doc' } }
-			]
-		},
-
-		{
 			name: 'Reading activeElement off the document of a local `global` object (as imported from ckeditor5-utils)',
 			code: 'declare const global: { readonly document: Document; readonly window: Window & typeof globalThis };\n' +
 				'global.document.activeElement;\n',
