@@ -64,7 +64,7 @@ module.exports = {
 		const sourceCode = context.sourceCode;
 		const services = sourceCode.parserServices;
 
-		if ( !services?.program ) {
+		if ( !services.program ) {
 			throw new Error(
 				'The "no-shadow-unsafe-dom-apis" rule requires type information. Enable it only for files covered by ' +
 				'a TypeScript project, and set `parserOptions.projectService` (or `parserOptions.project`) for them.'
