@@ -28,4 +28,13 @@ function isDomType( type, names, program ) {
 			program.getTypeChecker().getBaseTypes( target ).some( base => isDomType( base, names, program ) ) );
 }
 
-module.exports = { isDomType };
+/**
+ * Returns the members of a union, with a type parameter replaced by its constraint.
+ */
+function getUnionMembers( type, checker ) {
+	const resolved = checker.getBaseConstraintOfType( type ) ?? type;
+
+	return resolved.isUnion() ? resolved.types : [ resolved ];
+}
+
+module.exports = { isDomType, getUnionMembers };

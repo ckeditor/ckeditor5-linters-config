@@ -6,7 +6,7 @@
 'use strict';
 
 const { unwrapExpression } = require( '../utils/unwrap-expression' );
-const { isDomType } = require( '../utils/is-dom-type' );
+const { isDomType, getUnionMembers } = require( '../utils/dom-types' );
 
 const DOCUMENT_ELEMENT_LOOKUP_METHODS = new Set( [
 	'querySelector',
@@ -38,7 +38,8 @@ module.exports = {
 		type: 'problem',
 		docs: {
 			description: 'Disallow the use of utilities that cannot be used within the Shadow DOM',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			requiresTypeChecking: true
 		},
 		messages: {
 			/* eslint-disable @stylistic/max-len */
@@ -63,9 +64,15 @@ module.exports = {
 		const sourceCode = context.sourceCode;
 		const services = sourceCode.parserServices;
 
-		// Type information is optional: without it only the global access paths are recognized.
-		const program = services?.program;
-		const checker = program?.getTypeChecker();
+		if ( !services?.program ) {
+			throw new Error(
+				'The "no-shadow-unsafe-dom-apis" rule requires type information. Enable it only for files covered by ' +
+				'a TypeScript project, and set `parserOptions.projectService` (or `parserOptions.project`) for them.'
+			);
+		}
+
+		const program = services.program;
+		const checker = program.getTypeChecker();
 
 		return {
 			MemberExpression( node ) {
@@ -239,41 +246,11 @@ module.exports = {
 		}
 
 		/**
-		 * Checks whether an expression refers to the top-level document: `document`,
-		 * `window.document`, `global.document`, `global.window.document`, their `globalThis` / `self`
-		 * equivalents, any `*.ownerDocument` access, or any value of the DOM `Document` type.
-		 *
-		 * isDocumentExpression( node ); // node for `window.document` -> true
+		 * Checks whether an expression is a DOM `Document`, e.g. `document`, `global.document` or
+		 * `el.ownerDocument`.
 		 */
 		function isDocumentExpression( node ) {
-			return isDocumentPath( node ) || hasDomType( node, DOCUMENT_TYPES );
-		}
-
-		/**
-		 * Checks whether an expression is one of the global access paths of the document listed in
-		 * `isDocumentExpression()`.
-		 */
-		function isDocumentPath( node ) {
-			const expression = unwrapExpression( node );
-
-			if ( isGlobalIdentifier( expression, 'document' ) ) {
-				return true;
-			}
-
-			if ( expression?.type !== 'MemberExpression' ) {
-				return false;
-			}
-
-			const propertyName = getStaticPropertyName( expression );
-
-			if ( propertyName === 'ownerDocument' ) {
-				return true;
-			}
-
-			return propertyName === 'document' && (
-				isGlobalObjectExpression( expression.object ) ||
-				isWindowExpression( expression.object )
-			);
+			return hasDomType( node, DOCUMENT_TYPES );
 		}
 
 		/**
@@ -290,35 +267,10 @@ module.exports = {
 		}
 
 		/**
-		 * Checks whether an expression refers to the top-level window: `window`, `self`,
-		 * `global.window`, `globalThis.window`, any `*.defaultView` access, or any value of the DOM
-		 * `Window` type.
-		 *
-		 * isWindowExpression( node ); // node for `global.window` -> true
+		 * Checks whether an expression is a DOM `Window`, e.g. `window`, `self` or `doc.defaultView`.
 		 */
 		function isWindowExpression( node ) {
-			return isWindowPath( node ) || hasDomType( node, WINDOW_TYPES );
-		}
-
-		/**
-		 * Checks whether an expression is one of the global access paths of the window listed in
-		 * `isWindowExpression()`.
-		 */
-		function isWindowPath( node ) {
-			const expression = unwrapExpression( node );
-
-			if ( isGlobalIdentifier( expression, 'window' ) || isGlobalIdentifier( expression, 'self' ) ) {
-				return true;
-			}
-
-			if ( expression?.type !== 'MemberExpression' ) {
-				return false;
-			}
-
-			const propertyName = getStaticPropertyName( expression );
-
-			return propertyName === 'defaultView' ||
-				( propertyName === 'window' && isGlobalObjectExpression( expression.object ) );
+			return hasDomType( node, WINDOW_TYPES );
 		}
 
 		/**
@@ -328,18 +280,17 @@ module.exports = {
 		 */
 		function hasDomType( node, names ) {
 			// A bare call has no receiver, and an incomplete call may have no argument to check.
-			if ( !checker || !node ) {
+			if ( !node ) {
 				return false;
 			}
 
-			const type = checker.getNonNullableType( services.getTypeAtLocation( node ) );
-			const resolved = checker.getBaseConstraintOfType( type ) ?? type;
-
-			return ( resolved.isUnion() ? resolved.types : [ resolved ] ).every( member => isDomType( member, names, program ) );
+			return getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( node ) ), checker )
+				.every( member => isDomType( member, names, program ) );
 		}
 
 		/**
-		 * Checks whether an expression refers to the `global` or `globalThis` object.
+		 * Checks whether an expression refers to the `global` or `globalThis` object, which the type
+		 * checker does not tell apart from any other object.
 		 */
 		function isGlobalObjectExpression( node ) {
 			const expression = unwrapExpression( node );

@@ -6,7 +6,7 @@
 'use strict';
 
 const { unwrapExpression } = require( '../utils/unwrap-expression' );
-const { isDomType } = require( '../utils/is-dom-type' );
+const { isDomType, getUnionMembers } = require( '../utils/dom-types' );
 
 /**
  * The helpers that prepare a value for a sink, the module they are imported from, and the name of the directory of that
@@ -254,7 +254,7 @@ module.exports = {
 			}
 
 			const isNode = argument.type !== 'SpreadElement' &&
-				getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( argument ) ) )
+				getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( argument ) ), checker )
 					.every( member => isDomType( member, NODE_TYPES, program ) );
 
 			if ( !isNode ) {
@@ -296,7 +296,7 @@ module.exports = {
 		 * type that are not strings, such as numbers, are skipped, because they cannot spell a name.
 		 */
 		function getStringLiterals( node ) {
-			const types = getUnionMembers( services.getTypeAtLocation( node ) );
+			const types = getUnionMembers( services.getTypeAtLocation( node ), checker );
 
 			if ( types.some( type => !type.isStringLiteral() && checker.isTypeAssignableTo( type, stringType ) ) ) {
 				return null;
@@ -315,19 +315,10 @@ module.exports = {
 
 			// The constructor of a DOM interface counts as well, for the static `Document.parseHTMLUnsafe()`. It is checked one
 			// level deep only, because a type can have a constructor that returns the type itself.
-			return !!( type.flags & untypedFlags ) || getUnionMembers( type ).some( member =>
+			return !!( type.flags & untypedFlags ) || getUnionMembers( type, checker ).some( member =>
 				isDomType( member, SINK_OWNER_TYPES, program ) ||
 				member.getConstructSignatures().some( signature => isDomType( signature.getReturnType(), SINK_OWNER_TYPES, program ) )
 			);
-		}
-
-		/**
-		 * Returns the members of a union, with a type parameter replaced by its constraint.
-		 */
-		function getUnionMembers( type ) {
-			const resolved = checker.getBaseConstraintOfType( type ) ?? type;
-
-			return resolved.isUnion() ? resolved.types : [ resolved ];
 		}
 
 		/**

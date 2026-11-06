@@ -3,21 +3,30 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
+import path from 'node:path';
+import { beforeAll, describe, it, expect } from 'vitest';
+import { Linter, RuleTester } from 'eslint';
+import tsParser from '@typescript-eslint/parser';
+import rule from '../../lib/rules/no-shadow-unsafe-dom-apis.js';
 
-const path = require( 'node:path' );
-const { Linter, RuleTester } = require( 'eslint' );
-const tsParser = require( '@typescript-eslint/parser' );
+// The file does not need to exist: the default project of the type checker takes the code as it is.
+const filename = path.join( import.meta.dirname, 'file.ts' );
 
-const rule = require( '../../lib/rules/no-shadow-unsafe-dom-apis' );
-
-const ruleTester = new RuleTester( {
-	languageOptions: {
-		sourceType: 'module',
-		ecmaVersion: 2020,
-		parser: tsParser
+const languageOptions = {
+	parser: tsParser,
+	parserOptions: {
+		projectService: { allowDefaultProject: [ '*.ts' ] },
+		tsconfigRootDir: import.meta.dirname
 	}
-} );
+};
+
+const ruleTester = new RuleTester( { languageOptions } );
+
+// Starting the type checker (including loading the DOM types) can take several seconds on CI. Start it up front, so
+// that this cost is not charged against the timeout of whichever case runs first.
+beforeAll( () => {
+	new Linter().verify( '', { files: [ '**/*.ts' ], languageOptions }, filename );
+}, 60_000 );
 
 ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule, {
 	valid: [
@@ -200,11 +209,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring activeElement in a parameter, where the object is not known without type information',
-			code: 'function f( { activeElement } ) {}\n'
-		},
-
-		{
 			name: 'Destructuring in a function type, which is not run',
 			code: 'type F = ( { relatedTarget }: FocusEvent ) => void;\n'
 		},
@@ -220,15 +224,58 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Reading activeElement off a value typed as Document, which is not recognized without type information',
-			code: 'declare const doc: Document;\ndoc.activeElement;\n'
+			name: 'Destructuring in an overload signature, which is not run',
+			code: 'function f( { parentElement }: Node ): void;\nfunction f( node: Node ) {}\n'
 		},
 
 		{
-			name: 'Destructuring in an overload signature, which is not run',
-			code: 'function f( { parentElement }: Node ): void;\nfunction f( node: Node ) {}\n'
+			name: 'Reading activeElement off a class of the same name as the DOM Document (e.g. the model one)',
+			code: 'export class Document { activeElement = null; }\n' +
+				'declare const doc: Document;\n' +
+				'doc.activeElement;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a value typed as any',
+			code: 'declare const doc: any;\ndoc.activeElement;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a union of Document and ShadowRoot',
+			code: 'function f( root: Document | ShadowRoot ) { return root.activeElement; }\n'
+		},
+
+		{
+			name: 'Calling contains on an element',
+			code: 'declare const el: HTMLElement;\ndeclare const other: Node;\nel.contains( other );\n'
+		},
+
+		{
+			name: 'Destructuring in an abstract method',
+			code: 'abstract class A { abstract m( { activeElement }: Document ): void; }\n'
+		},
+
+		{
+			name: 'Destructuring nested in the parameter of a function declaration without a body',
+			code: 'declare function f( { node: { parentNode } }: { node: Node } ): void;\n'
+		},
+
+		{
+			name: 'Calling bare functions that share their names with the checked methods, so there is no receiver',
+			code: 'declare const el: Node;\n' +
+				'addEventListener( \'scroll\', () => {} );\n' +
+				'removeEventListener( \'scroll\', () => {} );\n' +
+				'querySelector( \'.foo\' );\n' +
+				'elementFromPoint( 0, 0 );\n' +
+				'appendChild( el );\n'
+		},
+
+		{
+			name: 'Creating a TreeWalker and a NodeIterator without the root argument',
+			code: 'document.createTreeWalker();\ndocument.createNodeIterator();\n'
 		}
-	],
+	].map( withFilename ),
+
 	invalid: [
 		{
 			name: 'Reading document.activeElement',
@@ -264,7 +311,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Reading *.ownerDocument.activeElement',
-			code: 'const el = someEl.ownerDocument.activeElement;\n',
+			code: 'declare const someEl: Element;\n' +
+				'const el = someEl.ownerDocument.activeElement;\n',
 			errors: [
 				{ messageId: 'activeElement' }
 			]
@@ -424,7 +472,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.getSelection()',
-			code: 'const sel = someEl.ownerDocument.getSelection();\n',
+			code: 'declare const someEl: Element;\n' +
+				'const sel = someEl.ownerDocument.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -432,7 +481,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.defaultView.getSelection()',
-			code: 'const sel = someEl.ownerDocument.defaultView.getSelection();\n',
+			code: 'declare const someEl: Element;\n' +
+				'const sel = someEl.ownerDocument.defaultView.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -504,7 +554,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.contains(...)',
-			code: 'someEl.ownerDocument.contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -512,7 +563,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.body.contains(...)',
-			code: 'someEl.ownerDocument.body.contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.body.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -560,7 +612,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.elementFromPoint(...)',
-			code: 'someEl.ownerDocument.elementFromPoint( x, y );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.elementFromPoint( x, y );\n',
 			errors: [
 				{ messageId: 'elementFromPoint' }
 			]
@@ -640,7 +693,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.querySelector(...)',
-			code: 'someEl.ownerDocument.querySelector( \'.foo\' );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.querySelector( \'.foo\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
@@ -672,7 +726,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling *.ownerDocument.getElementsByTagName(...)',
-			code: 'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
@@ -712,7 +767,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Creating a TreeWalker rooted at *.ownerDocument',
-			code: 'document.createTreeWalker( someEl.ownerDocument, NodeFilter.SHOW_ELEMENT );\n',
+			code: 'declare const someEl: Element;\n' +
+				'document.createTreeWalker( someEl.ownerDocument, NodeFilter.SHOW_ELEMENT );\n',
 			errors: [
 				{ messageId: 'documentTreeWalker' }
 			]
@@ -768,7 +824,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Attaching a mouseleave listener on *.ownerDocument',
-			code: 'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
 			errors: [
 				{ messageId: 'documentListener' }
 			]
@@ -808,7 +865,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Appending directly to *.ownerDocument.body',
-			code: 'someEl.ownerDocument.body.appendChild( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.body.appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
 			]
@@ -864,7 +922,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Calling contains through a TSAsExpression cast on ownerDocument',
-			code: '( someEl.ownerDocument as Document ).contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'( someEl.ownerDocument as Document ).contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -952,7 +1011,7 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 
 		{
 			name: 'Destructuring activeElement in an assignment from *.ownerDocument',
-			code: 'let activeElement;\n( { activeElement } = el.ownerDocument );\n',
+			code: 'declare const el: Element;\nlet activeElement;\n( { activeElement } = el.ownerDocument );\n',
 			errors: [
 				{ messageId: 'activeElement', data: { path: 'el.ownerDocument' } }
 			]
@@ -997,94 +1056,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 			errors: [
 				{ messageId: 'relatedTarget' }
 			]
-		}
-	]
-} );
-
-// The cases that need type information. The file does not need to exist: the default project of the type checker
-// takes the code as it is.
-const filename = path.join( __dirname, 'file.ts' );
-
-const typeAwareLanguageOptions = {
-	parser: tsParser,
-	parserOptions: {
-		projectService: { allowDefaultProject: [ '*.ts' ] },
-		tsconfigRootDir: __dirname
-	}
-};
-
-const typeAwareRuleTester = new RuleTester( { languageOptions: typeAwareLanguageOptions } );
-
-const DOCUMENT_DECLARATIONS = 'declare const doc: Document;\ndeclare const el: Node;\n';
-
-// Each check that depends on the receiver, with a receiver known to be a document only from its type.
-const TYPED_DOCUMENT_CALLS = {
-	getSelection: [ 'doc.getSelection();', { messageId: 'getSelection', data: { path: 'doc.getSelection' } } ],
-	querySelector: [ 'doc.querySelector( \'.foo\' );', { messageId: 'documentElementLookup' } ],
-	contains: [ 'doc.body.contains( el );', { messageId: 'contains' } ],
-	elementFromPoint: [ 'doc.elementFromPoint( 0, 0 );', { messageId: 'elementFromPoint' } ],
-	addEventListener: [ 'doc.addEventListener( \'scroll\', () => {} );', { messageId: 'documentListener' } ],
-	removeEventListener: [ 'doc.removeEventListener( \'scroll\', () => {} );', { messageId: 'documentListener' } ],
-	appendChild: [ 'doc.body.appendChild( el );', { messageId: 'bodyAppendChild', data: { path: 'doc.body' } } ],
-	createTreeWalker: [ 'doc.createTreeWalker( doc, NodeFilter.SHOW_ELEMENT );', { messageId: 'documentTreeWalker' } ],
-	createNodeIterator: [ 'doc.createNodeIterator( doc.body );', { messageId: 'documentTreeWalker' } ]
-};
-
-// Starting the type checker (including loading the DOM types) can take several seconds on CI. Start it up front, so
-// that this cost is not charged against the timeout of whichever case runs first.
-new Linter().verify( '', { files: [ '**/*.ts' ], languageOptions: typeAwareLanguageOptions }, filename );
-
-typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis (type-aware)', rule, {
-	valid: [
-		{
-			name: 'Reading activeElement off a class of the same name as the DOM Document (e.g. the model one)',
-			code: 'export class Document { activeElement = null; }\n' +
-				'declare const doc: Document;\n' +
-				'doc.activeElement;\n'
 		},
 
-		{
-			name: 'Reading activeElement off a value typed as any',
-			code: 'declare const doc: any;\ndoc.activeElement;\n'
-		},
-
-		{
-			name: 'Reading activeElement off a union of Document and ShadowRoot',
-			code: 'function f( root: Document | ShadowRoot ) { return root.activeElement; }\n'
-		},
-
-		{
-			name: 'Calling contains on an element',
-			code: 'declare const el: HTMLElement;\ndeclare const other: Node;\nel.contains( other );\n'
-		},
-
-		{
-			name: 'Destructuring in an abstract method',
-			code: 'abstract class A { abstract m( { activeElement }: Document ): void; }\n'
-		},
-
-		{
-			name: 'Destructuring nested in the parameter of a function declaration without a body',
-			code: 'declare function f( { node: { parentNode } }: { node: Node } ): void;\n'
-		},
-
-		{
-			name: 'Calling bare functions that share their names with the checked methods, so there is no receiver',
-			code: 'declare const el: Node;\n' +
-				'addEventListener( \'scroll\', () => {} );\n' +
-				'removeEventListener( \'scroll\', () => {} );\n' +
-				'querySelector( \'.foo\' );\n' +
-				'elementFromPoint( 0, 0 );\n' +
-				'appendChild( el );\n'
-		},
-
-		{
-			name: 'Creating a TreeWalker and a NodeIterator without the root argument',
-			code: 'document.createTreeWalker();\ndocument.createNodeIterator();\n'
-		}
-	].map( withFilename ),
-
-	invalid: [
 		{
 			name: 'Destructuring activeElement from a variable typed as Document',
 			code: 'var doc: Document = document;\nconst { activeElement } = doc;\n',
@@ -1142,12 +1115,6 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 			]
 		},
 
-		...Object.entries( TYPED_DOCUMENT_CALLS ).map( ( [ name, [ call, error ] ] ) => ( {
-			name: `Calling ${ name }() on a value typed as Document`,
-			code: DOCUMENT_DECLARATIONS + call + '\n',
-			errors: [ error ]
-		} ) ),
-
 		{
 			name: 'Destructuring activeElement in a parameter typed as Document',
 			code: 'function f( { activeElement }: Document ) {}\n',
@@ -1181,6 +1148,19 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 			]
 		}
 	].map( withFilename )
+} );
+
+describe( 'no-shadow-unsafe-dom-apis without type information', () => {
+	it( 'throws an error that explains how to enable type information', () => {
+		const linter = new Linter();
+
+		expect( () => linter.verify( 'document.activeElement;\n', {
+			files: [ '**/*.ts' ],
+			languageOptions: { parser: tsParser },
+			plugins: { 'ckeditor5-rules': { rules: { 'no-shadow-unsafe-dom-apis': rule } } },
+			rules: { 'ckeditor5-rules/no-shadow-unsafe-dom-apis': 'error' }
+		}, 'file.ts' ) ).toThrow( /requires type information/ );
+	} );
 } );
 
 function withFilename( testCase ) {
