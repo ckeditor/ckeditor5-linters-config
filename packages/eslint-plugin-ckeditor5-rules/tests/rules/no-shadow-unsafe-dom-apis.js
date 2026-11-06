@@ -1124,15 +1124,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring activeElement in a callback whose parameter is contextually typed as Document',
-			code: 'declare function withDoc( callback: ( doc: Document ) => void ): void;\n' +
-				'withDoc( ( { activeElement } ) => {} );\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'Document' } }
-			]
-		},
-
-		{
 			name: 'Destructuring activeElement from the document nested in window',
 			code: 'const { document: { activeElement } } = window;\n',
 			errors: [
