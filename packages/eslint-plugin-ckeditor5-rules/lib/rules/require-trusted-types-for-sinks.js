@@ -6,6 +6,7 @@
 'use strict';
 
 const { unwrapExpression } = require( '../utils/unwrap-expression' );
+const { isDomType } = require( '../utils/is-dom-type' );
 
 /**
  * The helpers that prepare a value for a sink, the module they are imported from, and the name of the directory of that
@@ -254,7 +255,7 @@ module.exports = {
 
 			const isNode = argument.type !== 'SpreadElement' &&
 				getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( argument ) ) )
-					.every( member => isDomType( member, NODE_TYPES ) );
+					.every( member => isDomType( member, NODE_TYPES, program ) );
 
 			if ( !isNode ) {
 				context.report( { node: argument, messageId: 'htmlWritingFunction', data: { name } } );
@@ -315,8 +316,8 @@ module.exports = {
 			// The constructor of a DOM interface counts as well, for the static `Document.parseHTMLUnsafe()`. It is checked one
 			// level deep only, because a type can have a constructor that returns the type itself.
 			return !!( type.flags & untypedFlags ) || getUnionMembers( type ).some( member =>
-				isDomType( member, SINK_OWNER_TYPES ) ||
-				member.getConstructSignatures().some( signature => isDomType( signature.getReturnType(), SINK_OWNER_TYPES ) )
+				isDomType( member, SINK_OWNER_TYPES, program ) ||
+				member.getConstructSignatures().some( signature => isDomType( signature.getReturnType(), SINK_OWNER_TYPES, program ) )
 			);
 		}
 
@@ -327,24 +328,6 @@ module.exports = {
 			const resolved = checker.getBaseConstraintOfType( type ) ?? type;
 
 			return resolved.isUnion() ? resolved.types : [ resolved ];
-		}
-
-		/**
-		 * Whether a type is, or extends, one of the given DOM interfaces.
-		 */
-		function isDomType( type, names ) {
-			const symbol = type.getSymbol();
-
-			if ( names.has( symbol?.name ) &&
-				symbol.declarations.some( declaration => program.isSourceFileDefaultLibrary( declaration.getSourceFile() ) )
-			) {
-				return true;
-			}
-
-			const target = type.target ?? type;
-
-			return ( type.isIntersection() && type.types.some( member => isDomType( member, names ) ) ) ||
-				( target.isClassOrInterface() && checker.getBaseTypes( target ).some( base => isDomType( base, names ) ) );
 		}
 
 		/**

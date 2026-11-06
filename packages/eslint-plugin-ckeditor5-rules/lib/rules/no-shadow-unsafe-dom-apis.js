@@ -6,6 +6,7 @@
 'use strict';
 
 const { unwrapExpression } = require( '../utils/unwrap-expression' );
+const { isDomType } = require( '../utils/is-dom-type' );
 
 const DOCUMENT_ELEMENT_LOOKUP_METHODS = new Set( [
 	'querySelector',
@@ -371,27 +372,6 @@ module.exports = {
 		}
 	}
 };
-
-/**
- * Checks whether a type is, or extends, one of the given DOM interfaces. A type counts only when the interface is
- * declared by the TypeScript DOM library, so that a class of the same name elsewhere, such as the editor model's
- * `Document`, does not match.
- */
-function isDomType( type, names, program ) {
-	const symbol = type.getSymbol();
-
-	if ( names.has( symbol?.name ) &&
-		symbol.declarations.some( declaration => program.isSourceFileDefaultLibrary( declaration.getSourceFile() ) )
-	) {
-		return true;
-	}
-
-	const target = type.target ?? type;
-
-	return ( type.isIntersection() && type.types.some( member => isDomType( member, names, program ) ) ) ||
-		( target.isClassOrInterface() &&
-			program.getTypeChecker().getBaseTypes( target ).some( base => isDomType( base, names, program ) ) );
-}
 
 /**
  * Extracts the static method name and receiver from a call target. For a bare identifier call the
