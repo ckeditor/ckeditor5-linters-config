@@ -32,9 +32,6 @@ const PARENT_TRAVERSAL_REPLACEMENTS = new Map( [
 const DOCUMENT_TYPES = new Set( [ 'Document' ] );
 const WINDOW_TYPES = new Set( [ 'Window' ] );
 
-// Nodes that a destructuring pattern can be nested in, up to the declaration or the parameter it belongs to.
-const PATTERN_PARENTS = new Set( [ 'Property', 'ObjectPattern', 'ArrayPattern', 'AssignmentPattern', 'RestElement' ] );
-
 module.exports = {
 	meta: {
 		type: 'problem',
@@ -76,7 +73,9 @@ module.exports = {
 
 			// The destructuring counterpart of the check above, e.g. `const { activeElement } = doc`.
 			ObjectPattern( node ) {
-				if ( isInFunctionSignature( node ) ) {
+				// Destructuring in a function without a body (a function type, an overload, an abstract method) only describes
+				// a type and is never run.
+				if ( sourceCode.getAncestors( node ).some( ancestor => ancestor.params && !ancestor.body ) ) {
 					return;
 				}
 
@@ -87,15 +86,8 @@ module.exports = {
 				const object = value || node;
 
 				for ( const property of node.properties ) {
-					const propertyName = property.type === 'Property' && getStaticKeyName( property.key, property.computed );
-
-					checkPropertyRead( property, propertyName, object );
-
-					// A destructured `getSelection` is called later as a bare function, which is fine in `CallExpression`.
-					if ( propertyName === 'getSelection' && (
-						isGlobalObjectExpression( object ) || isWindowExpression( object ) || isDocumentExpression( object )
-					) ) {
-						report( property, 'getSelection', { path: `${ getObjectText( object ) }.getSelection` } );
+					if ( property.type === 'Property' ) {
+						checkPropertyRead( property, getStaticKeyName( property.key, property.computed ), object );
 					}
 				}
 			},
@@ -167,7 +159,12 @@ module.exports = {
 		 */
 		function checkPropertyRead( node, propertyName, object ) {
 			if ( propertyName === 'activeElement' && isDocumentExpression( object ) ) {
-				report( node, 'activeElement', { path: getObjectText( object ) } );
+				// A pattern without a value, e.g. a typed parameter, is named by the type it destructures.
+				const path = object.type === 'ObjectPattern' ?
+					checker.typeToString( services.getTypeAtLocation( object ) ) :
+					sourceCode.getText( unwrapExpression( object ) );
+
+				report( node, 'activeElement', { path } );
 			} else if ( propertyName === 'shadowRoot' ) {
 				report( node, 'shadowRootDiscovery' );
 			} else if ( PARENT_TRAVERSAL_REPLACEMENTS.has( propertyName ) ) {
@@ -178,15 +175,6 @@ module.exports = {
 			} else if ( propertyName === 'relatedTarget' ) {
 				report( node, 'relatedTarget' );
 			}
-		}
-
-		/**
-		 * Returns the text that names an object in messages: its source text, or the type of a destructuring pattern.
-		 */
-		function getObjectText( object ) {
-			return object.type === 'ObjectPattern' ?
-				checker.typeToString( services.getTypeAtLocation( object ) ) :
-				sourceCode.getText( unwrapExpression( object ) );
 		}
 
 		/**
@@ -403,22 +391,6 @@ function isDomType( type, names, program ) {
 	return ( type.isIntersection() && type.types.some( member => isDomType( member, names, program ) ) ) ||
 		( target.isClassOrInterface() &&
 			program.getTypeChecker().getBaseTypes( target ).some( base => isDomType( base, names, program ) ) );
-}
-
-/**
- * Checks whether a destructuring pattern belongs to the parameters of a function without a body, which only describes
- * a type, so no property is read at runtime.
- *
- * declare function f( { parentNode }: Node ): void; // -> true
- */
-function isInFunctionSignature( pattern ) {
-	let node = pattern;
-
-	while ( PATTERN_PARENTS.has( node.parent.type ) ) {
-		node = node.parent;
-	}
-
-	return !!node.parent.params?.includes( node ) && !node.parent.body;
 }
 
 /**

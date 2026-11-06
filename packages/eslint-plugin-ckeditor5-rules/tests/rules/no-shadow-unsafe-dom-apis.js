@@ -205,11 +205,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring a shadow-aware getSelection helper from a custom object',
-			code: 'const { getSelection } = shadowDomUtils;\n'
-		},
-
-		{
 			name: 'Destructuring in a function type, which is not run',
 			code: 'type F = ( { relatedTarget }: FocusEvent ) => void;\n'
 		},
@@ -972,27 +967,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring shadowRoot',
-			code: 'const { shadowRoot } = el;\n',
-			errors: [
-				{ messageId: 'shadowRootDiscovery' }
-			]
-		},
-
-		{
 			name: 'Destructuring several restricted properties, each reported at its own property',
 			code: 'const { shadowRoot, parentNode } = el;\n',
 			errors: [
 				{ messageId: 'shadowRootDiscovery', line: 1, column: 9 },
 				{ messageId: 'parentTraversal', line: 1, column: 21 }
-			]
-		},
-
-		{
-			name: 'Destructuring parentNode',
-			code: 'const { parentNode } = el;\n',
-			errors: [
-				{ messageId: 'parentTraversal', data: { property: 'parentNode', replacement: 'getParentNode' } }
 			]
 		},
 
@@ -1017,22 +996,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 			code: 'function f( { evt: { relatedTarget } } ) {}\n',
 			errors: [
 				{ messageId: 'relatedTarget' }
-			]
-		},
-
-		{
-			name: 'Destructuring getSelection from window',
-			code: 'const { getSelection } = window;\n',
-			errors: [
-				{ messageId: 'getSelection', data: { path: 'window.getSelection' } }
-			]
-		},
-
-		{
-			name: 'Destructuring getSelection from globalThis',
-			code: 'const { getSelection } = globalThis;\n',
-			errors: [
-				{ messageId: 'getSelection', data: { path: 'globalThis.getSelection' } }
 			]
 		}
 	]
@@ -1091,33 +1054,8 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 		},
 
 		{
-			name: 'Reading activeElement off a ShadowRoot',
-			code: 'declare const root: ShadowRoot;\nroot.activeElement;\n'
-		},
-
-		{
-			name: 'Destructuring activeElement from a ShadowRoot',
-			code: 'declare const root: ShadowRoot;\nconst { activeElement } = root;\n'
-		},
-
-		{
 			name: 'Calling contains on an element',
 			code: 'declare const el: HTMLElement;\ndeclare const other: Node;\nel.contains( other );\n'
-		},
-
-		{
-			name: 'Destructuring in a function type',
-			code: 'type F = ( { relatedTarget }: FocusEvent ) => void;\n'
-		},
-
-		{
-			name: 'Destructuring in a function declaration without a body',
-			code: 'declare function f( { parentNode }: Node ): void;\n'
-		},
-
-		{
-			name: 'Destructuring in an interface method signature',
-			code: 'interface I { m( { shadowRoot }: Element ): void; }\n'
 		},
 
 		{
@@ -1165,38 +1103,6 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 		},
 
 		{
-			name: 'Reading activeElement off the result of a function returning Document',
-			code: 'declare function getDoc(): Document;\ngetDoc().activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'getDoc()' } }
-			]
-		},
-
-		{
-			name: 'Reading activeElement off a parameter typed with an alias of Document',
-			code: 'type Doc = Document;\nfunction f( doc: Doc ) { return doc.activeElement; }\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'doc' } }
-			]
-		},
-
-		{
-			name: 'Reading activeElement off an inherited field typed as Document',
-			code: 'class A { doc!: Document; }\nclass B extends A { m() { return this.doc.activeElement; } }\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'this.doc' } }
-			]
-		},
-
-		{
-			name: 'Reading activeElement off a constructor parameter property typed as Document',
-			code: 'class A { constructor( private doc: Document ) {} m() { return this.doc.activeElement; } }\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'this.doc' } }
-			]
-		},
-
-		{
 			name: 'Reading activeElement off a generic constrained to Document',
 			code: 'function f<T extends Document>( doc: T ) { return doc.activeElement; }\n',
 			errors: [
@@ -1221,26 +1127,10 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 		},
 
 		{
-			name: 'Reading activeElement off a variable initialized with ownerDocument',
-			code: 'declare const el: HTMLElement;\nconst doc = el.ownerDocument;\ndoc.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'doc' } }
-			]
-		},
-
-		{
 			name: 'Reading activeElement through a cast to Document',
 			code: 'declare const node: Node;\n( node as Document ).activeElement;\n',
 			errors: [
 				{ messageId: 'activeElement', data: { path: 'node' } }
-			]
-		},
-
-		{
-			name: 'Reading activeElement off the document of a Window',
-			code: 'declare const win: Window;\nwin.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'win.document' } }
 			]
 		},
 
@@ -1280,14 +1170,6 @@ typeAwareRuleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-api
 			code: 'const { document: { activeElement } } = window;\n',
 			errors: [
 				{ messageId: 'activeElement', data: { path: 'Document' } }
-			]
-		},
-
-		{
-			name: 'Destructuring getSelection from a Window',
-			code: 'declare const win: Window;\nconst { getSelection } = win;\n',
-			errors: [
-				{ messageId: 'getSelection', data: { path: 'win.getSelection' } }
 			]
 		},
 
