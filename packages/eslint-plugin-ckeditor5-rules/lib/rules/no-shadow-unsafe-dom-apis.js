@@ -6,6 +6,7 @@
 'use strict';
 
 const { unwrapExpression } = require( '../utils/unwrap-expression' );
+const { isDomType, getUnionMembers } = require( '../utils/dom-types' );
 
 const DOCUMENT_ELEMENT_LOOKUP_METHODS = new Set( [
 	'querySelector',
@@ -29,12 +30,16 @@ const PARENT_TRAVERSAL_REPLACEMENTS = new Map( [
 	[ 'parentElement', 'getParentElement' ]
 ] );
 
+const DOCUMENT_TYPES = new Set( [ 'Document' ] );
+const WINDOW_TYPES = new Set( [ 'Window' ] );
+
 module.exports = {
 	meta: {
 		type: 'problem',
 		docs: {
 			description: 'Disallow the use of utilities that cannot be used within the Shadow DOM',
-			category: 'CKEditor5'
+			category: 'CKEditor5',
+			requiresTypeChecking: true
 		},
 		messages: {
 			/* eslint-disable @stylistic/max-len */
@@ -57,22 +62,41 @@ module.exports = {
 
 	create( context ) {
 		const sourceCode = context.sourceCode;
+		const services = sourceCode.parserServices;
+
+		if ( !services.program ) {
+			throw new Error(
+				'The "no-shadow-unsafe-dom-apis" rule requires type information. Enable it only for files covered by ' +
+				'a TypeScript project, and set `parserOptions.projectService` (or `parserOptions.project`) for them.'
+			);
+		}
+
+		const program = services.program;
+		const checker = program.getTypeChecker();
 
 		return {
 			MemberExpression( node ) {
-				const propertyName = getStaticPropertyName( node );
+				checkPropertyRead( node, getStaticPropertyName( node ), node.object );
+			},
 
-				if ( propertyName === 'activeElement' && isDocumentExpression( node.object ) ) {
-					report( node, 'activeElement', { path: sourceCode.getText( unwrapExpression( node.object ) ) } );
-				} else if ( propertyName === 'shadowRoot' ) {
-					report( node, 'shadowRootDiscovery' );
-				} else if ( PARENT_TRAVERSAL_REPLACEMENTS.has( propertyName ) ) {
-					report( node, 'parentTraversal', {
-						property: propertyName,
-						replacement: PARENT_TRAVERSAL_REPLACEMENTS.get( propertyName )
-					} );
-				} else if ( propertyName === 'relatedTarget' ) {
-					report( node, 'relatedTarget' );
+			// The destructuring counterpart of the check above, e.g. `const { activeElement } = doc`.
+			ObjectPattern( node ) {
+				// Destructuring in a function without a body (a function type, an overload, an abstract method) only describes
+				// a type and is never run.
+				if ( sourceCode.getAncestors( node ).some( ancestor => ancestor.params && !ancestor.body ) ) {
+					return;
+				}
+
+				const { parent } = node;
+				const value = parent.type === 'VariableDeclarator' ? parent.init : parent.left === node && parent.right;
+
+				// Without a value, the type of the pattern itself tells what is destructured, e.g. for a typed parameter.
+				const object = value || node;
+
+				for ( const property of node.properties ) {
+					if ( property.type === 'Property' ) {
+						checkPropertyRead( property, getStaticKeyName( property.key, property.computed ), object );
+					}
 				}
 			},
 
@@ -95,11 +119,7 @@ module.exports = {
 				if ( call.name === 'getSelection' ) {
 					// A bare `getSelection()` call always resolves to the global one here — locally
 					// defined helpers were filtered out above.
-					if ( !call.receiver ||
-						isGlobalObjectExpression( call.receiver ) ||
-						isWindowExpression( call.receiver ) ||
-						isDocumentExpression( call.receiver )
-					) {
+					if ( !call.receiver || isWindowExpression( call.receiver ) || isDocumentExpression( call.receiver ) ) {
 						report( node, 'getSelection', { path } );
 					}
 				} else if ( call.name === 'contains' ) {
@@ -134,6 +154,31 @@ module.exports = {
 
 		function report( node, messageId, data ) {
 			context.report( { node, messageId, data } );
+		}
+
+		/**
+		 * Flags reading a restricted property of an object, through a member access or by destructuring.
+		 *
+		 * const { activeElement } = document; // not allowed
+		 */
+		function checkPropertyRead( node, propertyName, object ) {
+			if ( propertyName === 'activeElement' && isDocumentExpression( object ) ) {
+				// A pattern without a value, e.g. a typed parameter, is named by the type it destructures.
+				const path = object.type === 'ObjectPattern' ?
+					checker.typeToString( services.getTypeAtLocation( object ) ) :
+					sourceCode.getText( unwrapExpression( object ) );
+
+				report( node, 'activeElement', { path } );
+			} else if ( propertyName === 'shadowRoot' ) {
+				report( node, 'shadowRootDiscovery' );
+			} else if ( PARENT_TRAVERSAL_REPLACEMENTS.has( propertyName ) ) {
+				report( node, 'parentTraversal', {
+					property: propertyName,
+					replacement: PARENT_TRAVERSAL_REPLACEMENTS.get( propertyName )
+				} );
+			} else if ( propertyName === 'relatedTarget' ) {
+				report( node, 'relatedTarget' );
+			}
 		}
 
 		/**
@@ -197,33 +242,11 @@ module.exports = {
 		}
 
 		/**
-		 * Checks whether an expression refers to the top-level document: `document`,
-		 * `window.document`, `global.document`, `global.window.document`, their `globalThis` / `self`
-		 * equivalents, or any `*.ownerDocument` access.
-		 *
-		 * isDocumentExpression( node ); // node for `window.document` -> true
+		 * Checks whether an expression is a DOM `Document`, e.g. `document`, `global.document` or
+		 * `el.ownerDocument`.
 		 */
 		function isDocumentExpression( node ) {
-			const expression = unwrapExpression( node );
-
-			if ( isGlobalIdentifier( expression, 'document' ) ) {
-				return true;
-			}
-
-			if ( expression?.type !== 'MemberExpression' ) {
-				return false;
-			}
-
-			const propertyName = getStaticPropertyName( expression );
-
-			if ( propertyName === 'ownerDocument' ) {
-				return true;
-			}
-
-			return propertyName === 'document' && (
-				isGlobalObjectExpression( expression.object ) ||
-				isWindowExpression( expression.object )
-			);
+			return hasDomType( node, DOCUMENT_TYPES );
 		}
 
 		/**
@@ -240,46 +263,25 @@ module.exports = {
 		}
 
 		/**
-		 * Checks whether an expression refers to the top-level window: `window`, `self`,
-		 * `global.window`, `globalThis.window`, or any `*.defaultView` access.
-		 *
-		 * isWindowExpression( node ); // node for `global.window` -> true
+		 * Checks whether an expression is a DOM `Window`, e.g. `window`, `self` or `doc.defaultView`.
 		 */
 		function isWindowExpression( node ) {
-			const expression = unwrapExpression( node );
+			return hasDomType( node, WINDOW_TYPES );
+		}
 
-			if ( isGlobalIdentifier( expression, 'window' ) || isGlobalIdentifier( expression, 'self' ) ) {
-				return true;
-			}
-
-			if ( expression?.type !== 'MemberExpression' ) {
+		/**
+		 * Checks whether the type checker knows an expression to be one of the given DOM interfaces, in
+		 * every member of its union type. A value of an unknown type, such as `any`, does not count. The
+		 * expression is not unwrapped, so that a cast such as `( node as Document )` gives its type.
+		 */
+		function hasDomType( node, names ) {
+			// A bare call has no receiver, and an incomplete call may have no argument to check.
+			if ( !node ) {
 				return false;
 			}
 
-			const propertyName = getStaticPropertyName( expression );
-
-			return propertyName === 'defaultView' ||
-				( propertyName === 'window' && isGlobalObjectExpression( expression.object ) );
-		}
-
-		/**
-		 * Checks whether an expression refers to the `global` or `globalThis` object.
-		 */
-		function isGlobalObjectExpression( node ) {
-			const expression = unwrapExpression( node );
-
-			return isGlobalIdentifier( expression, 'global' ) ||
-				isGlobalIdentifier( expression, 'globalThis' );
-		}
-
-		/**
-		 * Checks that an identifier has the expected global name and is not shadowed by a local
-		 * binding.
-		 */
-		function isGlobalIdentifier( node, name ) {
-			return node?.type === 'Identifier' &&
-				node.name === name &&
-				!isLocallyDefinedReference( node );
+			return getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( node ) ), checker )
+				.every( member => isDomType( member, names, program ) );
 		}
 
 		/**

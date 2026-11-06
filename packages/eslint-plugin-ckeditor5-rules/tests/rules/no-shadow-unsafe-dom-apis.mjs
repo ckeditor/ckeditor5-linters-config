@@ -3,20 +3,32 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
+import path from 'node:path';
+import { beforeAll, describe, it, expect } from 'vitest';
+import { Linter, RuleTester } from 'eslint';
+import tsParser from '@typescript-eslint/parser';
+import rule from '../../lib/rules/no-shadow-unsafe-dom-apis.js';
 
-const { RuleTester } = require( 'eslint' );
-const tsParser = require( '@typescript-eslint/parser' );
+// The file does not need to exist: the default project of the type checker takes the code as it is.
+const filename = path.join( import.meta.dirname, 'file.ts' );
 
-const ruleTester = new RuleTester( {
-	languageOptions: {
-		sourceType: 'module',
-		ecmaVersion: 2020,
-		parser: tsParser
+const languageOptions = {
+	parser: tsParser,
+	parserOptions: {
+		projectService: { allowDefaultProject: [ '*.ts' ] },
+		tsconfigRootDir: import.meta.dirname
 	}
-} );
+};
 
-ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', require( '../../lib/rules/no-shadow-unsafe-dom-apis' ), {
+const ruleTester = new RuleTester( { languageOptions } );
+
+// Starting the type checker (including loading the DOM types) can take several seconds on CI. Start it up front, so
+// that this cost is not charged against the timeout of whichever case runs first.
+beforeAll( () => {
+	new Linter().verify( '', { files: [ '**/*.ts' ], languageOptions }, filename );
+}, 60_000 );
+
+ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule, {
 	valid: [
 		{
 			name: 'Reading a property named activeElement on a custom object',
@@ -189,8 +201,66 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		{
 			name: 'Calling a locally imported caretPositionFromPoint helper without a { shadowRoots } option',
 			code: 'import { caretPositionFromPoint } from \'./shadow-dom-utils.js\';\ncaretPositionFromPoint( x, y );\n'
+		},
+
+		{
+			name: 'Destructuring activeElement from a custom object',
+			code: 'const { activeElement } = someCustomObject;\n'
+		},
+
+		{
+			name: 'Destructuring with only a rest element',
+			code: 'const { ...rest } = el;\n'
+		},
+
+		{
+			name: 'Destructuring in a function type, which is not run',
+			code: 'type F = ( { relatedTarget }: FocusEvent ) => void;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a class of the same name as the DOM Document (e.g. the model one)',
+			code: 'export class Document { activeElement = null; }\n' +
+				'declare const doc: Document;\n' +
+				'doc.activeElement;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a value typed as any',
+			code: 'declare const doc: any;\ndoc.activeElement;\n'
+		},
+
+		{
+			name: 'Reading activeElement off a union of Document and ShadowRoot',
+			code: 'function f( root: Document | ShadowRoot ) { return root.activeElement; }\n'
+		},
+
+		{
+			name: 'Calling contains on an element',
+			code: 'declare const el: HTMLElement;\ndeclare const other: Node;\nel.contains( other );\n'
+		},
+
+		{
+			name: 'Destructuring in an abstract method',
+			code: 'abstract class A { abstract m( { activeElement }: Document ): void; }\n'
+		},
+
+		{
+			name: 'Calling bare functions that share their names with the checked methods, so there is no receiver',
+			code: 'declare const el: Node;\n' +
+				'addEventListener( \'scroll\', () => {} );\n' +
+				'removeEventListener( \'scroll\', () => {} );\n' +
+				'querySelector( \'.foo\' );\n' +
+				'elementFromPoint( 0, 0 );\n' +
+				'appendChild( el );\n'
+		},
+
+		{
+			name: 'Creating a TreeWalker and a NodeIterator without the root argument',
+			code: 'document.createTreeWalker();\ndocument.createNodeIterator();\n'
 		}
-	],
+	].map( withFilename ),
+
 	invalid: [
 		{
 			name: 'Reading document.activeElement',
@@ -201,32 +271,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Reading global.document.activeElement',
-			code: 'const el = global.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
-			name: 'Reading window.document.activeElement',
-			code: 'const el = window.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
-			name: 'Reading global.window.document.activeElement',
-			code: 'const el = global.window.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
 			name: 'Reading *.ownerDocument.activeElement',
-			code: 'const el = someEl.ownerDocument.activeElement;\n',
+			code: 'declare const someEl: Element;\n' +
+				'const el = someEl.ownerDocument.activeElement;\n',
 			errors: [
 				{ messageId: 'activeElement' }
 			]
@@ -329,14 +376,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.getSelection()',
-			code: 'const sel = global.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
 			name: 'Calling document.getSelection()',
 			code: 'const sel = document.getSelection();\n',
 			errors: [
@@ -353,40 +392,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.window.getSelection()',
-			code: 'const sel = global.window.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.getSelection()',
-			code: 'const sel = global.document.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.getSelection()',
-			code: 'const sel = window.document.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.getSelection()',
-			code: 'const sel = global.window.document.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
 			name: 'Calling *.ownerDocument.getSelection()',
-			code: 'const sel = someEl.ownerDocument.getSelection();\n',
+			code: 'declare const someEl: Element;\n' +
+				'const sel = someEl.ownerDocument.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -394,7 +402,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 
 		{
 			name: 'Calling *.ownerDocument.defaultView.getSelection()',
-			code: 'const sel = someEl.ownerDocument.defaultView.getSelection();\n',
+			code: 'declare const someEl: Element;\n' +
+				'const sel = someEl.ownerDocument.defaultView.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -409,30 +418,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.document.contains(...)',
-			code: 'global.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.contains(...)',
-			code: 'window.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.contains(...)',
-			code: 'global.window.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
 			name: 'Calling document.body.contains(...)',
 			code: 'document.body.contains( el );\n',
 			errors: [
@@ -441,32 +426,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.document.body.contains(...)',
-			code: 'global.document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.body.contains(...)',
-			code: 'window.document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.body.contains(...)',
-			code: 'global.window.document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
 			name: 'Calling *.ownerDocument.contains(...)',
-			code: 'someEl.ownerDocument.contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -474,7 +436,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 
 		{
 			name: 'Calling *.ownerDocument.body.contains(...)',
-			code: 'someEl.ownerDocument.body.contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.body.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -497,32 +460,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.document.elementFromPoint(...)',
-			code: 'global.document.elementFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.elementFromPoint(...)',
-			code: 'window.document.elementFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.elementFromPoint(...)',
-			code: 'global.window.document.elementFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
 			name: 'Calling *.ownerDocument.elementFromPoint(...)',
-			code: 'someEl.ownerDocument.elementFromPoint( x, y );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.elementFromPoint( x, y );\n',
 			errors: [
 				{ messageId: 'elementFromPoint' }
 			]
@@ -577,32 +517,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Calling global.document.querySelector(...)',
-			code: 'global.document.querySelector( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.querySelector(...)',
-			code: 'window.document.querySelector( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.querySelector(...)',
-			code: 'global.window.document.querySelector( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
 			name: 'Calling *.ownerDocument.querySelector(...)',
-			code: 'someEl.ownerDocument.querySelector( \'.foo\' );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.querySelector( \'.foo\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
@@ -634,7 +551,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 
 		{
 			name: 'Calling *.ownerDocument.getElementsByTagName(...)',
-			code: 'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.getElementsByTagName( \'p\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
@@ -665,8 +583,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Creating a NodeIterator rooted at global.document.body',
-			code: 'document.createNodeIterator( global.document.body, NodeFilter.SHOW_ELEMENT );\n',
+			name: 'Creating a NodeIterator rooted at document.body',
+			code: 'document.createNodeIterator( document.body, NodeFilter.SHOW_ELEMENT );\n',
 			errors: [
 				{ messageId: 'documentTreeWalker' }
 			]
@@ -674,7 +592,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 
 		{
 			name: 'Creating a TreeWalker rooted at *.ownerDocument',
-			code: 'document.createTreeWalker( someEl.ownerDocument, NodeFilter.SHOW_ELEMENT );\n',
+			code: 'declare const someEl: Element;\n' +
+				'document.createTreeWalker( someEl.ownerDocument, NodeFilter.SHOW_ELEMENT );\n',
 			errors: [
 				{ messageId: 'documentTreeWalker' }
 			]
@@ -697,40 +616,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Attaching a pointerleave listener on global.document',
-			code: 'global.document.addEventListener( \'pointerleave\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a scroll listener on global.document',
-			code: 'global.document.addEventListener( \'scroll\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a scroll listener on window.document',
-			code: 'window.document.addEventListener( \'scroll\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a mouseenter listener on global.window.document',
-			code: 'global.window.document.addEventListener( \'mouseenter\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
 			name: 'Attaching a mouseleave listener on *.ownerDocument',
-			code: 'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
 			errors: [
 				{ messageId: 'documentListener' }
 			]
@@ -745,32 +633,9 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 		},
 
 		{
-			name: 'Appending directly to global.document.body',
-			code: 'global.document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
-			name: 'Appending directly to window.document.body',
-			code: 'window.document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
-			name: 'Appending directly to global.window.document.body',
-			code: 'global.window.document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
 			name: 'Appending directly to *.ownerDocument.body',
-			code: 'someEl.ownerDocument.body.appendChild( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'someEl.ownerDocument.body.appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
 			]
@@ -826,7 +691,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 
 		{
 			name: 'Calling contains through a TSAsExpression cast on ownerDocument',
-			code: '( someEl.ownerDocument as Document ).contains( el );\n',
+			code: 'declare const someEl: Element;\n' +
+				'( someEl.ownerDocument as Document ).contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -894,6 +760,153 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', requi
 			errors: [
 				{ messageId: 'getSelection' }
 			]
+		},
+
+		{
+			name: 'Destructuring activeElement from document',
+			code: 'const { activeElement } = document;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in an assignment from *.ownerDocument',
+			code: 'declare const el: Element;\nlet activeElement;\n( { activeElement } = el.ownerDocument );\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'el.ownerDocument' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in a parameter defaulting to document',
+			code: 'function f( { activeElement } = document ) {}\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring several restricted properties, each reported at its own property',
+			code: 'const { shadowRoot, parentNode } = el;\n',
+			errors: [
+				{ messageId: 'shadowRootDiscovery', line: 1, column: 9 },
+				{ messageId: 'parentTraversal', line: 1, column: 21 }
+			]
+		},
+
+		{
+			name: 'Destructuring parentElement under an alias',
+			code: 'const { parentElement: parent } = el;\n',
+			errors: [
+				{ messageId: 'parentTraversal', data: { property: 'parentElement', replacement: 'getParentElement' } }
+			]
+		},
+
+		{
+			name: 'Destructuring relatedTarget in an event listener parameter',
+			code: 'el.addEventListener( \'focusout\', ( { relatedTarget } ) => {} );\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Destructuring relatedTarget nested in a parameter of a function with a body',
+			code: 'function f( { evt: { relatedTarget } } ) {}\n',
+			errors: [
+				{ messageId: 'relatedTarget' }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off the document of a local `global` object (as imported from ckeditor5-utils)',
+			code: 'declare const global: { readonly document: Document; readonly window: Window & typeof globalThis };\n' +
+				'global.document.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'global.document' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a generic constrained to Document',
+			code: 'function f<T extends Document>( doc: T ) { return doc.activeElement; }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off a nullable Document',
+			code: 'function f( doc: Document | null ) { return doc!.activeElement; }\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement off an HTMLDocument, which extends Document',
+			code: 'declare const doc: HTMLDocument;\ndoc.activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'doc' } }
+			]
+		},
+
+		{
+			name: 'Reading activeElement through a cast to Document',
+			code: 'declare const node: Node;\n( node as Document ).activeElement;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'node' } }
+			]
+		},
+
+		{
+			name: 'Calling getSelection on a Window',
+			code: 'function f( win: Window ) { return win.getSelection(); }\n',
+			errors: [
+				{ messageId: 'getSelection', data: { path: 'win.getSelection' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement in a parameter typed as Document',
+			code: 'function f( { activeElement }: Document ) {}\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'Document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring activeElement from the document nested in window',
+			code: 'const { document: { activeElement } } = window;\n',
+			errors: [
+				{ messageId: 'activeElement', data: { path: 'Document' } }
+			]
+		},
+
+		{
+			name: 'Destructuring parentNode in a function with a body',
+			code: 'function f( { parentNode }: Node ) {}\n',
+			errors: [
+				{ messageId: 'parentTraversal', data: { property: 'parentNode', replacement: 'getParentNode' } }
+			]
 		}
-	]
+	].map( withFilename )
 } );
+
+describe( 'no-shadow-unsafe-dom-apis without type information', () => {
+	it( 'throws an error that explains how to enable type information', () => {
+		const linter = new Linter();
+
+		expect( () => linter.verify( 'document.activeElement;\n', {
+			files: [ '**/*.ts' ],
+			languageOptions: { parser: tsParser },
+			plugins: { 'ckeditor5-rules': { rules: { 'no-shadow-unsafe-dom-apis': rule } } },
+			rules: { 'ckeditor5-rules/no-shadow-unsafe-dom-apis': 'error' }
+		}, 'file.ts' ) ).toThrow( /requires type information/ );
+	} );
+} );
+
+function withFilename( testCase ) {
+	return { filename, ...testCase };
+}
