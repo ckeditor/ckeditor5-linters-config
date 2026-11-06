@@ -209,6 +209,11 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
+			name: 'Destructuring with only a rest element',
+			code: 'const { ...rest } = el;\n'
+		},
+
+		{
 			name: 'Destructuring in a function type, which is not run',
 			code: 'type F = ( { relatedTarget }: FocusEvent ) => void;\n'
 		},
