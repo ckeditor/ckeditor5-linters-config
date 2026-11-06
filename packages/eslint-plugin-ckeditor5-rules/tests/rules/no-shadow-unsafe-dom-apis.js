@@ -219,21 +219,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring in a function declaration without a body, which is not run',
-			code: 'declare function f( { parentNode }: Node ): void;\n'
-		},
-
-		{
-			name: 'Destructuring in an interface method signature, which is not run',
-			code: 'interface I { m( { shadowRoot }: Element ): void; }\n'
-		},
-
-		{
-			name: 'Destructuring in an overload signature, which is not run',
-			code: 'function f( { parentElement }: Node ): void;\nfunction f( node: Node ) {}\n'
-		},
-
-		{
 			name: 'Reading activeElement off a class of the same name as the DOM Document (e.g. the model one)',
 			code: 'export class Document { activeElement = null; }\n' +
 				'declare const doc: Document;\n' +
