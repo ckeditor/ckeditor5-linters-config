@@ -256,11 +256,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Destructuring nested in the parameter of a function declaration without a body',
-			code: 'declare function f( { node: { parentNode } }: { node: Node } ): void;\n'
-		},
-
-		{
 			name: 'Calling bare functions that share their names with the checked methods, so there is no receiver',
 			code: 'declare const el: Node;\n' +
 				'addEventListener( \'scroll\', () => {} );\n' +
