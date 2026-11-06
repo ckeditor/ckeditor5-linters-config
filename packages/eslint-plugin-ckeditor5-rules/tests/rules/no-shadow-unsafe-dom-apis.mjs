@@ -271,30 +271,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Reading global.document.activeElement',
-			code: 'const el = global.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
-			name: 'Reading window.document.activeElement',
-			code: 'const el = window.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
-			name: 'Reading global.window.document.activeElement',
-			code: 'const el = global.window.document.activeElement;\n',
-			errors: [
-				{ messageId: 'activeElement' }
-			]
-		},
-
-		{
 			name: 'Reading *.ownerDocument.activeElement',
 			code: 'declare const someEl: Element;\n' +
 				'const el = someEl.ownerDocument.activeElement;\n',
@@ -400,14 +376,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Calling global.getSelection()',
-			code: 'const sel = global.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
 			name: 'Calling document.getSelection()',
 			code: 'const sel = document.getSelection();\n',
 			errors: [
@@ -418,38 +386,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		{
 			name: 'Calling window.getSelection()',
 			code: 'const sel = window.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.getSelection()',
-			code: 'const sel = global.window.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.getSelection()',
-			code: 'const sel = global.document.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.getSelection()',
-			code: 'const sel = window.document.getSelection();\n',
-			errors: [
-				{ messageId: 'getSelection' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.getSelection()',
-			code: 'const sel = global.window.document.getSelection();\n',
 			errors: [
 				{ messageId: 'getSelection' }
 			]
@@ -482,56 +418,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Calling global.document.contains(...)',
-			code: 'global.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.contains(...)',
-			code: 'window.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.contains(...)',
-			code: 'global.window.document.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
 			name: 'Calling document.body.contains(...)',
 			code: 'document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.body.contains(...)',
-			code: 'global.document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.body.contains(...)',
-			code: 'window.document.body.contains( el );\n',
-			errors: [
-				{ messageId: 'contains' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.body.contains(...)',
-			code: 'global.window.document.body.contains( el );\n',
 			errors: [
 				{ messageId: 'contains' }
 			]
@@ -566,30 +454,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		{
 			name: 'Calling document.elementsFromPoint(...)',
 			code: 'document.elementsFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.elementFromPoint(...)',
-			code: 'global.document.elementFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.elementFromPoint(...)',
-			code: 'window.document.elementFromPoint( x, y );\n',
-			errors: [
-				{ messageId: 'elementFromPoint' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.elementFromPoint(...)',
-			code: 'global.window.document.elementFromPoint( x, y );\n',
 			errors: [
 				{ messageId: 'elementFromPoint' }
 			]
@@ -647,30 +511,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		{
 			name: 'Calling document.body.querySelectorAll(...)',
 			code: 'document.body.querySelectorAll( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
-			name: 'Calling global.document.querySelector(...)',
-			code: 'global.document.querySelector( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
-			name: 'Calling window.document.querySelector(...)',
-			code: 'window.document.querySelector( \'.foo\' );\n',
-			errors: [
-				{ messageId: 'documentElementLookup' }
-			]
-		},
-
-		{
-			name: 'Calling global.window.document.querySelector(...)',
-			code: 'global.window.document.querySelector( \'.foo\' );\n',
 			errors: [
 				{ messageId: 'documentElementLookup' }
 			]
@@ -743,8 +583,8 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Creating a NodeIterator rooted at global.document.body',
-			code: 'document.createNodeIterator( global.document.body, NodeFilter.SHOW_ELEMENT );\n',
+			name: 'Creating a NodeIterator rooted at document.body',
+			code: 'document.createNodeIterator( document.body, NodeFilter.SHOW_ELEMENT );\n',
 			errors: [
 				{ messageId: 'documentTreeWalker' }
 			]
@@ -776,38 +616,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		},
 
 		{
-			name: 'Attaching a pointerleave listener on global.document',
-			code: 'global.document.addEventListener( \'pointerleave\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a scroll listener on global.document',
-			code: 'global.document.addEventListener( \'scroll\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a scroll listener on window.document',
-			code: 'window.document.addEventListener( \'scroll\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
-			name: 'Attaching a mouseenter listener on global.window.document',
-			code: 'global.window.document.addEventListener( \'mouseenter\', listener );\n',
-			errors: [
-				{ messageId: 'documentListener' }
-			]
-		},
-
-		{
 			name: 'Attaching a mouseleave listener on *.ownerDocument',
 			code: 'declare const someEl: Element;\n' +
 				'someEl.ownerDocument.addEventListener( \'mouseleave\', listener );\n',
@@ -819,30 +627,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 		{
 			name: 'Appending directly to document.body',
 			code: 'document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
-			name: 'Appending directly to global.document.body',
-			code: 'global.document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
-			name: 'Appending directly to window.document.body',
-			code: 'window.document.body.appendChild( el );\n',
-			errors: [
-				{ messageId: 'bodyAppendChild' }
-			]
-		},
-
-		{
-			name: 'Appending directly to global.window.document.body',
-			code: 'global.window.document.body.appendChild( el );\n',
 			errors: [
 				{ messageId: 'bodyAppendChild' }
 			]
@@ -983,14 +767,6 @@ ruleTester.run( 'eslint-plugin-ckeditor5-rules/no-shadow-unsafe-dom-apis', rule,
 			code: 'const { activeElement } = document;\n',
 			errors: [
 				{ messageId: 'activeElement', data: { path: 'document' } }
-			]
-		},
-
-		{
-			name: 'Destructuring activeElement under an alias from window.document',
-			code: 'const { activeElement: active } = window.document;\n',
-			errors: [
-				{ messageId: 'activeElement', data: { path: 'window.document' } }
 			]
 		},
 

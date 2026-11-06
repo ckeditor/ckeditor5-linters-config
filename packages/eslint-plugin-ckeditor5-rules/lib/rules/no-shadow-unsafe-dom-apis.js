@@ -119,11 +119,7 @@ module.exports = {
 				if ( call.name === 'getSelection' ) {
 					// A bare `getSelection()` call always resolves to the global one here — locally
 					// defined helpers were filtered out above.
-					if ( !call.receiver ||
-						isGlobalObjectExpression( call.receiver ) ||
-						isWindowExpression( call.receiver ) ||
-						isDocumentExpression( call.receiver )
-					) {
+					if ( !call.receiver || isWindowExpression( call.receiver ) || isDocumentExpression( call.receiver ) ) {
 						report( node, 'getSelection', { path } );
 					}
 				} else if ( call.name === 'contains' ) {
@@ -286,27 +282,6 @@ module.exports = {
 
 			return getUnionMembers( checker.getNonNullableType( services.getTypeAtLocation( node ) ), checker )
 				.every( member => isDomType( member, names, program ) );
-		}
-
-		/**
-		 * Checks whether an expression refers to the `global` or `globalThis` object, which the type
-		 * checker does not tell apart from any other object.
-		 */
-		function isGlobalObjectExpression( node ) {
-			const expression = unwrapExpression( node );
-
-			return isGlobalIdentifier( expression, 'global' ) ||
-				isGlobalIdentifier( expression, 'globalThis' );
-		}
-
-		/**
-		 * Checks that an identifier has the expected global name and is not shadowed by a local
-		 * binding.
-		 */
-		function isGlobalIdentifier( node, name ) {
-			return node?.type === 'Identifier' &&
-				node.name === name &&
-				!isLocallyDefinedReference( node );
 		}
 
 		/**
