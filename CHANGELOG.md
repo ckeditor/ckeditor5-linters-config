@@ -1,6 +1,29 @@
 Changelog
 =========
 
+## [23.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v22.0.0...v23.0.0) (November 6, 2026)
+
+### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
+
+* **[eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `no-shadow-unsafe-dom-apis` rule now requires type information. Set `parserOptions.projectService` for the files that the rule checks, otherwise linting fails with an error. The rule now recognizes any value of the DOM `Document` or `Window` type, for example `global.document` from `@ckeditor/ckeditor5-utils`, and also reports restricted properties read through destructuring.
+
+### Released packages
+
+Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
+
+<details>
+<summary>Released packages (summary)</summary>
+
+Major releases (contain major breaking changes):
+
+* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/23.0.0): v22.0.0 => v23.0.0
+
+Other releases:
+
+* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/23.0.0): v22.0.0 => v23.0.0
+</details>
+
+
 ## [22.0.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v21.0.0...v22.0.0) (October 15, 2026)
 
 ### MAJOR BREAKING CHANGES [ℹ️](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html#major-and-minor-breaking-changes)
@@ -106,28 +129,6 @@ Major releases (contain major breaking changes):
 Other releases:
 
 * [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/20.0.0): v19.1.0 => v20.0.0
-</details>
-
-
-## [19.1.0](https://github.com/ckeditor/ckeditor5-linters-config/compare/v19.0.0...v19.1.0) (July 30, 2026)
-
-### Features
-
-* **[eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5), [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules)**: The `allow-imports-only-from-main-package-entry-point` rule now accepts the `allowedImportPatterns` option: an array of glob patterns matched against the import path. Imports matching any of these patterns are allowed. It defaults to `[ '**/tests/**/_utils*/**' ]`, which preserves the previous behavior of allowing test utility imports.
-
-  The shared `eslint-config-ckeditor5` preset now also allows importing utilities from the `manual/` directories of packages.
-
-### Released packages
-
-Check out the [Versioning policy](https://ckeditor.com/docs/ckeditor5/latest/framework/guides/support/versioning-policy.html) guide for more information.
-
-<details>
-<summary>Released packages (summary)</summary>
-
-Releases containing new features:
-
-* [eslint-config-ckeditor5](https://www.npmjs.com/package/eslint-config-ckeditor5/v/19.1.0): v19.0.0 => v19.1.0
-* [eslint-plugin-ckeditor5-rules](https://www.npmjs.com/package/eslint-plugin-ckeditor5-rules/v/19.1.0): v19.0.0 => v19.1.0
 </details>
 
 ---
