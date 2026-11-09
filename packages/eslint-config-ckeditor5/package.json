@@ -32,7 +32,7 @@
     "@eslint/js": "^10.0.0",
     "@eslint/markdown": "^6.6.0",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "eslint-plugin-ckeditor5-rules": "^23.0.0",
+    "eslint-plugin-ckeditor5-rules": "workspace:*",
     "typescript-eslint": "^8.57.0"
   },
   "devDependencies": {

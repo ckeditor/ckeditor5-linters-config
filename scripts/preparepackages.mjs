@@ -94,30 +94,25 @@ const tasks = new Listr( [
 		}
 	},
 	{
-		title: 'Updating dependencies.',
-		task: () => {
-			return releaseTools.updateDependencies( {
-				version: '^' + latestVersion,
-				packagesDirectory: PACKAGES_DIRECTORY,
-				shouldUpdateVersionCallback: isMonoRepositoryDependency
-			} );
-		},
-		skip: () => {
-			// When compiling the packages only, do not validate the release.
-			if ( cliArguments.compileOnly ) {
-				return true;
-			}
-
-			return false;
-		}
-	},
-	{
 		title: 'Copying linters-config packages.',
 		task: () => {
 			return releaseTools.prepareRepository( {
 				outputDirectory: RELEASE_DIRECTORY,
 				packagesDirectory: PACKAGES_DIRECTORY,
 				packagesToCopy: cliArguments.packages
+			} );
+		}
+	},
+	{
+		title: 'Updating dependencies.',
+		task: () => {
+			// Replace the `workspace:*` ranges in the copied packages only. The sources keep them,
+			// so the lockfile does not have to change after a release.
+			return releaseTools.updateDependencies( {
+				version: '^' + latestVersion,
+				packagesDirectory: RELEASE_DIRECTORY,
+				includeCwd: false,
+				shouldUpdateVersionCallback: isMonoRepositoryDependency
 			} );
 		}
 	},
